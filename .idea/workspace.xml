@@ -11,7 +11,7 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.TechVidvan-hand_gesture_detection">
+  <component name="RunManager" selected="Python.Face_Detection">
     <configuration name="Face_Detection" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -158,8 +158,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.TechVidvan-hand_gesture_detection" />
         <item itemvalue="Python.Face_Detection" />
+        <item itemvalue="Python.TechVidvan-hand_gesture_detection" />
         <item itemvalue="Python.test Matti" />
       </list>
     </recent_temporary>
