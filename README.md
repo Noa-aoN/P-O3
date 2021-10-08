@@ -20,18 +20,18 @@ OF
 - Virtual card game
 
 ## Minimal version
--Computer recognizes people from database
--Computer saves statistics, money
--Screens displaying: card- , face- , gesture detection (,money, statistics)
--Computer can tell who won
--Manually deal cards
+- Computer recognizes people from database
+- Computer saves statistics, money
+- Screens displaying: card- , face- , gesture detection (,money, statistics)
+- Computer can tell who won
+- Manually deal cards
 
 ## Ideal version
--Computer deals the cards
--App
--Nice player mat (like in poker)
--Register people at the spot
--AI (pytorch) compare to traditional computer vision
+- Computer deals the cards
+- App
+- Nice player mat (like in poker)
+- Register people at the spot
+- AI (pytorch) compare to traditional computer vision
 
 ### App
 - Bluetooth?
