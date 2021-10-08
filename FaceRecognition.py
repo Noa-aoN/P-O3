@@ -33,13 +33,13 @@ def insertOrUpdate(Id,Name,Age,Gen,CR):
 
 sampleNum=0
 while(True):
-    ret,img=cam.read();
-    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    faces=faceDetect.detectMultiScale(gray,1.3,5);
+    ret,img=cam.read();  # Makes a giant array of pixels
+    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)  # Changes the array into grayscale
+    faces=faceDetect.detectMultiScale(gray,1.3,5);  # This detects faces in a matrix
     for(x,y,w,h) in faces:
-        sampleNum=sampleNum+1;
-        cv2.imwrite("dataSet/User."+str('lol')+"."+str(sampleNum)+".jpg",gray[y:y+h,x:x+w])
-        cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+        sampleNum=sampleNum+1;  # This stores amount of samples
+        cv2.imwrite("dataSet/User."+str('lol')+"."+str(sampleNum)+".jpg",gray[y-20:y+h+20,x-20:x+w+20])
+        cv2.rectangle(img,(x-20,y-20),(x+w+20,y+h+20),(0,255,0),2)  # This creates the rectangle around your face
         cv2.waitKey(100);
     cv2.imshow("Face",img);
     cv2.waitKey(1);
