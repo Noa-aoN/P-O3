@@ -7,6 +7,18 @@ directory = r'C:\Users\bram\testfolder'
 faceDetect=cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 cam=cv2.VideoCapture(0)
 
+def imagesizeconverter (x,y,w,h):
+    width = 60
+    height = 80
+    if w != width or h != height:
+        # We are gonna be using x+a and w-a to keep the center of the face in the center,
+        # so now we have to find a to convert
+        a = (w-width)/2
+        b = (h-height)/2
+
+        x += a
+        y += b
+    return [int(x), int(y), int(x+width), int(y+height)]
 
 os.chdir(directory)
 face=0
@@ -17,9 +29,10 @@ while(True):
     faces=faceDetect.detectMultiScale(gray,1.3,5);  # This detects faces in a matrix
     for(x,y,w,h) in faces:
         face += 1;  # This stores amount of samples
-
-        cv2.imwrite(str(directory)+str("\seenface")+str(face)+".jpg", gray[y-20:y+h+20,x-20:x+w+20])  # This stores the file on your computer
-        cv2.rectangle(img,(x-20,y-20),(x+w+20,y+h+20),(0,255,0),2)  # This creates the rectangle around your face
+        convertedimage = imagesizeconverter(x,y,w,h)
+        cv2.imwrite(str(directory)+str("\seenface")+str(face)+".jpg", gray[convertedimage[1]:convertedimage[3],
+                                                                      convertedimage[0]:convertedimage[2]])  # This stores the file on your computer
+        cv2.rectangle(img,(convertedimage[0],convertedimage[1]),(convertedimage[2],convertedimage[3]),(0,255,0),2)  # This creates the rectangle around your face
         cv2.waitKey(1);  # This is a delay
     cv2.imshow("Face",img);  # This shows the camera image
     cv2.waitKey(1);
