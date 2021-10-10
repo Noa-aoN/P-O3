@@ -54,7 +54,6 @@ while True:
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)  # Changes the array into grayscale
     faces=faceDetect.detectMultiScale(gray,1.3,5);  # This detects faces in a matrix
     for(x,y,w,h) in faces:
-        cv2.rectangle(img,(x-20,y-20),(x+w+20,y+h+20),(0,255,0),2)  # This creates the rectangle around your face
         cv2.waitKey(1);  # This is a delay
         convertedimage = imagesizeconverter(x, y, w, h)
         vectornewface = numpy.array(gray[convertedimage[1]:convertedimage[3],
