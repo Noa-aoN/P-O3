@@ -15,8 +15,8 @@ directory = r'C:\Users\bram\testfolder\s'
 
 
 def imagesizeconverter (x,y,w,h):
-    width = 45
-    height = 60
+    width = 60
+    height = 80
     if w != width or h != height:
         # We are gonna be using x+a and w-a to keep the center of the face in the center,
         # so now we have to find a to convert
@@ -71,22 +71,25 @@ while True:
         vectornewface = numpy.array(gray[convertedimage[1]:convertedimage[3],
                                         convertedimage[0]:convertedimage[2]]).reshape(-1)
         weightvectornewface = numpy.dot(vectornewface - averageface, Eigenfaces.transpose())
-        predefined_treshhold = 1000;
+        predefined_treshhold = 650000000000;
         match = 0;
         for i in range(len(os.listdir(r"C:\Users\bram\testfolder"))):
             euclidian_distance = numpy.linalg.norm(weightvectornewface - (numpy.dot(Eigenfaces.transpose(), variancematrix[:, i])));
+            print(euclidian_distance)
             if euclidian_distance < predefined_treshhold:
                 match += 1
-            if match == 5:
-                cv2.rectangle(img, (convertedimage[0], convertedimage[1]), (convertedimage[2], convertedimage[3]),
-                              (255, 0, 0), 2)
-            else:
+            if match == len(os.listdir(r"C:\Users\bram\testfolder")):
                 cv2.rectangle(img, (convertedimage[0], convertedimage[1]), (convertedimage[2], convertedimage[3]),
                               (0, 0, 255), 2)
+                cv2.imshow("Face", img)
+            else:
+                cv2.rectangle(img, (convertedimage[0], convertedimage[1]), (convertedimage[2], convertedimage[3]),
+                              (255, 0, 0), 2)
+                cv2.imshow("Face", img)
     cv2.imshow("Face",img);  # This shows the camera image
     cv2.waitKey(1);
     face += 1
-    if face == 100:
+    if face == 1000:
         break
 cam.release()
 cv2.destroyAllWindows()
