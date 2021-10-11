@@ -3,8 +3,11 @@ import pickle
 import cv2
 import os
 import numpy
+from math import *
 from scipy import linalg
 from scipy.sparse.linalg import norm
+from scipy.linalg import sqrtm
+
 
 faceDetect=cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 cam=cv2.VideoCapture(0)
@@ -47,9 +50,12 @@ for i in os.listdir(r"C:\Users\bram\testfolder"):
         variancematrix = numpy.append(variancematrix, subtraction, axis=0)
 covariancematrix = numpy.dot(variancematrix.transpose(), variancematrix)
 P, D, V = linalg.svd(covariancematrix)
-D = numpy.diag(D)
-Eigenfaces = numpy.dot(variancematrix, numpy.dot(V, numpy.power(D, (-1/2))))
-print(Eigenfaces)
+Dpower = 1/D
+Dpower = numpy.diag(Dpower)
+Dpower = sqrtm(Dpower)
+Eigenfaces = numpy.dot(variancematrix, numpy.dot(V, Dpower))
+
+
 
 
 # get paths of each file in folder named Images
@@ -64,14 +70,14 @@ while True:
         convertedimage = imagesizeconverter(x, y, w, h)
         vectornewface = numpy.array(gray[convertedimage[1]:convertedimage[3],
                                         convertedimage[0]:convertedimage[2]]).reshape(-1)
-        weightvectornewface = numpy.dot(Eigenfaces.transpose(), vectornewface - averageface)
+        weightvectornewface = numpy.dot(vectornewface - averageface, Eigenfaces.transpose())
         predefined_treshhold = 1000;
         match = 0;
         for i in range(len(os.listdir(r"C:\Users\bram\testfolder"))):
-            euclidian_distance[i] = norm(weightvectornewface - (numpy.dot(Eigenfaces.transpose(), variancematrix[:, i])));
-            if euclidian_distance[i] < predefined_treshhold:
+            euclidian_distance = numpy.linalg.norm(weightvectornewface - (numpy.dot(Eigenfaces.transpose(), variancematrix[:, i])));
+            if euclidian_distance < predefined_treshhold:
                 match += 1
-            if match == len(os.listdir(r"C:\Users\bram\testfolder")):
+            if match == 5:
                 cv2.rectangle(img, (convertedimage[0], convertedimage[1]), (convertedimage[2], convertedimage[3]),
                               (255, 0, 0), 2)
             else:
@@ -80,7 +86,7 @@ while True:
     cv2.imshow("Face",img);  # This shows the camera image
     cv2.waitKey(1);
     face += 1
-    if face == 1:
+    if face == 100:
         break
 cam.release()
 cv2.destroyAllWindows()
