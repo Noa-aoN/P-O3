@@ -1,6 +1,6 @@
 import pygame
 from sys import exit
-#jasper
+
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
@@ -22,7 +22,7 @@ class Player:
 
 
 player1 = Player('Matthias:')
-player2 = Player('Bram:')
+player2 = Player('Karel:')
 player3 = Player('Yanninck:')
 Player4 = Player('Jasper:')
 
