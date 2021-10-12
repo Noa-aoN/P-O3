@@ -28,7 +28,7 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2130479" />
   </component>
-  <component name="RunManager" selected="Python.Runner">
+  <component name="RunManager" selected="Python.BlackJack">
     <configuration name="BlackJack" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -217,8 +217,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Runner" />
         <item itemvalue="Python.BlackJack" />
+        <item itemvalue="Python.Runner" />
         <item itemvalue="Python.card_detection" />
         <item itemvalue="Python.Face_Detection" />
         <item itemvalue="Python.TechVidvan-hand_gesture_detection" />
