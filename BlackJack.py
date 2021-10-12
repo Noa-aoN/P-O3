@@ -4,7 +4,7 @@ from sys import exit
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
-
+#dit ga ik ff checken
 screen.fill((20,160,20))
 
 deck = ['1H', '2H', '3H', '4H', '5H', '6H', '7H', '8H', '9H', '10H', '11H', '12H', '13H',
