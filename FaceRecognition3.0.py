@@ -1,17 +1,12 @@
-from imutils import paths
-import pickle
 import cv2
 import os
-import numpy
-from math import *
+import numpy as np
 from numpy import linalg
-from scipy.sparse.linalg import norm
-from scipy.linalg import sqrtm
 from tqdm import tqdm
 
 faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 cam = cv2.VideoCapture(0)
-directory = r'C:\Users\bram\testfolder\s'
+directory = r'C:\Users\bram\testfolder'
 
 
 def imagesizeconverter(x, y, w, h):
@@ -28,63 +23,118 @@ def imagesizeconverter(x, y, w, h):
     return [int(x), int(y), int(x + width), int(y + height)]
 
 
-imagematrix = ""
-for i in os.listdir(r"C:\Users\bram\testfolder"):
-    filenamewithouts = i[1:]
-    image = cv2.imread(directory + str(filenamewithouts))
-    image_vector = numpy.array(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).reshape(-1)
-    if isinstance(imagematrix, str):
-        imagematrix = numpy.matrix(image_vector)
-    else:
-        imagematrix = numpy.append(imagematrix, [image_vector], axis=0)
-averageface = numpy.sum(imagematrix, axis=0) / len(os.listdir(r"C:\Users\bram\testfolder"))
-variancematrix = ""
-for i in tqdm(os.listdir(r"C:\Users\bram\testfolder")):
-    filenamewithouts = i[1:]
-    image = cv2.imread(directory + str(filenamewithouts))   # os.path.join(arg1, arg2)
-    image_vector = numpy.array(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).reshape(-1)
-    if isinstance(variancematrix, str):
-        variancematrix = numpy.matrix(image_vector - averageface[0])
-    else:
-        subtraction = image_vector - averageface[0]
-        variancematrix = numpy.append(variancematrix, subtraction, axis=0)
-U, S, V = linalg.svd(variancematrix)
-print("Done")
-Eigenfaces = U
+def imagetoarray(imagematrix):
+    return imagematrix.flatten()
 
-# get paths of each file in folder named Images
-# Images here contains my data(folders of various persons)
-face = 0
-while True:
-    ret, img = cam.read();  # Makes a giant array of pixels
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # Changes the array into grayscale
-    faces = faceDetect.detectMultiScale(gray, 1.3, 5);  # This detects faces in a matrix
-    for (x, y, w, h) in faces:
-        cv2.waitKey(1);  # This is a delay
-        convertedimage = imagesizeconverter(x, y, w, h)
-        vectornewface = numpy.array(gray[convertedimage[1]:convertedimage[3],
-                                    convertedimage[0]:convertedimage[2]]).reshape(-1)
-        weightvectornewface = numpy.dot(vectornewface - averageface, Eigenfaces.transpose())
-        predefined_treshhold = 500000000000;
-        match = 0;
-        for i in range(len(os.listdir(r"C:\Users\bram\testfolder"))):
-            euclidian_distance = numpy.linalg.norm(
-                weightvectornewface - (numpy.dot(Eigenfaces.transpose(), variancematrix[:, i])));
-            print(euclidian_distance)
-            if euclidian_distance < predefined_treshhold:
-                match += 1
-            if match == len(os.listdir(r"C:\Users\bram\testfolder")):
-                cv2.rectangle(img, (convertedimage[0], convertedimage[1]), (convertedimage[2], convertedimage[3]),
-                              (0, 0, 255), 2)
-                cv2.imshow("Face", img)
-            else:
-                cv2.rectangle(img, (convertedimage[0], convertedimage[1]), (convertedimage[2], convertedimage[3]),
-                              (255, 0, 0), 2)
-                cv2.imshow("Face", img)
-    cv2.imshow("Face", img);  # This shows the camera image
-    cv2.waitKey(1);
-    face += 1
-    if face == 1000:
-        break
-cam.release()
-cv2.destroyAllWindows()
+
+def imagelibrarytomatrix(dir):
+    dirlist_of_images = os.listdir(dir)
+    imagearray_list = []
+    print("Converting Library to matrix")
+    for i in tqdm(dirlist_of_images):
+        image = cv2.imread(os.path.join(dir, i))
+        grayimage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        imagevector = imagetoarray(grayimage)
+        imagearray_list.append(imagevector)
+    librarymatrix = np.vstack(imagearray_list)
+    return librarymatrix
+
+
+def meanofvectors(numpy_matrix):
+    return np.mean(numpy_matrix, axis=0)
+
+
+def deviationmatrix(imagearraylist, average):
+    deviationarray_list = []
+    for i in tqdm(range(len(imagearraylist))):
+        deviationvector = imagearraylist[i] - average
+        deviationarray_list.append(deviationvector)
+    deviation_matrix = np.vstack(deviationarray_list)
+    return deviation_matrix
+
+
+def eigcov(devmatrix):
+    cov = (1/len(devmatrix)) * np.dot(devmatrix.transpose(), devmatrix)
+    eigenValues, eigenVectors = np.linalg.eig(cov)
+    idx = eigenValues.argsort()[::-1]
+    eigenValues = eigenValues[idx]
+    eigenVectors = eigenVectors[:, idx]
+    return eigenValues, eigenVectors
+
+
+def reducedeigcov(devmatrix):
+    reducedcov = dot(devmatrix, devmatrix.transpose())
+    D, P = np.linalg.eig(reducedcov)
+    return
+
+
+def normofmatrixvectors(matrix):
+    normalisedmatrix = []
+    for i in tqdm(range(len(matrix))):
+        vector = matrix[i]
+        norm = np.linalg.norm(vector)
+        normalisedmatrix.append(vector/norm)
+    normalisedmatrix = np.vstack(normalisedmatrix)
+    return normalisedmatrix
+
+
+def weight(normalisedeigenvectors, deviation_matrix):
+    transeigenv = normalisedeigenvectors.transpose()
+    weights = np.dot(transeigenv, deviation_matrix.transpose())
+    return weights
+
+
+def eigenfacereconstruction(weights, normalisedeigenvectors, average):
+    averagematrix = np.tile(average, (len(normalisedeigenvectors[0]), 1))
+    deviationperimage = np.dot(normalisedeigenvectors, weights).transpose()
+    reconstructedimages = averagematrix + deviationperimage
+    return reconstructedimages
+
+
+def __main__():
+
+    # Convert the library of images into vectors and put them in a matrix
+    librarymatrix = imagelibrarytomatrix(directory)
+
+    # Calculate the average of the vectors in that matrix
+    averageface = meanofvectors(librarymatrix)
+
+    # Calculate the deviation of the average for every image and put it into a matrix
+    deviation_matrix = deviationmatrix(librarymatrix, averageface)
+
+    # Calculate the Eigenvectors of the Covariancematrix
+    eigenvalues, eigenvectors = eigcov(devmatrix)  # P is already normalized and is of form [U1 U2 U3 ...]
+    # (so the vectors stored are the ROWS not the columns
+
+    # Calculate the weight of each eigenvector
+    weights = weight(P, deviation_matrix)
+
+    # Use the weights to reconstruct the images,
+    # if done correct you should have the exact same images that you started with
+    eigenfaces = eigenfacereconstruction(weights, eigenvectors, averageface)
+
+
+
+
+def __alt__():
+
+    librarymatrix = [[1, -2, 1, -3],
+                     [1, 3, -1, 2],
+                     [2, 1, -2, 3],
+                     [1, 2, 2, 1]]
+    average = meanofvectors(librarymatrix)
+    deviation_matrix = deviationmatrix(librarymatrix, average)
+    D, P = eigcov(deviation_matrix)
+    weights = weight(P,deviation_matrix)
+    eigenfaces = eigenfacereconstruction(weights, P, average)
+    print(eigenfaces)
+
+
+
+
+
+__main__()
+# __alt__()
+
+
+
