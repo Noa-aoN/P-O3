@@ -38,6 +38,8 @@ for i in os.listdir(r"C:\Users\bram\testfolder"):
     else:
         imagematrix = numpy.append(imagematrix, [image_vector], axis=0)
 averageface = numpy.sum(imagematrix, axis=0) / len(os.listdir(r"C:\Users\bram\testfolder"))
+print(averageface)
+cv2.imshow("Face", averageface)
 # variancematrix = ""
 # for i in tqdm(os.listdir(r"C:\Users\bram\testfolder")):
 #     filenamewithouts = i[1:]
@@ -51,12 +53,12 @@ averageface = numpy.sum(imagematrix, axis=0) / len(os.listdir(r"C:\Users\bram\te
 # covariancematrix = numpy.dot(variancematrix.transpose(), variancematrix)
 averagematrix = numpy.tile(averageface, (len(os.listdir(r"C:\Users\bram\testfolder")), 1))
 differencefromaverage = imagematrix - averagematrix
-covariancematrix = numpy.cov(differencefromaverage.transpose())
-covariancematrix1 = numpy.dot(differencefromaverage,differencefromaverage)/len(os.listdir(r"C:\Users\bram\testfolder"))
+covariancematrix = numpy.cov(differencefromaverage.transpose(), bias=1)
 D, V = linalg.eig(covariancematrix)
 Eigenfaces = V
-print(Eigenfaces.shape)
-raise
+
+
+
 # get paths of each file in folder named Images
 # Images here contains my data(folders of various persons)
 face = 0
@@ -73,8 +75,7 @@ while True:
         predefined_treshhold = 500000000000;
         match = 0;
         for i in range(len(os.listdir(r"C:\Users\bram\testfolder"))):
-            euclidian_distance = numpy.linalg.norm(
-            weightvectornewface - (numpy.dot(Eigenfaces.transpose(), differencefromaverage[i, :].transpose())));
+            euclidian_distance = numpy.linalg.norm(weightvectornewface - (numpy.dot(Eigenfaces, differencefromaverage[i, :].transpose())));
             if euclidian_distance < predefined_treshhold:
                 match += 1
             if match == len(os.listdir(r"C:\Users\bram\testfolder")):

@@ -7,6 +7,7 @@ directory = r'C:\Users\bram\testfolder'
 faceDetect=cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 cam=cv2.VideoCapture(0)
 
+
 def imagesizeconverter (x,y,w,h):
     width = 60
     height = 80
