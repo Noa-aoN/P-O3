@@ -103,7 +103,7 @@ def gesture_recognition():
             l += 1
 
             # juiste tekst weergeven
-            font = cv2.FONT_HERSHEY_SIMPLEX
+            font = cv2.FONT_HERSHEY_DUPLEX
             if l == 1:
                 if areacnt < 2000:  # oppervlakte contour rond hand
                     cv2.putText(frame, 'Geen hand zichtbaar', (0, 50), font, 2, (0, 0, 255), 3, cv2.LINE_AA)
@@ -155,5 +155,5 @@ def gesture_recognition():
     cap.release()
 
 
-if __name__ == "__main__": # normale constructie
+if __name__ == "__main__":  # normale constructie
     gesture_recognition()
