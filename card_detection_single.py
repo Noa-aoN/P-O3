@@ -7,25 +7,23 @@ import numpy as np
 class Card:
     """Structure to store information about query cards in the camera image."""
 
-    def __init__(self):
-        self.contour = []  # Contour of card
-        self.width, self.height = 0, 0  # Width and height of card
-        self.corner_pts = []  # Corner points of card
-        self.center = []  # Center point of card
-        self.warp = []  # 400x600, flattened, grayed, blurred image
+    def __init__(self, contour, w, h, pts, center, warp, rank_img, suit_img):
+        self.contour = contour  # Contour of card
+        self.width_height = w, h  # Width and height of card
+        self.corner_pts = pts  # Corner points of card
+        self.center = center  # Center point of card
+        self.warp = warp  # 400x600, flattened, grayed, blurred image
+        self.rank_img = rank_img  # Thresholded, sized image of card's rank
+        self.suit_img = suit_img  # Thresholded, sized image of card's suit
+        self.color = "Red"
         self.rank = -1  # Rank
         self.suit = -1  # Suit
-        self.rank_img = []  # Thresholded, sized image of card's rank
-        self.suit_img = []  # Thresholded, sized image of card's suit
 
 
 FONT = cv2.FONT_HERSHEY_PLAIN
 
-CARD_MAX_AREA = 4000000
-CARD_MIN_AREA = 10000
-
-CORNER_WIDTH = 32
-CORNER_HEIGHT = 84
+MAX_CARD_AREA = 4000000
+MIN_CARD_AREA = 10000
 
 URL = "http://192.168.1.102:8080/shot.jpg"
 
@@ -34,6 +32,7 @@ ICONS = ["Diamonds", "Clubs", "Hearts", "Spades"]
 RANKS = cv2.imread("GetallenMoreSpace.png", 0)
 SUITS = cv2.imread("SuitsLessTrimmed.png", 0)
 
+
 # cap = cv2.VideoCapture(0)
 
 def empty(_):
@@ -41,13 +40,9 @@ def empty(_):
 
 
 cv2.namedWindow("Parameters")
-cv2.resizeWindow("Parameters", 600, 240)
+cv2.resizeWindow("Parameters", 600, 120)
 cv2.createTrackbar("Contour", "Parameters", 120, 255, empty)
-cv2.createTrackbar("x2", "Parameters", 45, 50, empty)
-cv2.createTrackbar("y2", "Parameters", 110, 150, empty)
 cv2.createTrackbar("tresh value", "Parameters", 140, 255, empty)
-
-
 
 
 def find_match(template, kind):
@@ -55,6 +50,8 @@ def find_match(template, kind):
         ref_img = RANKS.copy()
         parts = 13
     elif template != [] and kind == "suit":
+        # TODO implement color
+        color = card.color
         ref_img = SUITS.copy()
         parts = 4
     else:
@@ -109,39 +106,30 @@ def find_cards(pre_proc):
     from largest to smallest."""
 
     # Find contours and sort their indices by contour size
-    cnts, hier = cv2.findContours(pre_proc, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    index_sort = sorted(range(len(cnts)), key=lambda i: cv2.contourArea(cnts[i]), reverse=True)
+    cnts, hiers = cv2.findContours(pre_proc, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # If there are no contours, do nothing
     if len(cnts) == 0:
-        return [], []
+        return []
 
-    # Otherwise, initialize empty sorted contour and hierarchy lists
-    cnts_sort = []
-    hier_sort = []
-    cnt_is_card = np.zeros(len(cnts), dtype=int)
+    index_sort = sorted(range(len(cnts)), key=lambda i: cv2.contourArea(cnts[i]), reverse=True)
+    cnts_hier_sorted = [(cnts[i], hiers[0][i]) for i in index_sort]
 
-    # Fill empty lists with sorted contour and sorted hierarchy. Now,
-    # the indices of the contour list still correspond with those of
-    # the hierarchy list. The hierarchy array can be used to check if
-    # the contours have parents or not.
-    for i in index_sort:
-        cnts_sort.append(cnts[i])
-        hier_sort.append(hier[0][i])
+    output_cnts = []
 
-    # Determine which of the contours are cards by applying the
-    # following criteria: 1) Smaller area than the maximum card size,
-    # 2), bigger area than the minimum card size, 3) have no parents,
-    # and 4) have four corners
+    # Contour is a card when:
+    # 1) Area is between minimum and maximum area
+    # 2) It has no parents
+    # 3) It has four corners
 
-    for i in range(len(cnts_sort)):
-        size = cv2.contourArea(cnts_sort[i])
-        peri = cv2.arcLength(cnts_sort[i], True)
-        approx = cv2.approxPolyDP(cnts_sort[i], 0.01 * peri, True)  # Kan ook matchshape
+    for contour, hier in cnts_hier_sorted:
+        size = cv2.contourArea(contour)
+        peri = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
 
-        if CARD_MAX_AREA > size > CARD_MIN_AREA and hier_sort[i][3] == -1 and len(approx) == 4:
-            cnt_is_card[i] = 1
+        if MIN_CARD_AREA < size < MAX_CARD_AREA and hier[3] == -1 and len(approx) == 4:
+            output_cnts.append(contour)
 
-    return cnts_sort, cnt_is_card
+    return output_cnts
 
 
 def flattener(image, pts, w, h):
@@ -200,8 +188,8 @@ def flattener(image, pts, w, h):
             temp_rect[2] = pts[2][0]  # Bottom right
             temp_rect[3] = pts[1][0]  # Bottom left
 
-    maxWidth = 285  # 200
-    maxHeight = 435  # 300
+    maxWidth = 285  # = 5.7*50 ipv 200
+    maxHeight = 435  # = 8.7*50 ipv 300
 
     # Create destination array, calculate perspective transform matrix,
     # and warp card image
@@ -217,85 +205,69 @@ def preprocess_card(contour, image):
     """Uses contour to find information about the query card. Isolates rank
     and suit images from the card."""
 
-    # Initialize new Query_card object
-    qCard = Card()
-    qCard.contour = contour
-
     # Find perimeter of card and use it to approximate corner points
     peri = cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
     pts = np.float32(approx)
-    qCard.corner_pts = pts
 
     # Find width and height of card's bounding rectangle
     x, y, w, h = cv2.boundingRect(contour)
-    qCard.width, qCard.height = w, h
 
     # Find center point of card by taking x and y average of the four corners.
     average = np.sum(pts, axis=0) / len(pts)
-    cent_x = int(average[0][0])
-    cent_y = int(average[0][1])
-    qCard.center = (cent_x, cent_y)
+    center = (int(average[0][0]), int(average[0][1]))
 
-    # Warp card into 200x300 flattened image using perspective transform
-    qCard.warp = flattener(image, pts, w, h)
+    # Warp card into 285x435 flattened image using perspective transform
+    warp = flattener(image, pts, w, h)
 
-    x2 = cv2.getTrackbarPos("x2", "Parameters")
-    y2 = cv2.getTrackbarPos("y2", "Parameters")
-
-    Qcorner_zoom = qCard.warp[2:y2, 2:x2]
-    # qCard.value_img = Qcorner_zoom
+    corner_zoom = warp[2:110, 2:45]
 
     thresh_level = cv2.getTrackbarPos("tresh value", "Parameters")
-
-    retval, query_thresh = cv2.threshold(Qcorner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
+    retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
     # Split in to top and bottom half (top shows rank, bottom shows suit)
-    Qrank = query_thresh[5:66, 0:50]
-    Qsuit = query_thresh[62:110, 0:48]
+    Qrank = corner_thresh[6:66, 0:50]
+    Qsuit = corner_thresh[62:110, 0:48]
 
     # Find rank contour and bounding rectangle, isolate and find largest contour
     Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     Qrank_cnts = sorted(Qrank_cnts, key=cv2.contourArea, reverse=True)
 
-
     # Find bounding rectangle for largest contour, use it to resize query rank
     # image to match dimensions of the train rank image
     if len(Qrank_cnts) != 0:
         x1, y1, w1, h1 = cv2.boundingRect(Qrank_cnts[0])
-        cv2.rectangle(Qrank, (x1, y1), (1 + w1, y1 + h1), (0, 255, 0), 2)
         Qrank_roi = Qrank[y1:y1 + h1, x1:x1 + w1]
-        qCard.rank_img = Qrank_roi
-        cv2.imshow(f"Rank ROI", Qrank_roi)
+        cv2.imshow("Rank ROI", Qrank_roi)
+    else:
+        Qrank_roi = []
 
-    cv2.imshow(f"Rank", Qrank)
+    cv2.imshow("Rank", Qrank)
 
     # Find suit contour and bounding rectangle, isolate and find largest contour
     Qsuit_cnts, hier = cv2.findContours(Qsuit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     Qsuit_cnts = sorted(Qsuit_cnts, key=cv2.contourArea, reverse=True)
-    cv2.imshow(f"Suit", Qsuit)
+    cv2.imshow("Suit", Qsuit)
 
     # Find bounding rectangle for largest contour, use it to resize query suit
     # image to match dimensions of the train suit image
     if len(Qsuit_cnts) != 0:
         x2, y2, w2, h2 = cv2.boundingRect(Qsuit_cnts[0])
         Qsuit_roi = Qsuit[y2:y2 + h2, x2:x2 + w2]
-        qCard.suit_img = Qsuit_roi
+    else:
+        Qsuit_roi = []
+
+    return Card(contour, w, h, pts, center, warp, Qrank_roi, Qsuit_roi)
 
 
-    return qCard
-
-
-
-
-def draw_results(img, qCard):
+def draw_results(img, card_class):
     """Draw the card name, center point, and contour on the camera image."""
 
-    x, y = qCard.center
+    x, y = card_class.center
     cv2.circle(img, (x, y), 5, (255, 0, 0), -1)
 
-    rank = str(qCard.rank)
-    suit = ICONS[qCard.suit - 1]
+    rank = str(card_class.rank)
+    suit = ICONS[card_class.suit - 1]
 
     cv2.putText(img, rank + ' of', (x - 60, y - 20), FONT, 5, (0, 0, 0), 5, cv2.LINE_AA)
     cv2.putText(img, rank + ' of', (x - 60, y - 20), FONT, 5, (50, 200, 200), 2, cv2.LINE_AA)
@@ -312,38 +284,31 @@ while True:
 
     pre_proc = preprocess_image(img)
 
-    cnts_sort, cnt_is_card = find_cards(pre_proc)  # 1 lijst ipv 2 is sneller
+    cnts = find_cards(pre_proc)  # 1 lijst ipv 2 is sneller
 
-    if len(cnts_sort) != 0:
+    if len(cnts) != 0:
         cards = []
-        k = 0
-        for i in range(len(cnts_sort)):
-            if cnt_is_card[i] == 1:
-                cards.append(preprocess_card(cnts_sort[i], img))
+        for k, cnt in enumerate(cnts):
 
-                rank = cards[k].rank_img
-                suit = cards[k].suit_img
+            cards.append(preprocess_card(cnt, img))
+            card = cards[k]
 
-                cards[k].rank = find_match(rank, "rank")
-                cards[k].suit = find_match(suit, "suit")
+            card.rank = find_match(card.rank_img, "rank")
+            card.suit = find_match(card.suit_img, "suit")
 
-                if cards[k].rank != -1 and cards[k].suit != -1:
-                    img = draw_results(img, cards[k])
+            if card.rank != -1 and card.suit != -1:
+                img = draw_results(img, cards[k])
 
-                k += 1
-
-            # Draw card contours on image (have to do contours all at once or
-            # they do not show up properly for some reason)
+        # Draw card contours on image (have to do contours all at once or
+        # they do not show up properly for some reason)
         if len(cards) != 0:
-            temp_cnts = []
-            for i in range(len(cards)):
-                temp_cnts.append(cards[i].contour)
+            temp_cnts = [card.contour for card in cards]
             cv2.drawContours(img, temp_cnts, -1, (255, 0, 0), 3)
 
-        resized2 = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
-        cv2.imshow('Colored', resized2)
-        q = cv2.waitKey(1)
-        if q == ord("q"):
-            break
+    resized2 = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
+    cv2.imshow('Colored', resized2)
+    q = cv2.waitKey(1)
+    if q == ord("q"):
+        break
 
 cv2.destroyAllWindows()
