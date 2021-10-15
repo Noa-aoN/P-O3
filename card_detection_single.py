@@ -240,7 +240,7 @@ def preprocess_card(contour, image):
 
     cv2.imshow("Suit", Qsuit)
 
-    return Card(contour, w, h, pts, center, Qrank_roi, Qsuit_roi
+    return Card(contour, w, h, pts, center, Qrank_roi, Qsuit_roi)
 
 
 
