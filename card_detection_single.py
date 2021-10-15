@@ -3,23 +3,6 @@ import cv2
 import urllib.request
 import numpy as np
 
-
-class Card:
-    """Structure to store information about query cards in the camera image."""
-
-    def __init__(self, contour, w, h, pts, center, warp, rank_img, suit_img):
-        self.contour = contour  # Contour of card
-        self.width_height = w, h  # Width and height of card
-        self.corner_pts = pts  # Corner points of card
-        self.center = center  # Center point of card
-        self.warp = warp  # 400x600, flattened, grayed, blurred image
-        self.rank_img = rank_img  # Thresholded, sized image of card's rank
-        self.suit_img = suit_img  # Thresholded, sized image of card's suit
-        self.color = "Red"
-        self.rank = -1  # Rank
-        self.suit = -1  # Suit
-
-
 FONT = cv2.FONT_HERSHEY_PLAIN
 
 MAX_CARD_AREA = 4000000
@@ -27,13 +10,30 @@ MIN_CARD_AREA = 10000
 
 URL = "http://192.168.1.102:8080/shot.jpg"
 
-ICONS = ["Diamonds", "Clubs", "Hearts", "Spades"]
+RANKS_IMG = cv2.imread("GetallenMoreSpace.png", 0)
+SUITS_IMG = cv2.imread("SuitsLessTrimmed.png", 0)
 
-RANKS = cv2.imread("GetallenMoreSpace.png", 0)
-SUITS = cv2.imread("SuitsLessTrimmed.png", 0)
+SUITS = ["Diamonds", "Clubs", "Hearts", "Spades"]
+RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 
 
-# cap = cv2.VideoCapture(0)
+class Card:
+    def __init__(self, contour, w, h, pts, center, rank_img, suit_img):
+        self.contour = contour  # Contour of card
+        self.width_height = (w, h)  # Width and height of card
+        self.corner_pts = pts  # Corner points of card
+        self.center = center  # Center point of card
+        self.rank_img = rank_img  # Thresholded, sized image of card's rank
+        self.suit_img = suit_img  # Thresholded, sized image of card's suit
+        self.color = "Red"
+        self.rank = -1  # Rank
+        self.suit = -1  # Suit
+
+    def get_rank_suit(self):
+        suit = SUITS[self.suit - 1]
+        rank = RANKS[self.rank - 1]
+        return rank, suit
+
 
 def empty(_):
     pass
@@ -41,18 +41,19 @@ def empty(_):
 
 cv2.namedWindow("Parameters")
 cv2.resizeWindow("Parameters", 600, 120)
-cv2.createTrackbar("Contour", "Parameters", 120, 255, empty)
-cv2.createTrackbar("tresh value", "Parameters", 140, 255, empty)
+cv2.createTrackbar("Contour", "Parameters", 170, 255, empty)
+cv2.createTrackbar("tresh value", "Parameters", 170, 255, empty)
 
 
 def find_match(template, kind):
     if template != [] and kind == "rank":
-        ref_img = RANKS.copy()
+        # Copy otherwise rect don't disappear
+        ref_img = RANKS_IMG.copy()
         parts = 13
     elif template != [] and kind == "suit":
         # TODO implement color
         color = card.color
-        ref_img = SUITS.copy()
+        ref_img = SUITS_IMG.copy()
         parts = 4
     else:
         return -1
@@ -64,14 +65,13 @@ def find_match(template, kind):
     template = cv2.resize(template, (0, 0), fx=h / h0, fy=h / h0)
     h1, w1 = template.shape
 
-    result = cv2.matchTemplate(ref_img, template, cv2.cv2.TM_CCOEFF)
+    result = cv2.matchTemplate(ref_img, template, cv2.cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
     bottom_right = (max_loc[0] + w1, max_loc[1] + h1)
     center = (int(max_loc[0] + w1 / 2), int(max_loc[1] + h1 / 2))
 
-    cv2.rectangle(ref_img, max_loc, bottom_right, (100, 100, 100), 2)
-    cv2.circle(ref_img, center, 5, (100, 100, 100), 2)
+    cv2.rectangle(ref_img, max_loc, bottom_right, (0, 0, 0), 2)
 
     ref_sized = cv2.resize(ref_img, (0, 0), fx=0.3, fy=0.3)
     cv2.imshow(kind, ref_sized)
@@ -86,7 +86,6 @@ def find_match(template, kind):
 
 
 def preprocess_image(image):
-    """Returns a grayed, blurred, and adaptively thresholded camera image."""
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -101,11 +100,7 @@ def preprocess_image(image):
 
 
 def find_cards(pre_proc):
-    """Finds all card-sized contours in a thresholded camera image.
-    Returns the number of cards, and a list of card contours sorted
-    from largest to smallest."""
 
-    # Find contours and sort their indices by contour size
     cnts, hiers = cv2.findContours(pre_proc, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # If there are no contours, do nothing
     if len(cnts) == 0:
@@ -202,22 +197,16 @@ def flattener(image, pts, w, h):
 
 
 def preprocess_card(contour, image):
-    """Uses contour to find information about the query card. Isolates rank
-    and suit images from the card."""
 
-    # Find perimeter of card and use it to approximate corner points
     peri = cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
     pts = np.float32(approx)
 
-    # Find width and height of card's bounding rectangle
-    x, y, w, h = cv2.boundingRect(contour)
-
-    # Find center point of card by taking x and y average of the four corners.
     average = np.sum(pts, axis=0) / len(pts)
     center = (int(average[0][0]), int(average[0][1]))
 
     # Warp card into 285x435 flattened image using perspective transform
+    x, y, w, h = cv2.boundingRect(contour)
     warp = flattener(image, pts, w, h)
 
     corner_zoom = warp[2:110, 2:45]
@@ -225,17 +214,13 @@ def preprocess_card(contour, image):
     thresh_level = cv2.getTrackbarPos("tresh value", "Parameters")
     retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
-    # Split in to top and bottom half (top shows rank, bottom shows suit)
     Qrank = corner_thresh[6:66, 0:50]
     Qsuit = corner_thresh[62:110, 0:48]
 
-    # Find rank contour and bounding rectangle, isolate and find largest contour
     Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    Qrank_cnts = sorted(Qrank_cnts, key=cv2.contourArea, reverse=True)
 
-    # Find bounding rectangle for largest contour, use it to resize query rank
-    # image to match dimensions of the train rank image
     if len(Qrank_cnts) != 0:
+        Qrank_cnts = sorted(Qrank_cnts, key=cv2.contourArea, reverse=True)
         x1, y1, w1, h1 = cv2.boundingRect(Qrank_cnts[0])
         Qrank_roi = Qrank[y1:y1 + h1, x1:x1 + w1]
         cv2.imshow("Rank ROI", Qrank_roi)
@@ -244,36 +229,40 @@ def preprocess_card(contour, image):
 
     cv2.imshow("Rank", Qrank)
 
-    # Find suit contour and bounding rectangle, isolate and find largest contour
     Qsuit_cnts, hier = cv2.findContours(Qsuit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    Qsuit_cnts = sorted(Qsuit_cnts, key=cv2.contourArea, reverse=True)
-    cv2.imshow("Suit", Qsuit)
 
-    # Find bounding rectangle for largest contour, use it to resize query suit
-    # image to match dimensions of the train suit image
     if len(Qsuit_cnts) != 0:
+        Qsuit_cnts = sorted(Qsuit_cnts, key=cv2.contourArea, reverse=True)
         x2, y2, w2, h2 = cv2.boundingRect(Qsuit_cnts[0])
         Qsuit_roi = Qsuit[y2:y2 + h2, x2:x2 + w2]
     else:
         Qsuit_roi = []
 
-    return Card(contour, w, h, pts, center, warp, Qrank_roi, Qsuit_roi)
+    cv2.imshow("Suit", Qsuit)
+
+    return Card(contour, w, h, pts, center, Qrank_roi, Qsuit_roi
 
 
-def draw_results(img, card_class):
-    """Draw the card name, center point, and contour on the camera image."""
 
-    x, y = card_class.center
-    cv2.circle(img, (x, y), 5, (255, 0, 0), -1)
+def display_text(img, card):
 
-    rank = str(card_class.rank)
-    suit = ICONS[card_class.suit - 1]
+    size = 4
+    x, y = card.center
 
-    cv2.putText(img, rank + ' of', (x - 60, y - 20), FONT, 5, (0, 0, 0), 5, cv2.LINE_AA)
-    cv2.putText(img, rank + ' of', (x - 60, y - 20), FONT, 5, (50, 200, 200), 2, cv2.LINE_AA)
+    if card.rank == -1 and card.suit == -1:
+        cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+        cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
 
-    cv2.putText(img, suit, (x - 60, y + 25), FONT, 5, (0, 0, 0), 5, cv2.LINE_AA)
-    cv2.putText(img, suit, (x - 60, y + 25), FONT, 5, (50, 200, 200), 2, cv2.LINE_AA)
+        cv2.putText(img, "Card", (x - 75, y + 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+        cv2.putText(img, "Card", (x - 75, y + 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
+    else:
+        rank, suit = card.get_rank_suit()
+
+        cv2.putText(img, rank + " of", (x - 100, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+        cv2.putText(img, rank + " of", (x - 100, y - 25), FONT, size, (0, 255, 0), 2, cv2.LINE_AA)
+
+        cv2.putText(img, suit, (x - 100, y + 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+        cv2.putText(img, suit, (x - 100, y + 25), FONT, size, (0, 255, 0), 2, cv2.LINE_AA)
 
     return img
 
@@ -282,31 +271,21 @@ while True:
     img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
     img = cv2.imdecode(img_arr, -1)
 
-    pre_proc = preprocess_image(img)
+    thresh = preprocess_image(img)
+    #cv2.imshow('Thresh', cv2.resize(thresh, (0, 0), fx=0.4, fy=0.4))
+    contours = find_cards(thresh)
+    cards = [preprocess_card(cnt, img) for cnt in contours]
 
-    cnts = find_cards(pre_proc)  # 1 lijst ipv 2 is sneller
+    for card in cards:
+        cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
 
-    if len(cnts) != 0:
-        cards = []
-        for k, cnt in enumerate(cnts):
+        card.rank = find_match(card.rank_img, "rank")
+        card.suit = find_match(card.suit_img, "suit")
 
-            cards.append(preprocess_card(cnt, img))
-            card = cards[k]
+        img = display_text(img, card)
 
-            card.rank = find_match(card.rank_img, "rank")
-            card.suit = find_match(card.suit_img, "suit")
-
-            if card.rank != -1 and card.suit != -1:
-                img = draw_results(img, cards[k])
-
-        # Draw card contours on image (have to do contours all at once or
-        # they do not show up properly for some reason)
-        if len(cards) != 0:
-            temp_cnts = [card.contour for card in cards]
-            cv2.drawContours(img, temp_cnts, -1, (255, 0, 0), 3)
-
-    resized2 = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
-    cv2.imshow('Colored', resized2)
+    img = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
+    cv2.imshow('Colored', img)
     q = cv2.waitKey(1)
     if q == ord("q"):
         break
