@@ -201,11 +201,10 @@ def __main__():
             if match(euclidian_distance, threshold):
                 cv2.rectangle(image, (x, y), (x+w, y+h),
                               (0, 0, 255), 2)
-                cv2.imshow("Face", image)
             else:
                 cv2.rectangle(image, (x, y), (x+w, y+h),
                               (255, 0, 0), 2)
-                cv2.imshow("Face", image)
+        cv2.imshow("Face", image)
         cv2.waitKey(1);
 
 

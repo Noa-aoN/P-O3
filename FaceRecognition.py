@@ -8,7 +8,7 @@ faceDetect=cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 cam=cv2.VideoCapture(0)
 
 
-def imagesizeconverter (x,y,w,h):
+def imagesizeconverter (x, y, w, h):
     width = 60
     height = 80
     if w != width or h != height:
@@ -24,6 +24,7 @@ def imagesizeconverter (x,y,w,h):
 os.chdir(directory)
 face=0
 sampleNum = 0
+
 while(True):
     ret,img=cam.read();  # Makes a giant array of pixels
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)  # Changes the array into grayscale
