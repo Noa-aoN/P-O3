@@ -120,7 +120,7 @@ def euclidiandistance(weights_eigenvectors, weights_detectedface):
 def threshold_for_euclidiandistance(weights_eigenvectors):
     rowdividedweights = weights_eigenvectors.transpose()
     maxeucdis = 0
-    a = 1.5
+    a = 1
     for i in rowdividedweights:
         for j in rowdividedweights:
             eucdis = np.linalg.norm(i-j)
@@ -199,13 +199,12 @@ def __main__():
 
             # Calculate if every Euclidian distance is below the threshold -> if so, face is a match!
             if match(euclidian_distance, threshold):
-                cv2.rectangle(image, (facecoords[0], facecoords[1]), (facecoords[2], facecoords[3]),
+                cv2.rectangle(image, (x, y), (x+w, y+h),
                               (0, 0, 255), 2)
-                cv2.imshow("Face", image)
             else:
-                cv2.rectangle(image, (facecoords[0], facecoords[1]), (facecoords[2], facecoords[3]),
+                cv2.rectangle(image, (x, y), (x+w, y+h),
                               (255, 0, 0), 2)
-                cv2.imshow("Face", image)
+        cv2.imshow("Face", image)
         cv2.waitKey(1);
 
 
