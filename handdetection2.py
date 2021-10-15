@@ -5,9 +5,11 @@ import math
 
 """
 link: https://stackoverflow.com/questions/57525324/how-to-detect-number-of-fingers-and-add-double-digits-using-opencv
+uitleg convex hull: http://www.ripublication.com/ijaer17/ijaerv12n18_04.pdf 
+                    https://brilliant.org/wiki/convex-hull/
 """
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1) # 0 voor webcam, 1 voor USB-camera
 
 while True:
 
