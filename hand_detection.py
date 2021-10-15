@@ -39,12 +39,12 @@ if __name__ == "__main__": # main functie maken
             defects = get_defects(contours)
             if defects is not None:
                 cnt = 0
-                for i in range(defects.shape[0]):  # hoek berkenen
+                for i in range(defects.shape[0]):  # hoek berekenen
                     s, e, f, d = defects[i][0]
                     start = tuple(contours[s][0])
                     end = tuple(contours[e][0])
                     far = tuple(contours[f][0])
-                    a = np.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
+                    a = np.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2) # lengtes berekenen
                     b = np.sqrt((far[0] - start[0]) ** 2 + (far[1] - start[1]) ** 2)
                     c = np.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
                     angle = np.arccos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c))  # cosinusregel
