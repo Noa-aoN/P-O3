@@ -9,7 +9,7 @@ cam = cv2.VideoCapture(0)
 width = 60
 height = 80
 playernumber = 1
-number_of_faces_per_library = 20
+number_of_faces_per_library = 50
 
 
 def createFolder(directory):
