@@ -3,8 +3,8 @@ import pygame
 
 class Player:
     def __init__(self, name, balance, player_number, cards=None):
-        font = pygame.font.SysFont('comicsans', 20)
-        font_small = pygame.font.SysFont('comicsans', 13)
+        self.font = pygame.font.SysFont('comicsans', 20)
+        self.font_small = pygame.font.SysFont('comicsans', 13)
 
         if cards is None:
             cards = []
@@ -12,8 +12,8 @@ class Player:
         self.balance = balance
         self.cards = cards
         self.number = player_number
-        self.surf = font.render(self.name, False, (10, 10, 10))
-        self.surf_balance = font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
+        self.surf = self.font.render(self.name, False, (10, 10, 10))
+        self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
 
     def show_name(self, window):
         window.blit(self.surf, self.surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 550)))
@@ -28,16 +28,16 @@ class Player:
     def show_cards(self, window):
         i = 0
         for card in self.cards:
-            window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (100 + 300*(self.number - 1) + 25*i, 375))
+            window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (100 + 300*(self.number - 1) + 25*i, 400))
             i += 1
 
     def value_count(self):
         value_list = []
         for card in self.cards:
-            if card[1] == 0:
+            if card.value == 0:
                 value_list.append(11)
             else:
-                value_list.append(card[1])
+                value_list.append(card.value)
         som = sum(value_list)
         if som < 22:
             return som
@@ -50,3 +50,7 @@ class Player:
                     if som < 22:
                         return som
             return som
+
+    def display_score(self, window):
+        score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+        window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))

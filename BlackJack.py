@@ -4,10 +4,10 @@ from Button import Button
 from Deck import *
 from Player import Player
 
+
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
-
 test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 
 Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
@@ -27,6 +27,7 @@ game_active = False
 
 start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
 deal_2_cards = True
+
 
 while True:
     pygame.display.update()
@@ -51,6 +52,7 @@ while True:
 
         for player in players:
             player.show_cards(screen)
+            player.display_score(screen)
 
     else:
         screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
