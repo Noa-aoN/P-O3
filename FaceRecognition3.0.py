@@ -32,10 +32,11 @@ def imagelibrarytomatrix(dir):
     imagearray_list = []
     print("Converting Library to matrix")
     for i in tqdm(dirlist_of_images):
-        image = cv2.imread(os.path.join(dir, i))
-        grayimage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        imagevector = imagetoarray(grayimage)
-        imagearray_list.append(imagevector)
+        if i[-1] == 'g':
+            image = cv2.imread(os.path.join(dir, i))
+            grayimage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            imagevector = imagetoarray(grayimage)
+            imagearray_list.append(imagevector)
     librarymatrix = np.vstack(imagearray_list)
     return librarymatrix
 
@@ -54,7 +55,7 @@ def deviationmatrix(imagearraylist, average):
 
 
 def eigcov(devmatrix):
-    cov = (1/len(devmatrix)) * np.dot(devmatrix.transpose(), devmatrix)
+    cov = (1 / len(devmatrix)) * np.dot(devmatrix.transpose(), devmatrix)
     print("Calculating Eigenvalues...")
     eigenValues, eigenVectors = np.linalg.eig(cov)
     eigenVectors = eigenVectors.real
@@ -76,7 +77,7 @@ def normofmatrixvectors(matrix):
     for i in tqdm(range(len(matrix))):
         vector = matrix[i]
         norm = np.linalg.norm(vector)
-        normalisedmatrix.append(vector/norm)
+        normalisedmatrix.append(vector / norm)
     normalisedmatrix = np.vstack(normalisedmatrix)
     return normalisedmatrix
 
@@ -103,6 +104,12 @@ def facedetection(grayimage):
     return faceDetect.detectMultiScale(grayimage, scaleFactor=1.2, minNeighbors=5)
 
 
+def normalise_lightlevel(imagematrix):
+    minvalue = np.amin(imagematrix)
+    normalisedimage = imagematrix - minvalue
+    return normalisedimage
+
+
 def arraytoimage(array):
     image = np.reshape(array, (height, width))
     image = image.astype(np.uint8)
@@ -123,10 +130,10 @@ def threshold_for_euclidiandistance(weights_eigenvectors):
     a = 1
     for i in rowdividedweights:
         for j in rowdividedweights:
-            eucdis = np.linalg.norm(i-j)
+            eucdis = np.linalg.norm(i - j)
             if eucdis > maxeucdis:
                 maxeucdis = eucdis
-    return a*maxeucdis
+    return a * maxeucdis
 
 
 def match(eucdis, thresh):
@@ -140,7 +147,6 @@ def match(eucdis, thresh):
 
 
 def __main__():
-
     """Database Processing"""
 
     # Convert the library of images into vectors and put them in a matrix
@@ -184,8 +190,10 @@ def __main__():
         for (x, y, w, h) in faces:
             # Cut out the face from the image:
             facecoords = imagesizeconverter(x, y, w, h)
-            detectedface = imagetoarray(grayscale_picture[facecoords[1]:facecoords[3],
-                                        facecoords[0]:facecoords[2]])
+            normalisedimage = normalise_lightlevel(
+                grayscale_picture[facecoords[1]:facecoords[3], facecoords[0]:facecoords[2]])
+
+            detectedface = imagetoarray(normalisedimage)
 
             # Calculate the deviation for the detected face:
             deviation_detectedface = deviationmatrix([detectedface], averageface)
@@ -195,21 +203,21 @@ def __main__():
             assert isinstance(weightvector_detectedface, np.ndarray)
 
             # Calculate Euclidian distance
-            euclidian_distance = euclidiandistance(eigenvectorweights.transpose(), weightvector_detectedface.transpose())
+            euclidian_distance = euclidiandistance(eigenvectorweights.transpose(),
+                                                   weightvector_detectedface.transpose())
 
             # Calculate if every Euclidian distance is below the threshold -> if so, face is a match!
             if match(euclidian_distance, threshold):
-                cv2.rectangle(image, (x, y), (x+w, y+h),
+                cv2.rectangle(image, (x, y), (x + w, y + h),
                               (0, 0, 255), 2)
             else:
-                cv2.rectangle(image, (x, y), (x+w, y+h),
+                cv2.rectangle(image, (x, y), (x + w, y + h),
                               (255, 0, 0), 2)
         cv2.imshow("Face", image)
         cv2.waitKey(1);
 
 
 def __alt__():
-
     librarymatrix = [[1, -2, 1, -3],
                      [1, 3, -1, 2],
                      [2, 1, -2, 3],
@@ -224,6 +232,3 @@ def __alt__():
 
 __main__()
 # __alt__()
-
-
-

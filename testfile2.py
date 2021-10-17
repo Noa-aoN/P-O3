@@ -1,47 +1,46 @@
-from imutils import paths
-import pickle
 import cv2
-import os
-import numpy
-from math import *
-from numpy import linalg
-from scipy.sparse.linalg import norm
-from scipy.linalg import sqrtm
-from tqdm import tqdm
-import numpy as np
-
-faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
-cam = cv2.VideoCapture(0)
-directory = r'C:\Users\bram\testfolder\s'
+import mediapipe as mp
 
 
-def imagesizeconverter(x, y, w, h):
-    width = 60
-    height = 80
-    if w != width or h != height:
-        # We are gonna be using x+a and w-a to keep the center of the face in the center,
-        # so now we have to find a to convert
-        a = (w - width) / 2
-        b = (h - height) / 2
+cap = cv2.VideoCapture(0)
+mp_holistic = mp.solutions.holistic
+mp_drawing = mp.solutions.drawing_utils
+mp_facemesh = mp.solutions.face_mesh
+face_mesh = mp_facemesh.FaceMesh()
+# mp_drawing.DrawingSpec(color = (0, 255, 0), thickness = 1, circle_radius = 1)
 
-        x += a
-        y += b
-    return [int(x), int(y), int(x + width), int(y + height)]
+with mp_holistic.Holistic(min_detection_confidence = 0.7, min_tracking_confidence = 0.7) as holistic:
+    while cap.isOpened():
+        ret, frame = cap.read()
 
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-imagematrix = ""
-for i in os.listdir(r"C:\Users\bram\testfolder"):
-    filenamewithouts = i[1:]
-    image = cv2.imread(directory + str(filenamewithouts))
-    image_array = numpy.array(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), dtype=np.uint16)
-    if isinstance(imagematrix, str):
-        imagematrix = image_array
-    else:
-        imagematrix = imagematrix + image_array
-averageface = imagematrix / len(os.listdir(r"C:\Users\bram\testfolder"))
-averageface = averageface.astype(numpy.uint8)
+        results = holistic.process(img)
+
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+        # print(results.face_landmarks)
+
+        # for i in mp_holistic.FACEMESH_TESSELATION:
+        #     print(i)
 
 
-while True:
-    cv2.imshow("Face", averageface)
-    cv2.waitKey(1)
+        mp_drawing.draw_landmarks(img, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION,
+                                  mp_drawing.DrawingSpec(color = (255, 0, 0), thickness = 1, circle_radius = 1),
+                                  mp_drawing.DrawingSpec(color = (0, 255, 0), thickness = 1, circle_radius = 1))
+        #
+        # mp_drawing.draw_landmarks(img, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
+        #                           mp_drawing.DrawingSpec(color = (255, 0, 0), thickness = 1, circle_radius = 1),
+        #                           mp_drawing.DrawingSpec(color = (0, 255, 0), thickness = 1, circle_radius = 1))
+        #
+        # mp_drawing.draw_landmarks(img, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
+        #                           mp_drawing.DrawingSpec(color = (0, 0, 255), thickness = 2, circle_radius =3),
+        #                           mp_drawing.DrawingSpec(color = (0, 255, 0), thickness = 1, circle_radius = 1))
+
+        cv2.imshow('Raw Webcam Feed', img)
+
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            break
+
+cap.release()
+cv2.destroyAllWindows()

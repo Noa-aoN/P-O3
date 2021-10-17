@@ -21,6 +21,13 @@ def imagesizeconverter (x, y, w, h):
         y += b
     return [int(x), int(y), int(x+width), int(y+height)]
 
+
+def normalise_lightlevel(imagematrix):
+    minvalue = np.amin(imagematrix)
+    normalisedimage = imagematrix - minvalue
+    return normalisedimage
+
+
 os.chdir(directory)
 face=0
 sampleNum = 0
@@ -32,10 +39,10 @@ while(True):
     for(x,y,w,h) in faces:
         face += 1;  # This stores amount of samples
         convertedimage = imagesizeconverter(x,y,w,h)
-        print(len(gray[convertedimage[1]:convertedimage[3],convertedimage[0]:convertedimage[2]][0]))
-        cv2.imwrite(str(directory)+str("\seenface")+str(face)+".jpg", gray[convertedimage[1]:convertedimage[3],
-                                                                      convertedimage[0]:convertedimage[2]])  # This stores the file on your computer
-        cv2.rectangle(img,(convertedimage[0],convertedimage[1]),(convertedimage[2],convertedimage[3]),(0,255,0),2)  # This creates the rectangle around your face
+        normalisedimage = normalise_lightlevel(gray[convertedimage[1]:convertedimage[3],convertedimage[0]:convertedimage[2]])
+
+        cv2.imwrite(str(directory)+str("\seenface")+str(face)+".jpg", normalisedimage)  # This stores the file on your computer
+        cv2.rectangle(img, (convertedimage[0],convertedimage[1]),(convertedimage[2],convertedimage[3]),(0,255,0),2)  # This creates the rectangle around your face
         cv2.waitKey(1);  # This is a delay
     cv2.imshow("Face",img);  # This shows the camera image
     cv2.waitKey(1);
