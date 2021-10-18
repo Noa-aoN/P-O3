@@ -15,6 +15,7 @@ Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 screen.fill((31, 171, 57))
 
 players = []
+player0 = Player('Dealer', 0, 0)
 player1 = Player('Matthias', 10000, 1)
 players.append(player1)
 player2 = Player('Karel', 10000, 2)
@@ -48,12 +49,31 @@ while True:
                     random_card = random.choice(deck)
                     deck.remove(random_card)
                     player.add_card(random_card)
+            while len(player0.cards) < 2:
+                random_card = random.choice(deck)
+                deck.remove(random_card)
+                player0.add_card(random_card)
             deal_2_cards = False
 
         for player in players:
             player.show_cards(screen)
             player.display_score(screen)
-
+        player0.show_cards(screen)
+        player0.display_score(screen)
+        '''
+        i = 0
+        while i < len(players):
+            while players[i].value_count() != 'Bust':
+                choice = input('do you want another card:')
+                if choice == 'yes' or choice == 'Yes':
+                    random_card = random.choice(deck)
+                    players[i].add_card(random_card)
+                    deck.remove(random_card)
+                    players[i].show_cards(screen)
+                    players[i].display_score(screen)
+                else:
+                    i += 1
+        '''
     else:
         screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
         start_button.draw(screen)

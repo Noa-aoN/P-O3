@@ -27,9 +27,14 @@ class Player:
 
     def show_cards(self, window):
         i = 0
-        for card in self.cards:
-            window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (100 + 300*(self.number - 1) + 25*i, 400))
-            i += 1
+        if not self.name == 'Dealer':
+            for card in self.cards:
+                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (100 + 300*(self.number - 1) + 25*i, 400))
+                i += 1
+        else:
+            for card in self.cards:
+                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25*i, 100))
+                i += 1
 
     def value_count(self):
         value_list = []
@@ -49,8 +54,12 @@ class Player:
                     som = sum(value_list)
                     if som < 22:
                         return som
-            return som
+            return 'bust'
 
     def display_score(self, window):
-        score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
-        window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))
+        if not self.name == 'Dealer':
+            score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+            window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))
+        else:
+            score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+            window.blit(score_surf, score_surf.get_rect(midbottom=(600, 80)))
