@@ -11,8 +11,8 @@ MIN_CARD_AREA = 10000
 
 URL = "http://192.168.1.102:8080/shot.jpg"
 
-RANKS_IMG = cv2.imread("Rank_Pixels.jpg", 0)
-SUITS_IMG = cv2.imread("Suit_Pixels.jpg", 0)
+RANKS_IMG = cv2.imread("References/Rank_Pixels.jpg", 0)
+SUITS_IMG = cv2.imread("References/Suit_Pixels.jpg", 0)
 
 SUITS = ["Spades", "Hearts", "Clubs", "Diamonds"]
 RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
@@ -238,7 +238,7 @@ def display_cards(img, cards):
 
     return img
 
-
+@timeit
 def get_cards(img):
     thresh = binary_threshold(img)
     contours_pts = detect_cards(thresh)
