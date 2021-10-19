@@ -11,24 +11,22 @@ MIN_CARD_AREA = 10000
 
 URL = "http://192.168.1.102:8080/shot.jpg"
 
-RANKS_IMG = cv2.imread("GetallenMoreSpace.png", 0)
-SUITS_IMG = cv2.imread("SuitsLessTrimmed.png", 0)
+RANKS_IMG = cv2.imread("Rank_Pixels.jpg", 0)
+SUITS_IMG = cv2.imread("Suit_Pixels.jpg", 0)
 
-SUITS = ["Diamonds", "Clubs", "Hearts", "Spades"]
+SUITS = ["Spades", "Hearts", "Clubs", "Diamonds"]
 RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 
 
 class Card:
-    def __init__(self, contour, pts, w, h, center, rank_img, suit_img):
+    def __init__(self, contour, pts, w, h, center, rank, suit):
         self.contour = contour  # Contour of card
         self.corner_pts = pts  # Corner points of card
         self.dimensions = (w, h)  # Width and height of card
         self.center = center  # Center point of card
-        self.rank_img = rank_img  # Thresholded, sized image of card's rank
-        self.suit_img = suit_img  # Thresholded, sized image of card's suit
         self.color = "Red"
-        self.rank = -1  # Rank
-        self.suit = -1  # Suit
+        self.rank = rank
+        self.suit = suit
 
     def get_rank_suit(self):
         suit = SUITS[self.suit - 1]
@@ -42,7 +40,7 @@ def empty(_):
 
 cv2.namedWindow("Parameters")
 cv2.resizeWindow("Parameters", 600, 120)
-cv2.createTrackbar("Contour", "Parameters", 170, 255, empty)
+cv2.createTrackbar("Contour", "Parameters", 140, 255, empty)
 cv2.createTrackbar("Thresh Card", "Parameters", 170, 255, empty)
 
 
@@ -61,7 +59,6 @@ def timeit(method):
     return timed
 
 
-@timeit
 def binary_threshold(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -74,7 +71,6 @@ def binary_threshold(image):
     return thresh
 
 
-@timeit
 def detect_cards(thresh):
     card_cnts_pts = []
     cnts, hiers = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -93,7 +89,6 @@ def detect_cards(thresh):
     return card_cnts_pts
 
 
-@timeit
 def create_card(contour, pts, image):
     average = np.sum(pts, axis=0) / len(pts)
     center = (int(average[0][0]), int(average[0][1]))
@@ -107,35 +102,19 @@ def create_card(contour, pts, image):
     thresh_level = cv2.getTrackbarPos("Thresh Card", "Parameters")
     retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
-    rank = corner_thresh[6:66, 0:50]
-    suit = corner_thresh[62:110, 0:48]
+    tol = 1
 
-    rank_cnts, hier = cv2.findContours(rank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    rank_img = corner_thresh[4+tol:66-tol, 0+tol:50-tol]
+    suit_img = corner_thresh[62+tol:110-tol, 0+tol:48-tol]
 
-    if len(rank_cnts) != 0:
-        rank_cnts = sorted(rank_cnts, key=cv2.contourArea, reverse=True)
-        x1, y1, w1, h1 = cv2.boundingRect(rank_cnts[0])
-        rank_roi = rank[y1:y1 + h1, x1:x1 + w1]
-    else:
-        rank_roi = np.array([])
+    cv2.imshow("Rank", rank_img)
+    rank = find_match(rank_img, "rank")
+    cv2.imshow("Suit", suit_img)
+    suit = find_match(suit_img, "suit")
 
-    cv2.imshow("Rank", rank)
-
-    suit_cnts, hier = cv2.findContours(suit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    if len(suit_cnts) != 0:
-        suit_cnts = sorted(suit_cnts, key=cv2.contourArea, reverse=True)
-        x2, y2, w2, h2 = cv2.boundingRect(suit_cnts[0])
-        suit_roi = suit[y2:y2 + h2, x2:x2 + w2]
-    else:
-        suit_roi = np.array([])
-
-    cv2.imshow("Suit", suit)
-
-    return Card(contour, pts, w, h, center, rank_roi, suit_roi)
+    return Card(contour, pts, w, h, center, rank, suit)
 
 
-@timeit
 def transform(image, pts, w, h):
     """Flattens an image of a card into a top-down 200x300 perspective.
     Returns the flattened, re-sized, grayed image.
@@ -198,30 +177,18 @@ def transform(image, pts, w, h):
     return warp
 
 
-@timeit
-def find_match(card, kind):
+def find_match(template, kind):
     if kind == "rank":
         # Copy otherwise rect don't disappear
         ref_img = RANKS_IMG.copy()
-        template = card.rank_img
         parts = 13
     elif kind == "suit":
-        # TODO implement color
-        color = card.color
         ref_img = SUITS_IMG.copy()
-        template = card.suit_img
         parts = 4
     else:
         return -1
 
-    if np.array_equal(template, []):
-        return -1
-
-    h0, w0 = template.shape
     h, w = ref_img.shape
-
-    # scale to make a perfect fit
-    template = cv2.resize(template, (0, 0), fx=h / h0, fy=h / h0)
     h1, w1 = template.shape
 
     result = cv2.matchTemplate(ref_img, template, cv2.cv2.TM_CCOEFF_NORMED)
@@ -235,7 +202,8 @@ def find_match(card, kind):
 
     cv2.rectangle(ref_img, max_loc, bottom_right, (0, 0, 0), 2)
 
-    ref_sized = cv2.resize(ref_img, (0, 0), fx=0.3, fy=0.3)
+    ref_sized = cv2.resize(ref_img, (0, 0), fx=2, fy=2)
+
     cv2.imshow(kind, ref_sized)
 
     # Cut the reference image in parts
@@ -247,52 +215,46 @@ def find_match(card, kind):
             return i
 
 
-@timeit
-def display_text(img, card):
+def display_cards(img, cards):
     size = 4
-    x, y = card.center
+    for card in cards:
+        x, y = card.center
+        cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
 
-    cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
+        if card.rank == -1 or card.suit == -1:
+            cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
 
-    if card.rank == -1 or card.suit == -1:
-        cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
-        cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(img, "Card", (x - 75, y + 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, "Card", (x - 75, y + 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
+        else:
+            rank, suit = card.get_rank_suit()
 
-        cv2.putText(img, "Card", (x - 75, y + 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
-        cv2.putText(img, "Card", (x - 75, y + 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
-    else:
-        rank, suit = card.get_rank_suit()
+            cv2.putText(img, rank + " of", (x - 100, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, rank + " of", (x - 100, y - 25), FONT, size, (0, 255, 0), 2, cv2.LINE_AA)
 
-        cv2.putText(img, rank + " of", (x - 100, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
-        cv2.putText(img, rank + " of", (x - 100, y - 25), FONT, size, (0, 255, 0), 2, cv2.LINE_AA)
-
-        cv2.putText(img, suit, (x - 100, y + 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
-        cv2.putText(img, suit, (x - 100, y + 25), FONT, size, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(img, suit, (x - 100, y + 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, suit, (x - 100, y + 25), FONT, size, (0, 255, 0), 2, cv2.LINE_AA)
 
     return img
 
 
-def get_cards_in_img(img):
+def get_cards(img):
     thresh = binary_threshold(img)
     contours_pts = detect_cards(thresh)
     cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
 
-    for card in cards:
-        card.rank = find_match(card, "rank")
-        card.suit = find_match(card, "suit")
-        img = display_text(img, card)
-
-    return img, thresh, cards
+    return cards
 
 
 while True:
     img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
     img = cv2.imdecode(img_arr, -1)
 
-    img, thresh, cards = get_cards_in_img(img)
+    cards = get_cards(img)
+    img = display_cards(img, cards)
 
-    cv2.imshow('Thresh', cv2.resize(thresh, (0, 0), fx=0.4, fy=0.4))
-    cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.4, fy=0.4))
+    cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.5, fy=0.5))
 
     q = cv2.waitKey(1)
     if q == ord("q"):
