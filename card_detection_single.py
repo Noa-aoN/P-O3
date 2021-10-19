@@ -2,6 +2,7 @@ import cv2
 
 import urllib.request
 import numpy as np
+import time
 
 FONT = cv2.FONT_HERSHEY_PLAIN
 
@@ -20,7 +21,7 @@ RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
 class Card:
     def __init__(self, contour, pts, w, h, center, rank_img, suit_img):
         self.contour = contour  # Contour of card
-        self.corner_pts = pts # Corner points of card
+        self.corner_pts = pts  # Corner points of card
         self.dimensions = (w, h)  # Width and height of card
         self.center = center  # Center point of card
         self.rank_img = rank_img  # Thresholded, sized image of card's rank
@@ -42,9 +43,25 @@ def empty(_):
 cv2.namedWindow("Parameters")
 cv2.resizeWindow("Parameters", 600, 120)
 cv2.createTrackbar("Contour", "Parameters", 170, 255, empty)
-cv2.createTrackbar("tresh value", "Parameters", 170, 255, empty)
+cv2.createTrackbar("Thresh Card", "Parameters", 170, 255, empty)
 
 
+def timeit(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        if 'log_time' in kw:
+            name = kw.get('log_name', method.__name__.upper())
+            kw['log_time'][name] = (te - ts) * 1000
+        else:
+            print('%r  %2.2f ms' % (method.__name__, (te - ts) * 1000))
+        return result
+
+    return timed
+
+
+@timeit
 def binary_threshold(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -52,33 +69,32 @@ def binary_threshold(image):
     # img_w, img_h = np.shape(image)[:2]
     # bkg_level = gray[int(img_h / 100)][int(img_w / 2)]
     thresh_level = cv2.getTrackbarPos("Contour", "Parameters")  # + bkg_level
-
     retval, thresh = cv2.threshold(blur, thresh_level, 255, cv2.THRESH_BINARY)
 
     return thresh
 
 
+@timeit
 def detect_cards(thresh):
-    card_cnts = []
-
+    card_cnts_pts = []
     cnts, hiers = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     # Card when: min < area < max, no parents, four corners
-    if len(cnts) != 0:
-        for contour, hier in zip(cnts, hiers[0]):
-            area = cv2.contourArea(contour)
-            peri = cv2.arcLength(contour, True)
-            approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
 
-            if MIN_CARD_AREA < area < MAX_CARD_AREA and hier[3] == -1 and len(approx) == 4:
-                pts = np.float32(approx)
-                card_cnts.append((contour, pts))
+    for i, contour in enumerate(cnts):
+        area = cv2.contourArea(contour)
+        peri = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
 
-    return card_cnts
+        if MIN_CARD_AREA < area < MAX_CARD_AREA and hiers[0][i][3] == -1 and len(approx) == 4:
+            pts = np.float32(approx)
+            card_cnts_pts.append((contour, pts))
+
+    return card_cnts_pts
 
 
+@timeit
 def create_card(contour, pts, image):
-
     average = np.sum(pts, axis=0) / len(pts)
     center = (int(average[0][0]), int(average[0][1]))
 
@@ -88,7 +104,7 @@ def create_card(contour, pts, image):
 
     corner_zoom = warp[2:110, 2:45]
 
-    thresh_level = cv2.getTrackbarPos("tresh value", "Parameters")
+    thresh_level = cv2.getTrackbarPos("Thresh Card", "Parameters")
     retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
     rank = corner_thresh[6:66, 0:50]
@@ -119,6 +135,7 @@ def create_card(contour, pts, image):
     return Card(contour, pts, w, h, center, rank_roi, suit_roi)
 
 
+@timeit
 def transform(image, pts, w, h):
     """Flattens an image of a card into a top-down 200x300 perspective.
     Returns the flattened, re-sized, grayed image.
@@ -181,17 +198,23 @@ def transform(image, pts, w, h):
     return warp
 
 
-def find_match(template, kind):
-    if not np.array_equal(template, []) and kind == "rank":
+@timeit
+def find_match(card, kind):
+    if kind == "rank":
         # Copy otherwise rect don't disappear
         ref_img = RANKS_IMG.copy()
+        template = card.rank_img
         parts = 13
-    elif not np.array_equal(template, []) and kind == "suit":
+    elif kind == "suit":
         # TODO implement color
         color = card.color
         ref_img = SUITS_IMG.copy()
+        template = card.suit_img
         parts = 4
     else:
+        return -1
+
+    if np.array_equal(template, []):
         return -1
 
     h0, w0 = template.shape
@@ -224,6 +247,7 @@ def find_match(template, kind):
             return i
 
 
+@timeit
 def display_text(img, card):
     size = 4
     x, y = card.center
@@ -248,18 +272,24 @@ def display_text(img, card):
     return img
 
 
-while True:
-    img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
-    img = cv2.imdecode(img_arr, -1)
-
+def get_cards_in_img(img):
     thresh = binary_threshold(img)
     contours_pts = detect_cards(thresh)
     cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
 
     for card in cards:
-        card.rank = find_match(card.rank_img, "rank")
-        card.suit = find_match(card.suit_img, "suit")
+        card.rank = find_match(card, "rank")
+        card.suit = find_match(card, "suit")
         img = display_text(img, card)
+
+    return img, thresh, cards
+
+
+while True:
+    img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
+    img = cv2.imdecode(img_arr, -1)
+
+    img, thresh, cards = get_cards_in_img(img)
 
     cv2.imshow('Thresh', cv2.resize(thresh, (0, 0), fx=0.4, fy=0.4))
     cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.4, fy=0.4))
