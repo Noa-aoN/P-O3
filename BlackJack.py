@@ -4,11 +4,11 @@ from Button import Button
 from Deck import *
 from Player import Player
 
-
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
 test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
+test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 
 Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
@@ -27,8 +27,11 @@ players.append(player4)
 game_active = False
 
 start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
+yes_button = Button((0, 0, 0), (400, 250), (110, 60), 'Hit')
+no_button = Button((0, 0, 0), (700, 250), (110, 60), 'Stand')
 deal_2_cards = True
-
+dealer_cards = False
+i = 0
 
 while True:
     pygame.display.update()
@@ -49,10 +52,12 @@ while True:
                     random_card = random.choice(deck)
                     deck.remove(random_card)
                     player.add_card(random_card)
-            while len(player0.cards) < 2:
+            while len(player0.cards) < 1:
                 random_card = random.choice(deck)
                 deck.remove(random_card)
                 player0.add_card(random_card)
+            for player in players:
+                player.wants_card = True
             deal_2_cards = False
 
         for player in players:
@@ -60,20 +65,51 @@ while True:
             player.display_score(screen)
         player0.show_cards(screen)
         player0.display_score(screen)
-        '''
-        i = 0
-        while i < len(players):
-            while players[i].value_count() != 'Bust':
-                choice = input('do you want another card:')
-                if choice == 'yes' or choice == 'Yes':
-                    random_card = random.choice(deck)
-                    players[i].add_card(random_card)
-                    deck.remove(random_card)
-                    players[i].show_cards(screen)
-                    players[i].display_score(screen)
-                else:
+
+        if i < len(players):
+            if players[i].wants_card:
+                if players[i].value_count() == 'bust':
+                    players[i].wants_card = False
+                if players[i].value_count() == 21:
                     i += 1
-        '''
+                another_card_surf = test_font.render(players[i].name + ', do you want another card?', False, (0, 0, 0))
+                screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600, 200)))
+                yes_button.draw(screen)
+                no_button.draw(screen)
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        pos = pygame.mouse.get_pos()
+                        if yes_button.collides(pos):
+                            random_card = random.choice(deck)
+                            deck.remove(random_card)
+                            players[i].add_card(random_card)
+                            players[i].show_cards(screen)
+                            players[i].display_score(screen)
+                        elif no_button.collides(pos):
+                            players[i].wants_card = False
+                    if event.type == pygame.MOUSEMOTION:
+                        pos = pygame.mouse.get_pos()
+                        if start_button.collides(pos):
+                            start_button.color = (255, 255, 255)
+                        else:
+                            start_button.color = (0, 0, 0)
+            if not players[i].wants_card:
+                i += 1
+        else:
+            dealer_cards = True
+        if dealer_cards:
+            if len(player0.cards) == 1:
+                random_card = random.choice(deck)
+                deck.remove(random_card)
+                player0.add_card(random_card)
+            if player0.value_count() == 'bust':
+                dealer_cards = False
+            while player0.value_count() < 17:
+                random_card = random.choice(deck)
+                deck.remove(random_card)
+                player0.add_card(random_card)
+            dealer_cards = False
+
     else:
         screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
         start_button.draw(screen)

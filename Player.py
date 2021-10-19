@@ -2,7 +2,7 @@ import pygame
 
 
 class Player:
-    def __init__(self, name, balance, player_number, cards=None):
+    def __init__(self, name, balance, player_number, cards=None, wants_card=False):
         self.font = pygame.font.SysFont('comicsans', 20)
         self.font_small = pygame.font.SysFont('comicsans', 13)
 
@@ -14,6 +14,7 @@ class Player:
         self.number = player_number
         self.surf = self.font.render(self.name, False, (10, 10, 10))
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
+        self.wants_card = wants_card
 
     def show_name(self, window):
         window.blit(self.surf, self.surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 550)))
@@ -33,7 +34,7 @@ class Player:
                 i += 1
         else:
             for card in self.cards:
-                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25*i, 100))
+                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25*i, 50))
                 i += 1
 
     def value_count(self):
@@ -54,6 +55,7 @@ class Player:
                     som = sum(value_list)
                     if som < 22:
                         return som
+            self.wants_card = False
             return 'bust'
 
     def display_score(self, window):
@@ -62,4 +64,4 @@ class Player:
             window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))
         else:
             score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
-            window.blit(score_surf, score_surf.get_rect(midbottom=(600, 80)))
+            window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
