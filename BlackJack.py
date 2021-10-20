@@ -4,9 +4,29 @@ from Button import Button
 from Deck import *
 from Player import Player
 
+'''
+Bugs: 
+- If dealer busts the game crashes. -->Fixed
+- If last player has 21 the game crashes.
+- If everyone stands the game can crash. -->Fixed
+- If everyone busts the game can crash. -->Fixed
+
+To DO:
+- Restarting rounds.
+- Showing who won and who lost.
+- Betting on the rounds.
+- Adding double down feature.
+- Dealer has to check if he has Blackjack to terminate the round immediately.
+- Adding delay with generating cards.
+- Entering player names and amount of players.
+- Entering starting balance.
+- ...
+'''
+
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
+
 test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 
@@ -102,13 +122,14 @@ while True:
                 random_card = random.choice(deck)
                 deck.remove(random_card)
                 player0.add_card(random_card)
-            if player0.value_count() == 'bust':
+            if player0.value_count() == 0:
                 dealer_cards = False
-            while player0.value_count() < 17:
-                random_card = random.choice(deck)
-                deck.remove(random_card)
-                player0.add_card(random_card)
-            dealer_cards = False
+            else:
+                while 0 < player0.value_count() < 17:
+                    random_card = random.choice(deck)
+                    deck.remove(random_card)
+                    player0.add_card(random_card)
+                dealer_cards = False
 
     else:
         screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))

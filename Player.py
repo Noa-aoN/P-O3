@@ -5,7 +5,6 @@ class Player:
     def __init__(self, name, balance, player_number, cards=None, wants_card=False):
         self.font = pygame.font.SysFont('comicsans', 20)
         self.font_small = pygame.font.SysFont('comicsans', 13)
-
         if cards is None:
             cards = []
         self.name = name
@@ -30,7 +29,8 @@ class Player:
         i = 0
         if not self.name == 'Dealer':
             for card in self.cards:
-                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (100 + 300*(self.number - 1) + 25*i, 400))
+                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1),
+                            (100 + 300*(self.number - 1) + 25*i, 400))
                 i += 1
         else:
             for card in self.cards:
@@ -56,12 +56,20 @@ class Player:
                     if som < 22:
                         return som
             self.wants_card = False
-            return 'bust'
+            return 0
 
     def display_score(self, window):
         if not self.name == 'Dealer':
-            score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
-            window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))
+            if self.value_count() == 0:
+                score_surf = self.font.render('bust', False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
+            else:
+                score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))
         else:
-            score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
-            window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
+            if self.value_count() == 0:
+                score_surf = self.font.render('Bust', False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
+            else:
+                score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
