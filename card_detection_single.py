@@ -12,26 +12,28 @@ MIN_CARD_AREA = 10000
 URL = "http://192.168.1.102:8080/shot.jpg"
 
 RANKS_IMG = cv2.imread("References/Rank_Pixels.jpg", 0)
-SUITS_IMG = cv2.imread("References/Suit_Pixels.jpg", 0)
+BLACK_SUITS_IMG = cv2.imread("References/Black_Pixels.png", 0)
+RED_SUITS_IMG = cv2.imread("References/Red_Pixels.png", 0)
 
-SUITS = ["Spades", "Hearts", "Clubs", "Diamonds"]
+SUITS = {"r": ("Hearts", "Diamonds"), "b": ("Spades", "Clubs"), "w":("fout","fout")}
 RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
 
 
 class Card:
-    def __init__(self, contour, pts, w, h, center, rank, suit):
+    def __init__(self, contour, pts, w, h, center, rank, suit, color):
         self.contour = contour  # Contour of card
         self.corner_pts = pts  # Corner points of card
         self.dimensions = (w, h)  # Width and height of card
         self.center = center  # Center point of card
-        self.color = "Red"
+        self.color = color
         self.rank = rank
         self.suit = suit
 
     def get_rank_suit(self):
-        suit = SUITS[self.suit - 1]
-        rank = RANKS[self.rank - 1]
+        suit = SUITS[self.color][self.suit]
+        rank = RANKS[self.rank]
         return rank, suit
+
 
 
 def empty(_):
@@ -104,15 +106,27 @@ def create_card(contour, pts, image):
 
     tol = 1
 
-    rank_img = corner_thresh[4+tol:66-tol, 0+tol:50-tol]
-    suit_img = corner_thresh[62+tol:110-tol, 0+tol:48-tol]
+    rank_img = corner_thresh[4 + tol:66 - tol, 0 + tol:50 - tol]
+    suit_img = corner_thresh[62 + tol:110 - tol, 0 + tol:48 - tol]
+    suit_colored = corner_zoom[62 + tol:110 - tol, 0 + tol:48 - tol]
 
     cv2.imshow("Rank", rank_img)
     rank = find_match(rank_img, "rank")
-    cv2.imshow("Suit", suit_img)
-    suit = find_match(suit_img, "suit")
 
-    return Card(contour, pts, w, h, center, rank, suit)
+    y, x = suit_colored.shape
+    pixel_val = suit_colored[int(y/2), int(x/2)]
+
+    if pixel_val < 50:
+        color = "b"
+    elif 50 <= pixel_val < 150:
+        color = "r"
+    else:
+        color = "w"
+
+    cv2.imshow("Suit", suit_colored)
+    suit = find_match(suit_img, "suit", color)
+
+    return Card(contour, pts, w, h, center, rank, suit, color)
 
 
 def transform(image, pts, w, h):
@@ -177,14 +191,19 @@ def transform(image, pts, w, h):
     return warp
 
 
-def find_match(template, kind):
+def find_match(template, kind, color=None):
     if kind == "rank":
         # Copy otherwise rect don't disappear
         ref_img = RANKS_IMG.copy()
         parts = 13
     elif kind == "suit":
-        ref_img = SUITS_IMG.copy()
-        parts = 4
+        if color == "b":
+            ref_img = BLACK_SUITS_IMG.copy()
+        elif color == "r":
+            ref_img = RED_SUITS_IMG.copy()
+        else:
+            return -1
+        parts = 2
     else:
         return -1
 
@@ -209,14 +228,14 @@ def find_match(template, kind):
     # Cut the reference image in parts
     w_part = w / parts
 
-    for i in range(1, parts + 1):
+    for i in range(parts):
         # Find the part in which the center lies
-        if (i - 1) * w_part < center[0] < i * w_part:
+        if i * w_part < center[0] < (i+1) * w_part:
             return i
 
 
 def display_cards(img, cards):
-    size = 4
+    size = 2
     for card in cards:
         x, y = card.center
         cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
@@ -238,7 +257,8 @@ def display_cards(img, cards):
 
     return img
 
-@timeit
+
+
 def get_cards(img):
     thresh = binary_threshold(img)
     contours_pts = detect_cards(thresh)
@@ -247,14 +267,17 @@ def get_cards(img):
     return cards
 
 
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+
 while True:
-    img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
-    img = cv2.imdecode(img_arr, -1)
+    ret, img = cap.read()
+    # img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
+    # img = cv2.imdecode(img_arr, -1)
 
     cards = get_cards(img)
     img = display_cards(img, cards)
 
-    cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.5, fy=0.5))
+    cv2.imshow('Colored', img)
 
     q = cv2.waitKey(1)
     if q == ord("q"):
