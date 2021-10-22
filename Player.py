@@ -2,7 +2,7 @@ import pygame
 
 
 class Player:
-    def __init__(self, name, balance, player_number, cards=None, wants_card=False):
+    def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000):
         self.font = pygame.font.SysFont('comicsans', 20)
         self.font_small = pygame.font.SysFont('comicsans', 13)
         if cards is None:
@@ -14,6 +14,7 @@ class Player:
         self.surf = self.font.render(self.name, False, (10, 10, 10))
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
         self.wants_card = wants_card
+        self.bet = bet
 
     def show_name(self, window):
         window.blit(self.surf, self.surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 550)))
@@ -76,11 +77,20 @@ class Player:
 
     def results(self, dealer_score):
         self_value = self.value_count()
-        if str(self_value) == 'bust':
-            return 'bust'
+        if self_value == 0:
+            return 'bust: dealer wins', -1
         if dealer_score == self_value:
-            return 'draw'
+            return str(self_value) + ': draw', 0
         if dealer_score > self_value:
-            return 'dealer wins'
+            return str(self_value) + ': dealer wins', -1
         if dealer_score < self_value:
-            return 'you win'
+            return str(self_value) + ': you win', 1
+
+    def display_results(self, window, dealer_score):
+        score_surf = self.font.render(self.results(dealer_score)[0], False, (10, 10, 10))
+        window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
+
+    def adjust_balance(self, dealer_score):
+        self.balance += self.bet * self.results(dealer_score)[1]
+        self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
+        print(self.name, self.balance)
