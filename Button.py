@@ -1,6 +1,15 @@
 import pygame
 
 
+def turn_white(button, event):
+    if event.type == pygame.MOUSEMOTION:
+        pos = pygame.mouse.get_pos()
+        if button.collides(pos):
+            button.color = (255, 255, 255)
+        else:
+            button.color = (0, 0, 0)
+
+
 class Button:
     def __init__(self, color, position, size, text=''):
         self.color = color

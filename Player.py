@@ -73,3 +73,14 @@ class Player:
             else:
                 score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
                 window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
+
+    def results(self, dealer_score):
+        self_value = self.value_count()
+        if str(self_value) == 'bust':
+            return 'bust'
+        if dealer_score == self_value:
+            return 'draw'
+        if dealer_score > self_value:
+            return 'dealer wins'
+        if dealer_score < self_value:
+            return 'you win'
