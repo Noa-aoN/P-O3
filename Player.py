@@ -38,25 +38,8 @@ class Player:
                 i += 1
 
     def value_count(self):
-        value_list = []
-        for card in self.cards:
-            if card.value == 0:
-                value_list.append(11)
-            else:
-                value_list.append(card.value)
-        som = sum(value_list)
-        if som < 22:
-            return som
-        if som > 21:
-            for value in value_list:
-                if value == 11:
-                    ace_index = value_list.index(11)
-                    value_list[ace_index] = 1
-                    som = sum(value_list)
-                    if som < 22:
-                        return som
-            self.wants_card = False
-            return 0
+        return len(self.cards)
+
 
     def display_score(self, window):
         if not self.name == 'Dealer':
