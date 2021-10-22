@@ -15,25 +15,35 @@ RANKS_IMG = cv2.imread("References/Rank_Pixels.jpg", 0)
 BLACK_SUITS_IMG = cv2.imread("References/Black_Pixels.png", 0)
 RED_SUITS_IMG = cv2.imread("References/Red_Pixels.png", 0)
 
-SUITS = {"r": ("Hearts", "Diamonds"), "b": ("Spades", "Clubs"), "w":("fout","fout")}
-RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
+SUITS = {"r": ("Hearts", "Diamonds"), "b": ("Spades", "Clubs")}
+RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King")
 
 
 class Card:
     def __init__(self, contour, pts, w, h, center, rank, suit, color):
         self.contour = contour  # Contour of card
         self.corner_pts = pts  # Corner points of card
-        self.dimensions = (w, h)  # Width and height of card
+        self.dim = (w, h)  # Width and height of card
         self.center = center  # Center point of card
         self.color = color
         self.rank = rank
         self.suit = suit
 
     def get_rank_suit(self):
+        if self.color == "w":
+            return None
         suit = SUITS[self.color][self.suit]
         rank = RANKS[self.rank]
         return rank, suit
 
+    def filter_card(self):
+        if self.rank == -1 or self.suit == -1 or self.color == "w":
+            return False
+        return True
+
+    def __str__(self):
+        rank, suit = self.get_rank_suit()
+        return f"{rank} of {suit}"
 
 
 def empty(_):
@@ -91,9 +101,16 @@ def detect_cards(thresh):
     return card_cnts_pts
 
 
-def create_card(contour, pts, image):
+def create_card(contour, pts, image, prev_cards):
     average = np.sum(pts, axis=0) / len(pts)
     center = (int(average[0][0]), int(average[0][1]))
+    n_x, n_y = center
+
+    for p_card in prev_cards:
+        p_x, p_y = p_card.center
+        dist = ((n_x-p_x)**2+(n_y-p_y)**2)**(1/2)
+        if dist < 10:
+            return p_card
 
     # Warp card into 285x435 flattened image using perspective transform
     x, y, w, h = cv2.boundingRect(contour)
@@ -114,7 +131,7 @@ def create_card(contour, pts, image):
     rank = find_match(rank_img, "rank")
 
     y, x = suit_colored.shape
-    pixel_val = suit_colored[int(y/2), int(x/2)]
+    pixel_val = suit_colored[int(y / 2), int(x / 2)]
 
     if pixel_val < 50:
         color = "b"
@@ -126,7 +143,11 @@ def create_card(contour, pts, image):
     cv2.imshow("Suit", suit_colored)
     suit = find_match(suit_img, "suit", color)
 
-    return Card(contour, pts, w, h, center, rank, suit, color)
+    card = Card(contour, pts, w, h, center, rank, suit, color)
+
+
+
+    return card
 
 
 def transform(image, pts, w, h):
@@ -230,7 +251,7 @@ def find_match(template, kind, color=None):
 
     for i in range(parts):
         # Find the part in which the center lies
-        if i * w_part < center[0] < (i+1) * w_part:
+        if i * w_part < center[0] < (i + 1) * w_part:
             return i
 
 
@@ -240,7 +261,7 @@ def display_cards(img, cards):
         x, y = card.center
         cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
 
-        if card.rank == -1 or card.suit == -1:
+        if card.rank == -1 or card.suit == -1 or card.color == "w":
             cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
             cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
 
@@ -258,24 +279,26 @@ def display_cards(img, cards):
     return img
 
 
-
-def get_cards(img):
+def get_cards(img, prev_cards):
     thresh = binary_threshold(img)
     contours_pts = detect_cards(thresh)
-    cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
+    cards = [create_card(cnt, pts, img, prev_cards) for cnt, pts in contours_pts]
 
     return cards
 
 
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+prev_cards = []
 
 while True:
     ret, img = cap.read()
     # img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
     # img = cv2.imdecode(img_arr, -1)
 
-    cards = get_cards(img)
+    cards = get_cards(img, prev_cards)
     img = display_cards(img, cards)
+
+    prev_cards = list(filter(lambda card: card.filter_card(), cards))
 
     cv2.imshow('Colored', img)
 
