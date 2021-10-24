@@ -27,6 +27,8 @@ class Player:
         self.cards.append(card)
 
     def show_cards(self, window):
+        if self.cards == None:
+            self.cards = []
         i = 0
         if not self.name == 'Dealer':
             for card in self.cards:
@@ -93,4 +95,3 @@ class Player:
     def adjust_balance(self, dealer_score):
         self.balance += self.bet * self.results(dealer_score)[1]
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
-        print(self.name, self.balance)

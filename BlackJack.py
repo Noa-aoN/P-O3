@@ -6,15 +6,11 @@ from Player import Player
 
 '''
 Bugs: 
-- If dealer busts the game crashes. -->Fixed
-- If last player has 21 the game crashes. --> Fixed
-- If everyone stands the game can crash. -->Fixed
-- If everyone busts the game can crash. -->Fixed
+- The original deck changes with changes to Deck.
+- In second round people cant ask for cards.
 
 To DO:
-- Turn hit- and stand buttons white when hovering over them. --> Done
 - Restarting rounds.
-- Showing who won and who lost. --> Done
 - Betting on the rounds.
 - Adding double down feature.
 - Dealer has to check if he has Blackjack to terminate the round immediately.
@@ -35,6 +31,8 @@ Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
 screen.fill((31, 171, 57))
 
+Deck = deck.copy()
+
 players = []
 player0 = Player('Dealer', 0, 0)
 player1 = Player('Matthias', 10000, 1)
@@ -50,6 +48,7 @@ game_active = False
 start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
 yes_button = Button((0, 0, 0), (400, 250), (110, 60), 'Hit')
 no_button = Button((0, 0, 0), (700, 250), (110, 60), 'Stand')
+again_button = Button((0, 0, 0), (530, 260), (200, 65), 'Play again!')
 deal_2_cards = True
 dealer_cards = False
 change_bal = False
@@ -76,19 +75,22 @@ while True:
 
         if deal_2_cards:
             for player in players:
+                if player.cards is None:
+                    player.cards = []
                 while len(player.cards) < 2:
-                    random_card = random.choice(deck)
-                    deck.remove(random_card)
+                    random_card = random.choice(Deck)
+                    Deck.remove(random_card)
                     player.add_card(random_card)
+            if player0.cards is None:
+                player0.cards = []
             while len(player0.cards) < 1:
-                random_card = random.choice(deck)
-                deck.remove(random_card)
+                random_card = random.choice(Deck)
+                Deck.remove(random_card)
                 player0.add_card(random_card)
             for player in players:
                 player.wants_card = True
             deal_2_cards = False
             deal_cards = True
-            print('DUUUDE')
 
         if deal_cards:
             if i < len(players):
@@ -107,8 +109,8 @@ while True:
                             if event.type == pygame.MOUSEBUTTONDOWN:
                                 pos = pygame.mouse.get_pos()
                                 if yes_button.collides(pos):
-                                    random_card = random.choice(deck)
-                                    deck.remove(random_card)
+                                    random_card = random.choice(Deck)
+                                    Deck.remove(random_card)
                                     players[i].add_card(random_card)
                                     players[i].show_cards(screen)
                                     players[i].display_score(screen)
@@ -122,24 +124,22 @@ while True:
                         if not players[i].wants_card:
                             i += 1
             else:
-                print('WTF')
                 dealer_cards = True
 
         if dealer_cards:
             if len(player0.cards) == 1:
-                random_card = random.choice(deck)
-                deck.remove(random_card)
+                random_card = random.choice(Deck)
+                Deck.remove(random_card)
                 player0.add_card(random_card)
             if player0.value_count() == 0:
                 pass
             else:
                 while 0 < player0.value_count() < 17:
-                    random_card = random.choice(deck)
-                    deck.remove(random_card)
+                    random_card = random.choice(Deck)
+                    Deck.remove(random_card)
                     player0.add_card(random_card)
             deal_cards = False
             dealer_cards = False
-            print('OK')
             change_bal = True
             check_results = True
 
@@ -154,6 +154,24 @@ while True:
             pygame.draw.rect(screen, (31, 171, 57), (0, 360, 1200, 25), 0)
             for player in players:
                 player.display_results(screen, dealer_score)
+
+            again_button.draw(screen)
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    if again_button.collides(pos):
+                        deal_2_cards = True
+                        dealer_cards = False
+                        change_bal = False
+                        deal_cards = False
+                        check_results = False
+                        i = 0
+                        for player in players:
+                            player.cards = None
+                            player.wants_card = False
+                        player0.cards = None
+                        Deck = deck.copy()
+                turn_white(again_button, event)
 
     else:
         screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
