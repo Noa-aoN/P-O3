@@ -20,8 +20,8 @@ class Player:
         self.wants_bet = wants_bet
 
     def show_name(self, window):
-        window.blit(self.surf, self.surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 550)))
-        window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(100 + 300*(self.number - 1), 555)))
+        window.blit(self.surf, self.surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 550)))
+        window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(100 + 300 * (self.number - 1), 555)))
 
     def set_balance(self, new_balance):
         self.balance = new_balance
@@ -36,11 +36,11 @@ class Player:
         if not self.name == 'Dealer':
             for card in self.cards:
                 window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1),
-                            (100 + 300*(self.number - 1) + 25*i, 400))
+                            (100 + 300 * (self.number - 1) + 25 * i, 400))
                 i += 1
         else:
             for card in self.cards:
-                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25*i, 50))
+                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
                 i += 1
 
     def value_count(self):
@@ -71,7 +71,7 @@ class Player:
                 window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
             else:
                 score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
-                window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 385)))
+                window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
         else:
             if self.value_count() == 0:
                 score_surf = self.font.render('Bust', False, (10, 10, 10))
@@ -122,15 +122,15 @@ class Player:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if button_1.collides(pos):
+                if button_1.collides(pos) and self.balance >= 1000:
                     self.bet = 1000
-                elif button_2.collides(pos):
+                elif button_2.collides(pos) and self.balance >= 2000:
                     self.bet = 2000
-                elif button_3.collides(pos):
+                elif button_3.collides(pos) and self.balance >= 3000:
                     self.bet = 3000
-                elif button_4.collides(pos):
+                elif button_4.collides(pos) and self.balance >= 4000:
                     self.bet = 4000
-                elif button_5.collides(pos):
+                elif button_5.collides(pos) and self.balance >= 5000:
                     self.bet = 5000
             turn_white(button_1, event)
             turn_white(button_2, event)

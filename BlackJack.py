@@ -15,7 +15,6 @@ To DO:
 - Entering starting balance.
 - ...
 '''
-
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
