@@ -1,10 +1,12 @@
 import pygame
+from Button import Button, turn_white
 
 
 class Player:
-    def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000):
+    def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000, wants_bet=True):
         self.font = pygame.font.SysFont('comicsans', 20)
         self.font_small = pygame.font.SysFont('comicsans', 13)
+        self.font_big = pygame.font.SysFont('comicsans', 30)
         if cards is None:
             cards = []
         self.name = name
@@ -15,6 +17,7 @@ class Player:
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
         self.wants_card = wants_card
         self.bet = bet
+        self.wants_bet = wants_bet
 
     def show_name(self, window):
         window.blit(self.surf, self.surf.get_rect(bottomleft=(100 + 300*(self.number - 1), 550)))
@@ -27,7 +30,7 @@ class Player:
         self.cards.append(card)
 
     def show_cards(self, window):
-        if self.cards == None:
+        if self.cards is None:
             self.cards = []
         i = 0
         if not self.name == 'Dealer':
@@ -95,3 +98,42 @@ class Player:
     def adjust_balance(self, dealer_score):
         self.balance += self.bet * self.results(dealer_score)[1]
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
+
+    def place_bet(self, window):
+        self.bet = 0
+        question_surf = self.font_big.render(str(self.name) + ', how much do you want to bet?', False, (10, 10, 10))
+        window.blit(question_surf, question_surf.get_rect(midbottom=(600, 250)))
+        button_1 = Button((0, 0, 0), (400, 350), (50, 30), '1k')
+        button_2 = Button((0, 0, 0), (475, 350), (50, 30), '2k')
+        button_3 = Button((0, 0, 0), (550, 350), (50, 30), '3k')
+        button_4 = Button((0, 0, 0), (625, 350), (50, 30), '4k')
+        button_5 = Button((0, 0, 0), (700, 350), (50, 30), '5k')
+        if self.balance >= 1000:
+            button_1.draw(window)
+        if self.balance >= 2000:
+            button_2.draw(window)
+        if self.balance >= 3000:
+            button_3.draw(window)
+        if self.balance >= 4000:
+            button_4.draw(window)
+        if self.balance >= 5000:
+            button_5.draw(window)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if button_1.collides(pos):
+                    self.bet = 1000
+                elif button_2.collides(pos):
+                    self.bet = 2000
+                elif button_3.collides(pos):
+                    self.bet = 3000
+                elif button_4.collides(pos):
+                    self.bet = 4000
+                elif button_5.collides(pos):
+                    self.bet = 5000
+            turn_white(button_1, event)
+            turn_white(button_2, event)
+            turn_white(button_3, event)
+            turn_white(button_4, event)
+            turn_white(button_5, event)

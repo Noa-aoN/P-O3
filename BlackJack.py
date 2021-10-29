@@ -6,12 +6,8 @@ from Player import Player
 
 '''
 Bugs: 
-- The original deck changes with changes to Deck.
-- In second round people cant ask for cards.
 
 To DO:
-- Restarting rounds.
-- Betting on the rounds.
 - Adding double down feature.
 - Dealer has to check if he has Blackjack to terminate the round immediately.
 - Adding delay with generating cards.
@@ -49,12 +45,14 @@ start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
 yes_button = Button((0, 0, 0), (400, 250), (110, 60), 'Hit')
 no_button = Button((0, 0, 0), (700, 250), (110, 60), 'Stand')
 again_button = Button((0, 0, 0), (530, 260), (200, 65), 'Play again!')
-deal_2_cards = True
+place_bets = True
+deal_2_cards = False
 dealer_cards = False
 change_bal = False
 deal_cards = False
 check_results = False
 i = 0
+j = 0
 
 while True:
     pygame.display.update()
@@ -64,14 +62,35 @@ while True:
             exit()
 
     if game_active:
+        if len(players) == 0:
+            game_active = False
         screen.fill((31, 171, 57))
+
+        if place_bets:
+            if j < len(players):
+                if players[j].balance == 0:
+                    players.remove(players[j])
+                else:
+                    if players[j].wants_bet:
+                        pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 300), 0, -1)
+                        players[j].place_bet(screen)
+                    if players[j].bet != 0:
+                        players[j].wants_bet = False
+                    if not players[j].wants_bet:
+                        j += 1
+            else:
+                place_bets = False
+                deal_2_cards = True
 
         for player in players:
             player.show_name(screen)
-            player.show_cards(screen)
-            player.display_score(screen)
-        player0.show_cards(screen)
-        player0.display_score(screen)
+            if not place_bets:
+                player.show_cards(screen)
+                player.display_score(screen)
+
+        if not place_bets:
+            player0.show_cards(screen)
+            player0.display_score(screen)
 
         if deal_2_cards:
             for player in players:
@@ -143,14 +162,14 @@ while True:
             change_bal = True
             check_results = True
 
-        dealer_score = player0.value_count()
-
         if change_bal:
+            dealer_score = player0.value_count()
             for player in players:
                 player.adjust_balance(dealer_score)
             change_bal = False
 
         if check_results:
+            dealer_score = player0.value_count()
             pygame.draw.rect(screen, (31, 171, 57), (0, 360, 1200, 25), 0)
             for player in players:
                 player.display_results(screen, dealer_score)
@@ -160,20 +179,22 @@ while True:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     if again_button.collides(pos):
-                        deal_2_cards = True
-                        dealer_cards = False
-                        change_bal = False
+                        deal_2_cards = False
                         deal_cards = False
                         check_results = False
+                        place_bets = True
                         i = 0
+                        j = 0
                         for player in players:
                             player.cards = None
+                            player.wants_bet = True
                             player.wants_card = False
                         player0.cards = None
                         Deck = deck.copy()
                 turn_white(again_button, event)
 
     else:
+        screen.fill((31, 171, 57))
         screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
         start_button.draw(screen)
         screen.blit(pygame.transform.rotozoom(S1.load_image(), 10, 1), (510, 250))
