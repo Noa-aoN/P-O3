@@ -9,7 +9,7 @@ FONT = cv2.FONT_HERSHEY_PLAIN
 MAX_CARD_AREA = 4000000
 MIN_CARD_AREA = 10000
 
-URL = "http://192.168.1.102:8080/shot.jpg"
+URL = "http://192.168.43.1:8080/shot.jpg"
 
 RANKS_IMG = cv2.imread("References/Rank_Pixels.jpg", 0)
 BLACK_SUITS_IMG = cv2.imread("References/Black_Pixels.png", 0)
@@ -35,15 +35,6 @@ class Card:
         suit = SUITS[self.color][self.suit]
         rank = RANKS[self.rank]
         return rank, suit
-
-    def filter_card(self):
-        if self.rank == -1 or self.suit == -1 or self.color == "w":
-            return False
-        return True
-
-    def __str__(self):
-        rank, suit = self.get_rank_suit()
-        return f"{rank} of {suit}"
 
 
 def empty(_):
@@ -101,16 +92,9 @@ def detect_cards(thresh):
     return card_cnts_pts
 
 
-def create_card(contour, pts, image, prev_cards):
+def create_card(contour, pts, image):
     average = np.sum(pts, axis=0) / len(pts)
     center = (int(average[0][0]), int(average[0][1]))
-    n_x, n_y = center
-
-    for p_card in prev_cards:
-        p_x, p_y = p_card.center
-        dist = ((n_x-p_x)**2+(n_y-p_y)**2)**(1/2)
-        if dist < 10:
-            return p_card
 
     # Warp card into 285x435 flattened image using perspective transform
     x, y, w, h = cv2.boundingRect(contour)
@@ -144,8 +128,6 @@ def create_card(contour, pts, image, prev_cards):
     suit = find_match(suit_img, "suit", color)
 
     card = Card(contour, pts, w, h, center, rank, suit, color)
-
-
 
     return card
 
@@ -256,7 +238,7 @@ def find_match(template, kind, color=None):
 
 
 def display_cards(img, cards):
-    size = 2
+    size = 4
     for card in cards:
         x, y = card.center
         cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
@@ -279,28 +261,28 @@ def display_cards(img, cards):
     return img
 
 
-def get_cards(img, prev_cards):
+def get_cards(img):
     thresh = binary_threshold(img)
     contours_pts = detect_cards(thresh)
-    cards = [create_card(cnt, pts, img, prev_cards) for cnt, pts in contours_pts]
+    cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
 
     return cards
 
 
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
 prev_cards = []
 
 while True:
     ret, img = cap.read()
-    # img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
+    #img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
     # img = cv2.imdecode(img_arr, -1)
 
-    cards = get_cards(img, prev_cards)
+    cards = get_cards(img)
     img = display_cards(img, cards)
 
-    prev_cards = list(filter(lambda card: card.filter_card(), cards))
-
-    cv2.imshow('Colored', img)
+    cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=1, fy=1))
 
     q = cv2.waitKey(1)
     if q == ord("q"):
