@@ -13,16 +13,23 @@ height = 80
 listofplayers = os.listdir(directory)
 
 
-def imagesizeconverter(x, y, w, h):
-    if w != width or h != height:
-        # We are gonna be using x+a and w-a to keep the center of the face in the center,
-        # so now we have to find a to convert
-        a = (w - width) / 2
-        b = (h - height) / 2
-
-        x += a
-        y += b
-    return [int(x), int(y), int(x + width), int(y + height)]
+def imagesizeconverter(x, y, w, h, gray):
+    heighttowidthratio = width/height
+    x += 0.2*w
+    w -= 0.4*w
+    y += 0.2*h
+    h -= 0.2*h
+    if w/h < heighttowidthratio:
+        compensation = heighttowidthratio*h - w
+        x -= compensation/2
+        w += compensation
+    else:
+        compensation = w - heighttowidthratio*h
+        x -= compensation/2
+        w += compensation
+    img = gray[int(y):int(y+h), int(x):int(x+w),]
+    img = cv2.resize(img, (width, height), interpolation = cv2.INTER_AREA)
+    return img
 
 
 def imagetoarray(imagematrix):
@@ -87,6 +94,12 @@ def weight(normalisedeigenvectors, deviation_matrix):
     transeigenv = normalisedeigenvectors.transpose()
     weights = np.dot(transeigenv, deviation_matrix.transpose())
     return weights
+
+
+def normalise_lightlevel(imagematrix):
+    minvalue = np.amin(imagematrix)
+    normalisedimage = imagematrix - minvalue
+    return normalisedimage
 
 
 def eigenfacereconstruction(weights, normalisedeigenvectors, average):
@@ -195,9 +208,9 @@ def __main__():
         # Now try to recognize every face in the frame
         for (x, y, w, h) in faces:
             # Cut out the face from the image:
-            facecoords = imagesizeconverter(x, y, w, h)
-            detectedface = imagetoarray(grayscale_picture[facecoords[1]:facecoords[3],
-                                        facecoords[0]:facecoords[2]])
+            reshapedface = imagesizeconverter(x, y, w, h, grayscale_picture)
+            reshapedface = normalise_lightlevel(reshapedface)
+            detectedface = imagetoarray(reshapedface)
             for i in os.listdir(directory):
 
                 # Calculate the deviation for the detected face:

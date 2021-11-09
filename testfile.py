@@ -18,7 +18,7 @@ while cap.isOpened():
     if result.multi_face_landmarks is not None:
         for face_landmarks in result.multi_face_landmarks:
             for point in range(468):
-                width, height, _ = frame.shape
+                height, width, _ = frame.shape
 
                 pointcoords = face_landmarks.landmark[point]
                 x = int(pointcoords.x * width) # x en y zijn genormaliseerd dus geeft het percentage aan
@@ -26,7 +26,7 @@ while cap.isOpened():
                 y = int(pointcoords.y * height)
 
                 if point != 1 and point != 234 and point != 454:  # Point 1 is tip of nose, point 234 is right cheekbone, 454 is left cheekbone
-                    cv2.circle(img, (x, y), 5, (0, 0, 0))
+                    cv2.circle(img, (x, y), 1, (0, 0, 0))
                 else:
                     cv2.circle(img, (x, y), 5, (0, 0, 255))
             if face_landmarks.landmark[454].x - face_landmarks.landmark[1].x < 1/4*(face_landmarks.landmark[454].x - face_landmarks.landmark[234].x):

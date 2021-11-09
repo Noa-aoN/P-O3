@@ -17,8 +17,7 @@ while cap.isOpened():
     if result.multi_hand_landmarks is not None:
         for hand_landmarks in result.multi_hand_landmarks:
             for point in range(21):
-                width, height, _ = frame.shape
-
+                height, width, _ = frame.shape
                 pointcoords = hand_landmarks.landmark[point]
                 x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
                 # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
@@ -120,7 +119,7 @@ while cap.isOpened():
                     color=(0, 0, 255),
                     thickness=1)
 
-            elif hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y < hand_landmarks.landmark[2].y < \
+            elif hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y < \
                     hand_landmarks.landmark[5].y and \
                     hand_landmarks.landmark[9].y > hand_landmarks.landmark[2].y and \
                     hand_landmarks.landmark[13].y > hand_landmarks.landmark[2].y and \
@@ -142,6 +141,20 @@ while cap.isOpened():
                 cv2.putText(
                     img=img,
                     text=str("Higher"),
+                    org=(0, 20),
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                    fontScale=0.5,
+                    color=(0, 0, 255),
+                    thickness=1)
+
+            elif hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
+                    hand_landmarks.landmark[5].y and \
+                    hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
+                    hand_landmarks.landmark[16].y > hand_landmarks.landmark[15].y > hand_landmarks.landmark[14].y and \
+                    hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
+                cv2.putText(
+                    img=img,
+                    text=str("Two"),
                     org=(0, 20),
                     fontFace=cv2.FONT_HERSHEY_DUPLEX,
                     fontScale=0.5,

@@ -3,24 +3,63 @@ import os
 import numpy as np
 from numpy import linalg
 from tqdm import tqdm
+import mediapipe as mp
 
 faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 directory = r'C:\Users\bram\testfolder'
-width = 60
-height = 80
+width = 30
+height = 40
+
+listofplayers = os.listdir(directory)
 
 
-def imagesizeconverter(x, y, w, h):
-    if w != width or h != height:
-        # We are gonna be using x+a and w-a to keep the center of the face in the center,
-        # so now we have to find a to convert
-        a = (w - width) / 2
-        b = (h - height) / 2
+def lookingdirection(frame):
+    mp_facemesh = mp.solutions.face_mesh
+    face_mesh = mp_facemesh.FaceMesh()
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    result = face_mesh.process(img)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    if result.multi_face_landmarks is not None:
+        for face_landmarks in result.multi_face_landmarks:
+            for point in range(468):
+                height, width, _ = frame.shape
 
-        x += a
-        y += b
-    return [int(x), int(y), int(x + width), int(y + height)]
+                pointcoords = face_landmarks.landmark[point]
+                x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
+                # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
+                y = int(pointcoords.y * height)
+                cv2.circle(img, (x, y), 1, (0, 255, 0))
+            if face_landmarks.landmark[454].x - face_landmarks.landmark[1].x < 1 / 3 * (
+                    face_landmarks.landmark[454].x - face_landmarks.landmark[234].x):
+                return "Right", img
+            elif face_landmarks.landmark[454].x - face_landmarks.landmark[1].x > 2 / 3 * (
+                    face_landmarks.landmark[454].x - face_landmarks.landmark[234].x):
+                return "Left", img
+            else:
+                return "Centered", img
+    return None, img
+
+
+def imagesizeconverter(x, y, w, h, gray):
+    heighttowidthratio = width/height
+    x += 0.2*w
+    w -= 0.4*w
+    y += 0.2*h
+    h -= 0.2*h
+    if w/h < heighttowidthratio:
+        compensation = heighttowidthratio*h - w
+        x -= compensation/2
+        w += compensation
+    else:
+        compensation = w - heighttowidthratio*h
+        x -= compensation/2
+        w += compensation
+    img = gray[int(y):int(y+h), int(x):int(x+w),]
+    img = cv2.resize(img, (width, height), interpolation = cv2.INTER_AREA)
+    return img
 
 
 def imagetoarray(imagematrix):
@@ -32,11 +71,10 @@ def imagelibrarytomatrix(dir):
     imagearray_list = []
     print("Converting Library to matrix")
     for i in tqdm(dirlist_of_images):
-        if i[-1] == 'g':
-            image = cv2.imread(os.path.join(dir, i))
-            grayimage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            imagevector = imagetoarray(grayimage)
-            imagearray_list.append(imagevector)
+        image = cv2.imread(os.path.join(dir, i))
+        grayimage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        imagevector = imagetoarray(grayimage)
+        imagearray_list.append(imagevector)
     librarymatrix = np.vstack(imagearray_list)
     return librarymatrix
 
@@ -55,7 +93,7 @@ def deviationmatrix(imagearraylist, average):
 
 
 def eigcov(devmatrix):
-    cov = (1 / len(devmatrix)) * np.dot(devmatrix.transpose(), devmatrix)
+    cov = (1/len(devmatrix)) * np.dot(devmatrix.transpose(), devmatrix)
     print("Calculating Eigenvalues...")
     eigenValues, eigenVectors = np.linalg.eig(cov)
     eigenVectors = eigenVectors.real
@@ -77,15 +115,22 @@ def normofmatrixvectors(matrix):
     for i in tqdm(range(len(matrix))):
         vector = matrix[i]
         norm = np.linalg.norm(vector)
-        normalisedmatrix.append(vector / norm)
+        normalisedmatrix.append(vector/norm)
     normalisedmatrix = np.vstack(normalisedmatrix)
     return normalisedmatrix
 
 
 def weight(normalisedeigenvectors, deviation_matrix):
+    normalisedeigenvectors = normalisedeigenvectors
     transeigenv = normalisedeigenvectors.transpose()
     weights = np.dot(transeigenv, deviation_matrix.transpose())
     return weights
+
+
+def normalise_lightlevel(imagematrix):
+    minvalue = np.amin(imagematrix)
+    normalisedimage = imagematrix - minvalue
+    return normalisedimage
 
 
 def eigenfacereconstruction(weights, normalisedeigenvectors, average):
@@ -104,12 +149,6 @@ def facedetection(grayimage):
     return faceDetect.detectMultiScale(grayimage, scaleFactor=1.2, minNeighbors=5)
 
 
-def normalise_lightlevel(imagematrix):
-    minvalue = np.amin(imagematrix)
-    normalisedimage = imagematrix - minvalue
-    return normalisedimage
-
-
 def arraytoimage(array):
     image = np.reshape(array, (height, width))
     image = image.astype(np.uint8)
@@ -124,16 +163,61 @@ def euclidiandistance(weights_eigenvectors, weights_detectedface):
     return eucliddist
 
 
+def eigenvectorselection(eigenvalues, eigenvectors):
+    accuracy = 0
+    numberofvectors = 0
+    while accuracy < 0.95:
+        numberofvectors += 1
+        accuracy = np.sum(eigenvalues[:numberofvectors])/np.sum(eigenvalues)
+    reducedeigenvectors = eigenvectors[:, :numberofvectors]
+    return reducedeigenvectors
+
+
 def threshold_for_euclidiandistance(weights_eigenvectors):
     rowdividedweights = weights_eigenvectors.transpose()
     maxeucdis = 0
-    a = 1
+    a = 0.8
     for i in rowdividedweights:
         for j in rowdividedweights:
-            eucdis = np.linalg.norm(i - j)
+            eucdis = np.linalg.norm(i-j)
             if eucdis > maxeucdis:
                 maxeucdis = eucdis
-    return a * maxeucdis
+    return a*maxeucdis
+
+
+def facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperplayer, eigenvectorsperplayer, weightsperplayer, thresholdperplayer, direction):
+    matchpercentages = {}
+    for i in os.listdir(directory):
+        # Define where the library the recogniser has to use is located
+        new_directory = 'looking' + str(direction)
+
+        # Calculate the deviation for the detected face:
+        deviation_detectedface = deviationmatrix([detectedface], averagefaceperplayer[i][new_directory])
+
+        # Calculate the weights of the detected face
+        weightvector_detectedface = weight(eigenvectorsperplayer[i][new_directory], deviation_detectedface)
+        assert isinstance(weightvector_detectedface, np.ndarray)
+
+        # Calculate Euclidian distance
+        euclidian_distance = euclidiandistance(weightsperplayer[i][new_directory].transpose(), weightvector_detectedface.transpose())
+
+        # Calculate if every Euclidian distance is below the threshold -> if so, face is a match!
+        matchpercentages[i] = match(euclidian_distance, thresholdperplayer[i][new_directory])
+
+    highestpercentage = ("No Match", 0)
+    for i in matchpercentages:
+        if matchpercentages[i] > highestpercentage[1]:
+            highestpercentage = (str(i), matchpercentages[i])
+    if highestpercentage[1] > 0.6:
+        cv2.rectangle(image, (x, y), (x + w, y + h),
+                          (0, 0, 255), 2)
+        cv2.putText(img=image,text=str(highestpercentage[0]),org=(x + w - 55, y + h + 20),fontFace=cv2.FONT_HERSHEY_DUPLEX,fontScale=0.5,color=(0, 0, 255),thickness=1)
+        cv2.putText(img=image,text=str(highestpercentage[1]),org=(x + w - 55, y - 20),fontFace=cv2.FONT_HERSHEY_DUPLEX,fontScale=0.5,color=(0, 0, 255),thickness=1)
+    else:
+        cv2.rectangle(image, (x, y), (x + w, y + h),
+                      (0, 255, 0), 2)
+        cv2.putText(img=image,text=str(highestpercentage[1]),org=(x + w - 55, y - 20),fontFace=cv2.FONT_HERSHEY_DUPLEX,fontScale=0.5,color=(0, 255, 0),thickness=1)
+    return image
 
 
 def match(eucdis, thresh):
@@ -141,40 +225,59 @@ def match(eucdis, thresh):
     for i in eucdis:
         if i < thresh:
             numberofmatches += 1
-    if numberofmatches == len(eucdis):
-        return True
-    return False
+    matchpercentage = numberofmatches/len(eucdis)
+    return matchpercentage
 
 
 def __main__():
+
     """Database Processing"""
+    eigenvectorsperplayer = {}
+    averagefaceperplayer = {}
+    thresholdperplayer = {}
+    weightsperplayer = {}
 
-    # Convert the library of images into vectors and put them in a matrix
-    librarymatrix = imagelibrarytomatrix(directory)
+    for i in os.listdir(directory):
+        averagefaceperplayer[i] = {}
+        eigenvectorsperplayer[i] = {}
+        weightsperplayer[i] = {}
+        thresholdperplayer[i] = {}
 
-    # Calculate the average of the vectors in that matrix
-    averageface = meanofvectors(librarymatrix)
+        for j in os.listdir(directory + str(r"\p") + str(i[1:])):
+            new_directory = directory + str(r"\p") + str(i[1:]) + str(r"\l") + str(j[1:])
 
-    # Calculate the deviation of the average for every image and put it into a matrix
-    deviation_matrix = deviationmatrix(librarymatrix, averageface)
+            # Convert the library of images into vectors and put them in a matrix
+            librarymatrix = imagelibrarytomatrix(new_directory)
 
-    # Calculate the Eigenvectors of the Covariancematrix
-    eigenvalues, eigenvectors = eigcov(deviation_matrix)  # P is already normalized and is of form [U1 U2 U3 ...]
-    # (so the vectors stored are the ROWS not the columns
+            # Calculate the average of the vectors in that matrix
+            averagefaceperplayer[i][j] = meanofvectors(librarymatrix)
 
-    # Calculate the weight of each eigenvector
-    eigenvectorweights = weight(eigenvectors, deviation_matrix)
+            # Calculate the deviation of the average for every image and put it into a matrix
+            deviation_matrix = deviationmatrix(librarymatrix, averagefaceperplayer[i][j])
 
-    # Use the weights to reconstruct the images,
-    # if done correct you should have the exact same images that you started with
-    # eigenfaces = eigenfacereconstruction(eigenvectorweights, eigenvectors, averageface)
+            # Calculate the Eigenvectors of the Covariancematrix
+            eigenvalues, eigenvectors = eigcov(deviation_matrix)  # P is already normalized and is of form [U1 U2 U3 ...]
+            # (so the vectors stored are the ROWS not the columns
 
-    # OPTIONAL shows the first eigenface
-    # image = arraytoimage(eigenfaces[0])
-    # cv2.imshow("Eigenface1", image)
-    # cv2.waitKey(10000)
+            neweigenvectors = eigenvectorselection(eigenvalues, eigenvectors)
 
-    threshold = threshold_for_euclidiandistance(eigenvectorweights)
+            # Store the eigenvectors of this player
+            eigenvectorsperplayer[i][j] = neweigenvectors
+
+            # Calculate the weight of each eigenvector
+            weightsperplayer[i][j] = weight(neweigenvectors, deviation_matrix)
+
+            # Use the weights to reconstruct the images,
+            # if done correct you should have the exact same images that you started with
+            # eigenfaces = eigenfacereconstruction(eigenvectorweights, eigenvectors, averageface)
+
+            # OPTIONAL shows the first eigenface
+            # image = arraytoimage(eigenfaces[0])
+            # cv2.imshow("Eigenface1", image)
+            # cv2.waitKey(10000)
+
+            # Define the threshold for face detection
+            thresholdperplayer[i][j] = threshold_for_euclidiandistance(weightsperplayer[i][j])
 
     """Face Recognition based on Images from the Camera"""
 
@@ -189,35 +292,26 @@ def __main__():
         # Now try to recognize every face in the frame
         for (x, y, w, h) in faces:
             # Cut out the face from the image:
-            facecoords = imagesizeconverter(x, y, w, h)
-            normalisedimage = normalise_lightlevel(
-                grayscale_picture[facecoords[1]:facecoords[3], facecoords[0]:facecoords[2]])
-
-            detectedface = imagetoarray(normalisedimage)
-
-            # Calculate the deviation for the detected face:
-            deviation_detectedface = deviationmatrix([detectedface], averageface)
-
-            # Calculate the weights of the detected face
-            weightvector_detectedface = weight(eigenvectors, deviation_detectedface)
-            assert isinstance(weightvector_detectedface, np.ndarray)
-
-            # Calculate Euclidian distance
-            euclidian_distance = euclidiandistance(eigenvectorweights.transpose(),
-                                                   weightvector_detectedface.transpose())
-
-            # Calculate if every Euclidian distance is below the threshold -> if so, face is a match!
-            if match(euclidian_distance, threshold):
-                cv2.rectangle(image, (x, y), (x + w, y + h),
-                              (0, 0, 255), 2)
-            else:
-                cv2.rectangle(image, (x, y), (x + w, y + h),
-                              (255, 0, 0), 2)
+            reshapedface = imagesizeconverter(x, y, w, h, grayscale_picture)
+            reshapedface = normalise_lightlevel(reshapedface)
+            detectedface = imagetoarray(reshapedface)
+            direction, image = lookingdirection(image)
+            cv2.putText(
+                img=image,
+                text=str("looking" + str(direction)),
+                org=(x + 10, y - 20),
+                fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                fontScale=0.5,
+                color=(0, 255, 0),
+                thickness=1)
+            if direction is not None:
+                image = facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperplayer, eigenvectorsperplayer, weightsperplayer, thresholdperplayer, direction)
         cv2.imshow("Face", image)
         cv2.waitKey(1);
 
 
 def __alt__():
+
     librarymatrix = [[1, -2, 1, -3],
                      [1, 3, -1, 2],
                      [2, 1, -2, 3],
@@ -225,10 +319,13 @@ def __alt__():
     average = meanofvectors(librarymatrix)
     deviation_matrix = deviationmatrix(librarymatrix, average)
     D, P = eigcov(deviation_matrix)
-    weights = weight(P, deviation_matrix)
+    P = eigenvectorselection(D, P)
     eigenfaces = eigenfacereconstruction(weights, P, average)
     print(eigenfaces)
 
 
 __main__()
 # __alt__()
+
+
+
