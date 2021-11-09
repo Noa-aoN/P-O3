@@ -6,6 +6,7 @@ from Player import Player
 
 '''
 Bugs: 
+- if a person except player 1 goes bankrupt the name and balance still show when first player picks his bet.
 
 To DO:
 - Adding double down feature.
