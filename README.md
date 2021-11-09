@@ -1,8 +1,6 @@
 # Interactive Card Game Robot
 
 ## Deadlines
-- 29/10 22u00: Tussentijds verslag
-- 01/11 22u00: Tussentijdse peer assessment
 - 12/11 22u00: Herwerkt tussentijds verslag
 - 01/12 22u00: Infobrochure indienen demodag
 - 17/12 18u00: Eindverslag indienen!
@@ -30,6 +28,7 @@ OF
 - Computer deals the cards
 - App
 - Nice player mat (like in poker)
+- SOUNDS !
 - Register people at the spot
 - AI (pytorch) compare to traditional computer vision
 
