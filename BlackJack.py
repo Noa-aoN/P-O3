@@ -1,6 +1,6 @@
 from sys import exit
 import random
-from Button import Button, turn_white
+from Button import Button, turn_white, button_pressed
 from Deck import *
 from PlayerBJ import Player
 
@@ -195,10 +195,8 @@ def blackjack(screen, clock):
             screen.blit(pygame.transform.rotozoom(H1.load_image(), -10, 1), (590, 250))
 
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos()
-                    if start_button.collides(pos):
-                        game_active = True
+                if button_pressed(start_button, event):
+                    game_active = True
                 turn_white(start_button, event)
 
         clock.tick(60)

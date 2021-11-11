@@ -1,5 +1,5 @@
 import pygame
-from Button import Button, turn_white
+from Button import Button, turn_white, button_pressed
 
 
 class Player:
@@ -120,18 +120,16 @@ class Player:
             button_5.draw(window)
 
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                if button_1.collides(pos) and self.balance >= 1000:
-                    self.bet = 1000
-                elif button_2.collides(pos) and self.balance >= 2000:
-                    self.bet = 2000
-                elif button_3.collides(pos) and self.balance >= 3000:
-                    self.bet = 3000
-                elif button_4.collides(pos) and self.balance >= 4000:
-                    self.bet = 4000
-                elif button_5.collides(pos) and self.balance >= 5000:
-                    self.bet = 5000
+            if button_pressed(button_1, event) and self.balance >= 1000:
+                self.bet = 1000
+            elif button_pressed(button_2, event) and self.balance >= 2000:
+                self.bet = 2000
+            elif button_pressed(button_3, event) and self.balance >= 3000:
+                self.bet = 3000
+            elif button_pressed(button_4, event) and self.balance >= 4000:
+                self.bet = 4000
+            elif button_pressed(button_5, event) and self.balance >= 5000:
+                self.bet = 5000
             turn_white(button_1, event)
             turn_white(button_2, event)
             turn_white(button_3, event)

@@ -1,5 +1,5 @@
 import pygame
-from Button import Button, turn_white
+from Button import Button, turn_white, button_pressed
 from BlackJack import blackjack
 from HigherLower import higherlower
 
@@ -24,23 +24,19 @@ def main_menu():
         bj_button.draw(screen)
         hl_button.draw(screen)
 
-        buttons = [bj_button, hl_button]
+        #buttons = [bj_button, hl_button]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                for button in buttons:
-                    if button.collides(pos):
-                        turn_white(button, event)
-                        game = button.text
-                        if game == "Blackjack":
-                            blackjack(screen, clock)
-                        elif game == "Higher Lower":
-                            higherlower(screen, clock)
+            elif button_pressed(bj_button, event):
+                blackjack(screen, clock)
+            elif button_pressed(hl_button, event):
+                higherlower(screen, clock)
+            turn_white(bj_button, event)
+            turn_white(hl_button, event)
 
         clock.tick(60)
 
