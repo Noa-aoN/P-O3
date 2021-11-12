@@ -4,6 +4,7 @@ from Button import Button, turn_white
 from Deck import *
 from Player import Player
 import time
+
 pygame.init()
 screen = pygame.display.set_mode((1200, 600))
 Clock = pygame.time.Clock()
@@ -46,22 +47,23 @@ while True:
 
     if game_active:
         if not verloren:
-           screen.fill((31, 171, 57))
-           player1.show_name(screen)
-           player1.display_score(screen)
-           if deal_card:
+            screen.fill((31, 171, 57))
+            player1.show_name(screen)
+            player1.display_score(screen)
+            if deal_card:
                 while len(player1.cards) < 1:
                     random_card = random.choice(player_deck)
                     player_deck.remove(random_card)
                     player1.add_card(random_card)
                     aantal_kaarten = 1
-           player1.show_cards(screen)
-           pick_higher_lower_surf = test_font.render(players[0].name + ', is the next card going to be higher or lower?',
-                                                     False, (0, 0, 0))
-           screen.blit(pick_higher_lower_surf, pick_higher_lower_surf.get_rect(midbottom=(600, 200)))
-           high_button.draw(screen)
-           low_button.draw(screen)
-           for event in pygame.event.get():
+            player1.show_cards(screen)
+            pick_higher_lower_surf = test_font.render(
+                players[0].name + ', is the next card going to be higher or lower?',
+                False, (0, 0, 0))
+            screen.blit(pick_higher_lower_surf, pick_higher_lower_surf.get_rect(midbottom=(600, 200)))
+            high_button.draw(screen)
+            low_button.draw(screen)
+            for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     if high_button.collides(pos):
@@ -69,7 +71,7 @@ while True:
                         player_deck.remove(random_card)
                         players[0].add_card(random_card)
                         players[0].show_cards(screen)
-                        vorige_kaart = player1.cards[aantal_kaarten-1]
+                        vorige_kaart = player1.cards[aantal_kaarten - 1]
                         huidige_kaart = player1.cards[aantal_kaarten]
                         if vorige_kaart.value <= huidige_kaart.value:
                             aantal_kaarten += 1
@@ -87,7 +89,7 @@ while True:
                         player_deck.remove(random_card)
                         players[0].add_card(random_card)
                         players[0].show_cards(screen)
-                        vorige_kaart = player1.cards[aantal_kaarten-1]
+                        vorige_kaart = player1.cards[aantal_kaarten - 1]
                         huidige_kaart = player1.cards[aantal_kaarten]
                         if vorige_kaart.value >= huidige_kaart.value:
                             aantal_kaarten += 1
@@ -105,7 +107,7 @@ while True:
         else:
             if not al_stil:
                 time.sleep(3)
-                al_stil=True
+                al_stil = True
             screen.fill((31, 171, 57))
             # screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
             again_button.draw(screen)
