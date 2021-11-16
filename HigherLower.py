@@ -24,16 +24,11 @@ def higherlower(screen, clock):
     again_button = Button((0, 0, 0), (480, 480), (240, 65), 'Play again?')
     high_button = Button((0, 0, 0), (380, 250), (150, 60), 'Higher')
     low_button = Button((0, 0, 0), (680, 250), (150, 60), 'Lower')
+    exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
     deal_card = True
     verloren = False
     while True:
         pygame.display.update()
-        '''
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-        '''
 
         if game_active:
             if not verloren:
@@ -89,6 +84,8 @@ def higherlower(screen, clock):
                             player1.show_cards(screen)
                             screen.blit(pygame.transform.rotozoom(player1.cards[aantal_kaarten].load_image(), 0, 2),
                                         (520, 200))
+                    elif button_pressed(exit_button, event):
+                        return 'Done'
             else:
                 if not al_stil:
                     time.sleep(3)
@@ -101,6 +98,10 @@ def higherlower(screen, clock):
                         player1.cards = []
                         player_deck = deck
                         verloren = False
+                    if button_pressed(exit_button, event):
+                        return 'Done'
+
+            exit_button.draw(screen)
 
         else:
             screen.blit(Higherlower_surf, Higherlower_surf.get_rect(midbottom=(600, 150)))
