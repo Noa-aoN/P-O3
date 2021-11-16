@@ -1,6 +1,6 @@
 from sys import exit
 import random
-from Button import Button, button_pressed
+from Button import Button, button_pressed, exit_pygame
 from Deck import *
 from Player import Player
 
@@ -49,11 +49,14 @@ def blackjack(screen, clock):
     playing_bj = True
 
     while playing_bj:
+
         pygame.display.update()
+        '''
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+        '''
 
         if game_active:
             if len(players) == 0:
@@ -188,6 +191,7 @@ def blackjack(screen, clock):
             screen.blit(pygame.transform.rotozoom(H1.load_image(), -10, 1), (590, 250))
 
             for event in pygame.event.get():
+                exit_pygame(event)
                 if button_pressed(start_button, event):
                     game_active = True
 

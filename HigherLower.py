@@ -1,6 +1,6 @@
 from sys import exit
 import random
-from Button import Button, turn_white
+from Button import Button, button_pressed, exit_pygame
 from Deck import *
 from Player import Player
 import time
@@ -16,32 +16,24 @@ def higherlower(screen, clock):
     screen.fill((31, 171, 57))
     player_deck = deck
     players = []
-    # player0 = Player('Dealer', 0, 0)
     player1 = Player('Matthias', 10000, 1)
     players.append(player1)
-    # player2 = Player('Karel', 10000, 2)
-    # players.append(player2)
-    # player3 = Player('Yannic', 10000, 3)
-    # players.append(player3)
-    # player4 = Player('Jasper', 10000, 4)
-    # players.append(player4)
     game_active = False
 
     start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
     again_button = Button((0, 0, 0), (480, 480), (240, 65), 'Play again?')
     high_button = Button((0, 0, 0), (380, 250), (150, 60), 'Higher')
     low_button = Button((0, 0, 0), (680, 250), (150, 60), 'Lower')
-    # deal_2_cards = True
-    # dealer_cards = False
     deal_card = True
-    i = 0
     verloren = False
     while True:
         pygame.display.update()
+        '''
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+        '''
 
         if game_active:
             if not verloren:
@@ -62,76 +54,62 @@ def higherlower(screen, clock):
                 high_button.draw(screen)
                 low_button.draw(screen)
                 for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        pos = pygame.mouse.get_pos()
-                        if high_button.collides(pos):
-                            random_card = random.choice(player_deck)
-                            player_deck.remove(random_card)
-                            players[0].add_card(random_card)
-                            players[0].show_cards(screen)
-                            vorige_kaart = player1.cards[aantal_kaarten - 1]
-                            huidige_kaart = player1.cards[aantal_kaarten]
-                            if vorige_kaart.value <= huidige_kaart.value:
-                                aantal_kaarten += 1
-                            else:
-                                al_stil = False
-                                screen.fill((31, 171, 57))
-                                screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
-                                verloren = True
-                                player1.show_cards(screen)
-                                screen.blit(pygame.transform.rotozoom(player1.cards[aantal_kaarten].load_image(), 0, 2),
-                                            (520, 200))
-                                # time.sleep(3)
-                        if low_button.collides(pos):
-                            random_card = random.choice(player_deck)
-                            player_deck.remove(random_card)
-                            players[0].add_card(random_card)
-                            players[0].show_cards(screen)
-                            vorige_kaart = player1.cards[aantal_kaarten - 1]
-                            huidige_kaart = player1.cards[aantal_kaarten]
-                            if vorige_kaart.value >= huidige_kaart.value:
-                                aantal_kaarten += 1
-                            else:
-                                al_stil = False
-                                screen.fill((31, 171, 57))
-                                screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
-                                verloren = True
-                                player1.show_cards(screen)
-                                screen.blit(pygame.transform.rotozoom(player1.cards[aantal_kaarten].load_image(), 0, 2),
-                                            (520, 200))
-                                # time.sleep(3)
-                    turn_white(high_button, event)
-                    turn_white(low_button, event)
+                    if button_pressed(high_button, event):
+                        random_card = random.choice(player_deck)
+                        player_deck.remove(random_card)
+                        players[0].add_card(random_card)
+                        players[0].show_cards(screen)
+                        vorige_kaart = player1.cards[aantal_kaarten - 1]
+                        huidige_kaart = player1.cards[aantal_kaarten]
+                        if vorige_kaart.value <= huidige_kaart.value:
+                            aantal_kaarten += 1
+                        else:
+                            al_stil = False
+                            screen.fill((31, 171, 57))
+                            screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
+                            verloren = True
+                            player1.show_cards(screen)
+                            screen.blit(pygame.transform.rotozoom(player1.cards[aantal_kaarten].load_image(), 0, 2),
+                                        (520, 200))
+
+                    elif button_pressed(low_button, event):
+                        random_card = random.choice(player_deck)
+                        player_deck.remove(random_card)
+                        players[0].add_card(random_card)
+                        players[0].show_cards(screen)
+                        vorige_kaart = player1.cards[aantal_kaarten - 1]
+                        huidige_kaart = player1.cards[aantal_kaarten]
+                        if vorige_kaart.value >= huidige_kaart.value:
+                            aantal_kaarten += 1
+                        else:
+                            al_stil = False
+                            screen.fill((31, 171, 57))
+                            screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
+                            verloren = True
+                            player1.show_cards(screen)
+                            screen.blit(pygame.transform.rotozoom(player1.cards[aantal_kaarten].load_image(), 0, 2),
+                                        (520, 200))
             else:
                 if not al_stil:
                     time.sleep(3)
                     al_stil = True
                 screen.fill((31, 171, 57))
-                # screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
                 again_button.draw(screen)
-                # screen.blit(pygame.transform.rotozoom(S1.load_image(), 10, 1), (510, 250))
-                # screen.blit(pygame.transform.rotozoom(H1.load_image(), -10, 1), (590, 250))
 
                 for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        pos = pygame.mouse.get_pos()
-                        if again_button.collides(pos):
-                            player1.cards = []
-                            player_deck = deck
-                            verloren = False
-                    turn_white(again_button, event)
+                    if button_pressed(again_button, event):
+                        player1.cards = []
+                        player_deck = deck
+                        verloren = False
+
         else:
             screen.blit(Higherlower_surf, Higherlower_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
-            # screen.blit(pygame.transform.rotozoom(S1.load_image(), 10, 1), (510, 250))
-            # screen.blit(pygame.transform.rotozoom(H1.load_image(), -10, 1), (590, 250))
 
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos()
-                    if start_button.collides(pos):
-                        game_active = True
-                turn_white(start_button, event)
+                exit_pygame(event)
+                if button_pressed(start_button, event):
+                    game_active = True
 
         clock.tick(60)
 

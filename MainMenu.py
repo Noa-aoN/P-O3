@@ -1,5 +1,5 @@
 import pygame
-from Button import Button, turn_white, button_pressed
+from Button import Button, turn_white, button_pressed, exit_pygame
 from BlackJack import blackjack
 from HigherLower import higherlower
 
@@ -24,21 +24,15 @@ def main_menu():
         bj_button.draw(screen)
         hl_button.draw(screen)
 
-        #buttons = [bj_button, hl_button]
-
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-
-            elif button_pressed(bj_button, event):
+            exit_pygame(event)
+            if button_pressed(bj_button, event):
                 blackjack(screen, clock)
             elif button_pressed(hl_button, event):
                 higherlower(screen, clock)
-            turn_white(bj_button, event)
-            turn_white(hl_button, event)
 
         clock.tick(60)
+
 
 if __name__ == '__main__':
     main_menu()

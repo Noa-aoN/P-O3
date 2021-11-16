@@ -1,4 +1,11 @@
 import pygame
+from sys import exit
+
+
+def exit_pygame(event):
+    if event.type == pygame.QUIT:
+        pygame.quit()
+        exit()
 
 
 def turn_white(button, event):
@@ -12,6 +19,7 @@ def turn_white(button, event):
 
 def button_pressed(button, event):
     turn_white(button, event)
+    exit_pygame(event)
     if event.type == pygame.MOUSEBUTTONDOWN:
         pos = pygame.mouse.get_pos()
         if button.collides(pos):
