@@ -24,8 +24,6 @@ def blackjack(screen, clock):
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
-    screen.fill((31, 171, 57))
-
     Deck = deck.copy()
 
     player0 = Player('Dealer', 0, 0)
@@ -37,6 +35,7 @@ def blackjack(screen, clock):
     yes_button = Button((0, 0, 0), (400, 250), (110, 60), 'Hit')
     no_button = Button((0, 0, 0), (700, 250), (110, 60), 'Stand')
     again_button = Button((0, 0, 0), (530, 260), (200, 65), 'Play again!')
+    exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
     place_bets = True
     deal_2_cards = False
     dealer_cards = False
@@ -51,14 +50,9 @@ def blackjack(screen, clock):
     while playing_bj:
 
         pygame.display.update()
-        '''
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-        '''
 
         if game_active:
+
             if len(players) == 0:
                 game_active = False
             screen.fill((31, 171, 57))
@@ -70,7 +64,9 @@ def blackjack(screen, clock):
                     else:
                         if players[j].wants_bet:
                             pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 300), 0, -1)
-                            players[j].place_bet(screen)
+                            status = players[j].place_bet(screen, exit_button)
+                            if status == 'exit':
+                                return 'Done'
                         if players[j].bet != 0:
                             players[j].wants_bet = False
                         if not players[j].wants_bet:
@@ -130,6 +126,8 @@ def blackjack(screen, clock):
                                     players[i].display_score_bj(screen)
                                 elif button_pressed(no_button, event):
                                     players[i].wants_card = False
+                                elif button_pressed(exit_button, event):
+                                    return 'Done'
                         if i >= len(players):
                             pass
                         else:
@@ -182,6 +180,10 @@ def blackjack(screen, clock):
                             player.wants_card = False
                         player0.cards = None
                         Deck = deck.copy()
+                    elif button_pressed(exit_button, event):
+                        return 'Done'
+
+            exit_button.draw(screen)
 
         else:
             screen.fill((31, 171, 57))

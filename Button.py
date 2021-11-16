@@ -17,6 +17,16 @@ def turn_white(button, event):
             button.color = (0, 0, 0)
 
 
+def exit_button_pressed(window):
+    exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
+    exit_button.draw(window)
+    pos = pygame.mouse.get_pos()
+    if exit_button.collides(pos):
+        for event in pygame.event.get():
+            if button_pressed(exit_button, event):
+                return 'done'
+
+
 def button_pressed(button, event):
     turn_white(button, event)
     exit_pygame(event)
@@ -28,21 +38,27 @@ def button_pressed(button, event):
 
 
 class Button:
-    def __init__(self, color, position, size, text=''):
+    def __init__(self, color, position, size, text='', font=None):
         self.color = color
         self.pos_x = position[0]
         self.pos_y = position[1]
         self.width = size[0]
         self.height = size[1]
         self.text = text
+        self.font = font
 
     def set_color(self, color):
         self.color = color
 
     def draw(self, window):
-        pygame.draw.rect(window, self.color, (self.pos_x - 2, self.pos_y - 2, self.width + 4, self.height + 4), 5)
-        if self.text != '':
+        if self.font is None:
             font = pygame.font.SysFont('comicsans', 40)
+            edge = 5
+        else:
+            font = pygame.font.SysFont('comicsans', 15)
+            edge = 2
+        pygame.draw.rect(window, self.color, (self.pos_x - 2, self.pos_y - 2, self.width + 4, self.height + 4), edge)
+        if self.text != '':
             text = font.render(self.text, False, (0, 0, 0))
             window.blit(text, (
                 self.pos_x + (self.width / 2 - text.get_width() / 2),

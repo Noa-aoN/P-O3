@@ -121,7 +121,7 @@ class Player:
         self.balance += self.bet * self.results(dealer_score, game)[1]
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
 
-    def place_bet(self, window):
+    def place_bet(self, window, exit_button):
         self.bet = 0
         question_surf = self.font_big.render(str(self.name) + ', how much do you want to bet?', False, (10, 10, 10))
         window.blit(question_surf, question_surf.get_rect(midbottom=(600, 250)))
@@ -152,3 +152,5 @@ class Player:
                 self.bet = 4000
             elif button_pressed(button_5, event) and self.balance >= 5000:
                 self.bet = 5000
+            elif button_pressed(exit_button, event):
+                return 'exit'
