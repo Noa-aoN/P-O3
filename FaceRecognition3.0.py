@@ -214,7 +214,7 @@ def facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperpl
     cv2.rectangle(image, (x, y), (x + w, y + h),
                   (0, 255, 0), 2)
 
-    # Storing all data from the recognition proces for later judgement
+    # Combine all calculated data for this face into one dictionary for each player
     for i in matchpercentages:
         a = 1
         if matchpercentages[i] > 0.8:
@@ -241,6 +241,81 @@ def minimumeuclidiandistance(dataperplayer):
             if minimum is None or dataperplayer[i][j][0] < minimum[2]:
                 minimum = [i, j, dataperplayer[i][j][0], dataperplayer[i][j][1]]
     return minimum
+
+
+def facialrecognition():
+    # First take a picture with the camera (we are going to be processing every frame it films)
+    image = readcam()
+    grayscale_picture = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Detect the position of all faces
+    faces = facedetection(grayscale_picture)
+
+    # Set up the dataperplayer dictionary and already integrate a section for each registered player
+    listofdetectedplayers = os.listdir(directory)
+    dataperplayer = {}
+    for i in listofdetectedplayers:
+        dataperplayer[i] = {}
+
+    # Now try to recognize every face in the frame
+    for (x, y, w, h) in faces:
+        # Cut out the face from the image:
+        reshapedface = imagesizeconverter(x, y, w, h, grayscale_picture)
+        reshapedface = normalise_lightlevel(reshapedface)
+        detectedface = imagetoarray(reshapedface)
+        direction, image = lookingdirection(image)
+        # Print the lookingdirection on the screen
+        cv2.putText(
+            img=image,
+            text=str("looking" + str(direction)),
+            org=(x + 10, y - 20),
+            fontFace=cv2.FONT_HERSHEY_DUPLEX,
+            fontScale=0.5,
+            color=(0, 255, 0),
+            thickness=1)
+        if direction is not None:
+            # Perform the recognitionprogram on the face, returning a processed image and all data on the relations
+            # between the playerlibraries and the face
+            image, dataperplayerforface = facerecognition(image, x, y, w, h, directory, detectedface,
+                                                          averagefaceperplayer, eigenvectorsperplayer, weightsperplayer,
+                                                          thresholdperplayer, direction)
+
+            # Add the data for this face to the total pile of data
+            for i in dataperplayerforface:
+                dataperplayer[i][(x, y, w, h)] = dataperplayerforface[i]
+
+    while len(dataperplayer) > 0:
+        # Calculate which face has the closest ressemblance to a player, and identify that one first
+        result = minimumeuclidiandistance(dataperplayer)
+
+        # If no faces were detected
+        if result is None:
+            dataperplayer = {}
+
+        # Else at least one face was detected and has a matchpercentage of over 80 percent with one of the libraries
+        else:
+            player = result[0]
+            coords = result[1]
+            matchpercentage = result[3]
+
+            # Remove all appearances of those coords and player from the list, since these were matched together
+            dataperplayer.pop(player)
+            for i in dataperplayer:
+                if len(dataperplayer[i]) != 0:
+                    dataperplayer[i].pop(coords)
+
+            # Replace the "No Match" rectangle with the recognition rectangle
+            (x, y, w, h) = coords
+            cv2.rectangle(image, (x, y), (x + w, y + h),
+                          (0, 0, 255), 2)
+            cv2.putText(img=image, text=str(player), org=(x + w - 55, y + h + 20),
+                        fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
+            cv2.putText(img=image, text=str(matchpercentage), org=(x + w - 55, y - 20),
+                        fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
+
+    # Show the resulting processed image, indicating whether each face is recognized and who it would respond to
+    cv2.imshow("Face", image)
+    cv2.waitKey(1)
 
 
 def __main__():
@@ -296,67 +371,7 @@ def __main__():
     """Face Recognition based on Images from the Camera"""
 
     while True:
-        # First take a picture with the camera (we are going to be processing every frame it films)
-        image = readcam()
-        grayscale_picture = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-        # Detect the position of all faces
-        faces = facedetection(grayscale_picture)
-
-        # Now try to recognize every face in the frame
-        listofdetectedplayers = os.listdir(directory)
-        dataperplayer = {}
-        for i in listofdetectedplayers:
-            dataperplayer[i] = {}
-        for (x, y, w, h) in faces:
-            # Cut out the face from the image:
-            reshapedface = imagesizeconverter(x, y, w, h, grayscale_picture)
-            reshapedface = normalise_lightlevel(reshapedface)
-            detectedface = imagetoarray(reshapedface)
-            direction, image = lookingdirection(image)
-            cv2.putText(
-                img=image,
-                text=str("looking" + str(direction)),
-                org=(x + 10, y - 20),
-                fontFace=cv2.FONT_HERSHEY_DUPLEX,
-                fontScale=0.5,
-                color=(0, 255, 0),
-                thickness=1)
-            if direction is not None:
-                image, dataperplayerforface = facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperplayer, eigenvectorsperplayer, weightsperplayer, thresholdperplayer, direction)
-                # Voeg data van dit gezicht toe aan de totale data
-                for i in dataperplayerforface:
-                    dataperplayer[i][(x,y,w,h)] = dataperplayerforface[i]
-
-        while len(dataperplayer) > 0:
-            # Bereken welke speler het zekerst bepaald is
-            # (dus voor welke speler is de weightedeucliddist het laagste en welk gezicht behaalt dit?)
-            result = minimumeuclidiandistance(dataperplayer)
-            if result is None:
-                dataperplayer = {}
-            else:
-                player = result[0]
-                coords = result[1]
-                matchpercentage = result[3]
-
-                # Remove all appearances of those coords and player from the list, since these were matched together
-                dataperplayer.pop(player)
-                for i in dataperplayer:
-                    if len(dataperplayer[i])!=0:
-                        dataperplayer[i].pop(coords)
-
-                # Replace the "No Match" rectangle with the recognition rectangle
-                (x,y,w,h) = coords
-                cv2.rectangle(image, (x, y), (x + w, y + h),
-                              (0, 0, 255), 2)
-                cv2.putText(img=image, text=str(player), org=(x + w - 55, y + h + 20),
-                            fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
-                cv2.putText(img=image, text=str(matchpercentage), org=(x + w - 55, y - 20),
-                            fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
-
-
-        cv2.imshow("Face", image)
-        cv2.waitKey(1);
+        facialrecognition()
 
 
 def __alt__():
