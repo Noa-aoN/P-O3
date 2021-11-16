@@ -97,8 +97,9 @@ def weight(normalisedeigenvectors, deviation_matrix):
 
 
 def normalise_lightlevel(imagematrix):
-    minvalue = np.amin(imagematrix)
-    normalisedimage = imagematrix - minvalue
+    median = np.median(imagematrix)
+    differencefromnormal = 125 - median
+    normalisedimage = imagematrix + differencefromnormal
     return normalisedimage
 
 

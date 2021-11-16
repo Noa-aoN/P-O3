@@ -7,8 +7,6 @@ from PIL import Image
 directory = r'C:\Users\bram\testfolder'
 faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 width = 30
 height = 40
 playernumber = 2
@@ -44,8 +42,9 @@ def imagesizeconverter(x, y, w, h, gray):
 
 
 def normalise_lightlevel(imagematrix):
-    minvalue = np.amin(imagematrix)
-    normalisedimage = imagematrix - minvalue
+    median = np.median(imagematrix)
+    differencefromnormal = 125 - median
+    normalisedimage = imagematrix + differencefromnormal
     return normalisedimage
 
 
