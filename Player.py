@@ -43,7 +43,7 @@ class Player:
                 window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
                 i += 1
 
-    def value_count(self):
+    def value_count_bj(self):
         value_list = []
         for card in self.cards:
             if card.value == 0:
@@ -64,24 +64,46 @@ class Player:
             self.wants_card = False
             return 0
 
-    def display_score(self, window):
+    def value_count_hl(self):
+        return len(self.cards)
+
+    def display_score_bj(self, window):
         if not self.name == 'Dealer':
-            if self.value_count() == 0:
+            if self.value_count_bj() == 0:
                 score_surf = self.font.render('bust', False, (10, 10, 10))
                 window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
             else:
-                score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+                score_surf = self.font.render(str(self.value_count_bj()), False, (10, 10, 10))
                 window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
         else:
-            if self.value_count() == 0:
+            if self.value_count_bj() == 0:
                 score_surf = self.font.render('Bust', False, (10, 10, 10))
                 window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
             else:
-                score_surf = self.font.render(str(self.value_count()), False, (10, 10, 10))
+                score_surf = self.font.render(str(self.value_count_bj()), False, (10, 10, 10))
                 window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
 
-    def results(self, dealer_score):
-        self_value = self.value_count()
+    def display_score_hl(self, window):
+        if not self.name == 'Dealer':
+            if self.value_count_hl() == 0:
+                score_surf = self.font.render('bust', False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
+            else:
+                score_surf = self.font.render(str(self.value_count_hl()), False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
+        else:
+            if self.value_count_hl() == 0:
+                score_surf = self.font.render('Bust', False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
+            else:
+                score_surf = self.font.render(str(self.value_count_hl()), False, (10, 10, 10))
+                window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
+
+    def results(self, dealer_score, game):
+        if game == 'bj':
+            self_value = self.value_count_bj()
+        else:
+            self_value = self.value_count_hl()
         if self_value == 0:
             return 'bust: dealer wins', -1
         if dealer_score == self_value:
@@ -91,12 +113,12 @@ class Player:
         if dealer_score < self_value:
             return str(self_value) + ': you win', 1
 
-    def display_results(self, window, dealer_score):
-        score_surf = self.font.render(self.results(dealer_score)[0], False, (10, 10, 10))
+    def display_results(self, window, dealer_score, game):
+        score_surf = self.font.render(self.results(dealer_score, game)[0], False, (10, 10, 10))
         window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
 
-    def adjust_balance(self, dealer_score):
-        self.balance += self.bet * self.results(dealer_score)[1]
+    def adjust_balance(self, dealer_score, game):
+        self.balance += self.bet * self.results(dealer_score, game)[1]
         self.surf_balance = self.font_small.render('Balance:' + str(self.balance), False, (10, 10, 10))
 
     def place_bet(self, window):

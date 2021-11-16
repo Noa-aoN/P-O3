@@ -1,8 +1,8 @@
 from sys import exit
 import random
-from Button import Button, turn_white, button_pressed
+from Button import Button, button_pressed
 from Deck import *
-from PlayerBJ import Player
+from Player import Player
 
 '''
 Bugs: 
@@ -80,11 +80,11 @@ def blackjack(screen, clock):
                 player.show_name(screen)
                 if not place_bets:
                     player.show_cards(screen)
-                    player.display_score(screen)
+                    player.display_score_bj(screen)
 
             if not place_bets:
                 player0.show_cards(screen)
-                player0.display_score(screen)
+                player0.display_score_bj(screen)
 
             if deal_2_cards:
                 for player in players:
@@ -108,9 +108,9 @@ def blackjack(screen, clock):
             if deal_cards:
                 if i < len(players):
                     if players[i].wants_card:
-                        if players[i].value_count() == 'bust':
+                        if players[i].value_count_bj() == 'bust':
                             players[i].wants_card = False
-                        if players[i].value_count() == 21:
+                        if players[i].value_count_bj() == 21:
                             i += 1
                         else:
                             another_card_surf = test_font.render(players[i].name + ', do you want another card?',
@@ -124,7 +124,7 @@ def blackjack(screen, clock):
                                     Deck.remove(random_card)
                                     players[i].add_card(random_card)
                                     players[i].show_cards(screen)
-                                    players[i].display_score(screen)
+                                    players[i].display_score_bj(screen)
                                 elif button_pressed(no_button, event):
                                     players[i].wants_card = False
                         if i >= len(players):
@@ -140,10 +140,10 @@ def blackjack(screen, clock):
                     random_card = random.choice(Deck)
                     Deck.remove(random_card)
                     player0.add_card(random_card)
-                if player0.value_count() == 0:
+                if player0.value_count_bj() == 0:
                     pass
                 else:
-                    while 0 < player0.value_count() < 17:
+                    while 0 < player0.value_count_bj() < 17:
                         random_card = random.choice(Deck)
                         Deck.remove(random_card)
                         player0.add_card(random_card)
@@ -153,16 +153,16 @@ def blackjack(screen, clock):
                 check_results = True
 
             if change_bal:
-                dealer_score = player0.value_count()
+                dealer_score = player0.value_count_bj()
                 for player in players:
-                    player.adjust_balance(dealer_score)
+                    player.adjust_balance(dealer_score, 'bj')
                 change_bal = False
 
             if check_results:
-                dealer_score = player0.value_count()
+                dealer_score = player0.value_count_bj()
                 pygame.draw.rect(screen, (31, 171, 57), (0, 360, 1200, 25), 0)
                 for player in players:
-                    player.display_results(screen, dealer_score)
+                    player.display_results(screen, dealer_score, 'bj')
 
                 again_button.draw(screen)
                 for event in pygame.event.get():

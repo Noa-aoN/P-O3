@@ -2,7 +2,7 @@ from sys import exit
 import random
 from Button import Button, turn_white
 from Deck import *
-from PlayerHL import Player
+from Player import Player
 import time
 
 
@@ -47,7 +47,7 @@ def higherlower(screen, clock):
             if not verloren:
                 screen.fill((31, 171, 57))
                 player1.show_name(screen)
-                player1.display_score(screen)
+                player1.display_score_hl(screen)
                 if deal_card:
                     while len(player1.cards) < 1:
                         random_card = random.choice(player_deck)
