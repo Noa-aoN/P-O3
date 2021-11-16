@@ -262,7 +262,7 @@ def draw_palm(img, hand_landmarks, width, height):
              (0, 255, 0), thickness=1)
 
 
-while cap.isOpened():
+while cap.isOpened(): # main loop
     ret, frame = cap.read()
 
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -294,7 +294,7 @@ while cap.isOpened():
 
             """ Gesture Recognition"""
 
-            # all recognizable gestures
+            # all recognizable gestures, more can be implemented
             pointer_up()
             thumbs_up()
             thumbs_down()
@@ -306,7 +306,7 @@ while cap.isOpened():
 
     cv2.imshow('Raw Webcam Feed', img)
 
-    if cv2.waitKey(10) & 0xFF == ord('q'):
+    if cv2.waitKey(10) & 0xFF == ord('q'): # exit main loop
         break
 
 cap.release()
