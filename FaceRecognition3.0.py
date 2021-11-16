@@ -6,7 +6,7 @@ from tqdm import tqdm
 import mediapipe as mp
 from math import sqrt
 
-faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
+faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -178,7 +178,7 @@ def eigenvectorselection(eigenvalues, eigenvectors):
 def threshold_for_euclidiandistance(weights_eigenvectors):
     rowdividedweights = weights_eigenvectors.transpose()
     maxeucdis = 0
-    a = 0.6
+    a = 0.7
     for i in rowdividedweights:
         for j in rowdividedweights:
             eucdis = np.linalg.norm(i-j)
@@ -207,15 +207,19 @@ def facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperpl
         # Calculate if every Euclidian distance is below the threshold -> if so, face is a match!
         matchpercentages[i], mineucliddistances[i] = match(euclidian_distance, thresholdperplayer[i][new_directory])
 
-    weightedeuclidianminimum = ("No Match", 100000000000, (x,y,w,h))
     dataperplayer = {}
+
+    # Already make a rectangle saying they are not recognized,
+    # if they are recognized later this will be replaced by a red one
+    cv2.rectangle(image, (x, y), (x + w, y + h),
+                  (0, 255, 0), 2)
+
+    # Storing all data from the recognition proces for later judgement
     for i in matchpercentages:
-        a = 5
-        data = (a*mineucliddistances[i]/(matchpercentages[i]+1), matchpercentages[i], mineucliddistances[i])
-        if a*mineucliddistances[i]/(matchpercentages[i]+1) < weightedeuclidianminimum[1] and matchpercentages[i] > 0.8:
-            weightedeuclidianminimum = (str(i), a*mineucliddistances[i]/(matchpercentages[i]+1), (x,y,w,h))
-        dataperplayer[i] = data
-    return image, dataperplayer, weightedeuclidianminimum
+        a = 1
+        if matchpercentages[i] > 0.8:
+            dataperplayer[i] = (a*mineucliddistances[i]/(matchpercentages[i]+1), matchpercentages[i], mineucliddistances[i])
+    return image, dataperplayer
 
 
 def match(eucdis, thresh):
@@ -228,6 +232,15 @@ def match(eucdis, thresh):
             mineucldist = i
     matchpercentage = numberofmatches/len(eucdis)
     return matchpercentage, mineucldist
+
+
+def minimumeuclidiandistance(dataperplayer):
+    minimum = None
+    for i in dataperplayer:
+        for j in dataperplayer[i]:
+            if minimum is None or dataperplayer[i][j][0] < minimum[2]:
+                minimum = [i, j, dataperplayer[i][j][0], dataperplayer[i][j][1]]
+    return minimum
 
 
 def __main__():
@@ -293,7 +306,6 @@ def __main__():
         # Now try to recognize every face in the frame
         listofdetectedplayers = os.listdir(directory)
         dataperplayer = {}
-        mineucliddist = []
         for i in listofdetectedplayers:
             dataperplayer[i] = {}
         for (x, y, w, h) in faces:
@@ -311,56 +323,38 @@ def __main__():
                 color=(0, 255, 0),
                 thickness=1)
             if direction is not None:
-                image, dataperplayerforface, euclidminface = facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperplayer, eigenvectorsperplayer, weightsperplayer, thresholdperplayer, direction)
+                image, dataperplayerforface = facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperplayer, eigenvectorsperplayer, weightsperplayer, thresholdperplayer, direction)
+                # Voeg data van dit gezicht toe aan de totale data
                 for i in dataperplayerforface:
                     dataperplayer[i][(x,y,w,h)] = dataperplayerforface[i]
-                mineucliddist.append(euclidminface)
-        # Bereken welke speler het zekerst bepaald is
-        # (dus voor welke speler is de weightedeucliddist het laagste en welk gezicht behaalt dit?)
-        absmineucliddist = ("No Match", 10000000000, None)
-        setofplayers = set(listofdetectedplayers)
-        # absolute minimale euclidische afstand
-        for i in mineucliddist:
-            if i[1] < absmineucliddist[1]:
-                absmineucliddist = i
-        # Als er een antwoord is voor absolute minimale (dus ook matchpercentage > 0.8)
-        if absmineucliddist[2] is not None:
-            # verwijder deze speleroptie en gezichtenoptie uit alle lijsten
-            setofplayers.remove(absmineucliddist[0])
-            for j in dataperplayer:
-                dataperplayer[j][absmineucliddist[2]] = (-1,dataperplayer[j][absmineucliddist[2]][1],-1)
-            (x,y,w,h) = absmineucliddist[2]
-            cv2.rectangle(image, (x, y), (x + w, y + h),
-                      (0, 0, 255), 2)
-            cv2.putText(img=image, text=str(absmineucliddist[0]), org=(x + w - 55, y + h + 20),
-                        fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
-            cv2.putText(img=image, text=str(dataperplayer[absmineucliddist[0]][(x,y,w,h)][1]), org=(x + w - 55, y - 20),
-                        fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
-        for i in setofplayers:  # Keys are the playernames
-            localmineucliddist = ("No Match", 100000000000)
-            for j in dataperplayer[i]:  # Keys are the coords of the faces
-                localmineucliddist = ("No Match", 100000000000)
-                if dataperplayer[i][j][1] > 0.8 and dataperplayer[i][j][0] != -1:
-                    if dataperplayer[i][j][0] < localmineucliddist[1]:
-                        localmineucliddist = (j, dataperplayer[i][j][0])
-            if localmineucliddist[0] != "No Match":
-                (x,y,w,h) = localmineucliddist[0]
-                for j in dataperplayer:
-                    dataperplayer[j][localmineucliddist[0]] = (-1,dataperplayer[j][localmineucliddist[0]][1],-1)
 
+        while len(dataperplayer) > 0:
+            # Bereken welke speler het zekerst bepaald is
+            # (dus voor welke speler is de weightedeucliddist het laagste en welk gezicht behaalt dit?)
+            result = minimumeuclidiandistance(dataperplayer)
+            if result is None:
+                dataperplayer = {}
+            else:
+                player = result[0]
+                coords = result[1]
+                matchpercentage = result[3]
+
+                # Remove all appearances of those coords and player from the list, since these were matched together
+                dataperplayer.pop(player)
+                for i in dataperplayer:
+                    if len(dataperplayer[i])!=0:
+                        dataperplayer[i].pop(coords)
+
+                # Replace the "No Match" rectangle with the recognition rectangle
+                (x,y,w,h) = coords
                 cv2.rectangle(image, (x, y), (x + w, y + h),
                               (0, 0, 255), 2)
-                cv2.putText(img=image, text=str(i), org=(x + w - 55, y + h + 20),
+                cv2.putText(img=image, text=str(player), org=(x + w - 55, y + h + 20),
                             fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
-                cv2.putText(img=image, text=str(dataperplayer[i][(x,y,w,h)][1]), org=(x + w - 55, y - 20),
+                cv2.putText(img=image, text=str(matchpercentage), org=(x + w - 55, y - 20),
                             fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255), thickness=1)
-        for i in dataperplayer["player1"]:
-            if dataperplayer["player1"][i][0] != -1:
-                (x,y,w,h) = i
-                cv2.rectangle(image, (x, y), (x + w, y + h),
-                                (0, 255, 0), 2)
-                cv2.putText(img=image, text=str("No Match"), org=(x + w - 55, y - 20),
-                            fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 255, 0), thickness=1)
+
+
         cv2.imshow("Face", image)
         cv2.waitKey(1);
 
