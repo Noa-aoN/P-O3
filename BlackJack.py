@@ -119,18 +119,14 @@ def blackjack(screen, clock):
                             yes_button.draw(screen)
                             no_button.draw(screen)
                             for event in pygame.event.get():
-                                if event.type == pygame.MOUSEBUTTONDOWN:
-                                    pos = pygame.mouse.get_pos()
-                                    if yes_button.collides(pos):
-                                        random_card = random.choice(Deck)
-                                        Deck.remove(random_card)
-                                        players[i].add_card(random_card)
-                                        players[i].show_cards(screen)
-                                        players[i].display_score(screen)
-                                    elif no_button.collides(pos):
-                                        players[i].wants_card = False
-                                turn_white(yes_button, event)
-                                turn_white(no_button, event)
+                                if button_pressed(yes_button, event):
+                                    random_card = random.choice(Deck)
+                                    Deck.remove(random_card)
+                                    players[i].add_card(random_card)
+                                    players[i].show_cards(screen)
+                                    players[i].display_score(screen)
+                                elif button_pressed(no_button, event):
+                                    players[i].wants_card = False
                         if i >= len(players):
                             pass
                         else:
@@ -170,22 +166,19 @@ def blackjack(screen, clock):
 
                 again_button.draw(screen)
                 for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        pos = pygame.mouse.get_pos()
-                        if again_button.collides(pos):
-                            deal_2_cards = False
-                            deal_cards = False
-                            check_results = False
-                            place_bets = True
-                            i = 0
-                            j = 0
-                            for player in players:
-                                player.cards = None
-                                player.wants_bet = True
-                                player.wants_card = False
-                            player0.cards = None
-                            Deck = deck.copy()
-                    turn_white(again_button, event)
+                    if button_pressed(again_button, event):
+                        deal_2_cards = False
+                        deal_cards = False
+                        check_results = False
+                        place_bets = True
+                        i = 0
+                        j = 0
+                        for player in players:
+                            player.cards = None
+                            player.wants_bet = True
+                            player.wants_card = False
+                        player0.cards = None
+                        Deck = deck.copy()
 
         else:
             screen.fill((31, 171, 57))
@@ -197,7 +190,6 @@ def blackjack(screen, clock):
             for event in pygame.event.get():
                 if button_pressed(start_button, event):
                     game_active = True
-                turn_white(start_button, event)
 
         clock.tick(60)
 

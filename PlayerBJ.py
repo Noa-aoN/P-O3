@@ -130,8 +130,3 @@ class Player:
                 self.bet = 4000
             elif button_pressed(button_5, event) and self.balance >= 5000:
                 self.bet = 5000
-            turn_white(button_1, event)
-            turn_white(button_2, event)
-            turn_white(button_3, event)
-            turn_white(button_4, event)
-            turn_white(button_5, event)

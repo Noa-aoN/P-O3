@@ -11,6 +11,7 @@ def turn_white(button, event):
 
 
 def button_pressed(button, event):
+    turn_white(button, event)
     if event.type == pygame.MOUSEBUTTONDOWN:
         pos = pygame.mouse.get_pos()
         if button.collides(pos):
