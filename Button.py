@@ -1,4 +1,5 @@
 import pygame
+from AudioPlay import playsound
 from sys import exit
 
 
@@ -23,6 +24,7 @@ def button_pressed(button, event):
     if event.type == pygame.MOUSEBUTTONDOWN:
         pos = pygame.mouse.get_pos()
         if button.collides(pos):
+            playsound("ButtonClick.wav")
             return True
         return False
 

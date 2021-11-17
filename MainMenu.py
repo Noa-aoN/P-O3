@@ -2,6 +2,7 @@ import pygame
 from Button import Button, turn_white, button_pressed, exit_pygame
 from BlackJack import blackjack
 from HigherLower import higherlower
+from AudioPlay import playsound
 
 
 def main_menu():
@@ -27,8 +28,10 @@ def main_menu():
         for event in pygame.event.get():
             exit_pygame(event)
             if button_pressed(bj_button, event):
+                playsound("DroppingChips.wav")
                 status_bj = blackjack(screen, clock)
             elif button_pressed(hl_button, event):
+                playsound("DroppingChips.wav")
                 status_bj = higherlower(screen, clock)
 
         clock.tick(60)

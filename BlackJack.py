@@ -3,6 +3,7 @@ import random
 from Button import Button, button_pressed, exit_pygame
 from Deck import *
 from Player import Player
+from AudioPlay import playsound
 
 '''
 Bugs: 
@@ -110,6 +111,7 @@ def blackjack(screen, clock):
                         if players[i].value_count_bj() == 'bust':
                             players[i].wants_card = False
                         if players[i].value_count_bj() == 21:
+                            playsound("Applause.wav")
                             i += 1
                         else:
                             another_card_surf = test_font.render(players[i].name + ', do you want another card?',
