@@ -7,9 +7,9 @@ import mediapipe as mp
 from math import sqrt
 
 faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cam = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+# cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+# cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 directory = r'C:\Users\bram\testfolder'
 width = 30
 height = 40
@@ -243,7 +243,8 @@ def minimumeuclidiandistance(dataperplayer):
     return minimum
 
 
-def facialrecognition():
+def facialrecognition(eigenvectorsperplayer, averagefaceperplayer, thresholdperplayer, weightsperplayer):
+
     # First take a picture with the camera (we are going to be processing every frame it films)
     image = readcam()
     grayscale_picture = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -259,11 +260,13 @@ def facialrecognition():
 
     # Now try to recognize every face in the frame
     for (x, y, w, h) in faces:
+
         # Cut out the face from the image:
         reshapedface = imagesizeconverter(x, y, w, h, grayscale_picture)
         reshapedface = normalise_lightlevel(reshapedface)
         detectedface = imagetoarray(reshapedface)
         direction, image = lookingdirection(image)
+
         # Print the lookingdirection on the screen
         cv2.putText(
             img=image,
@@ -274,6 +277,7 @@ def facialrecognition():
             color=(0, 255, 0),
             thickness=1)
         if direction is not None:
+
             # Perform the recognitionprogram on the face, returning a processed image and all data on the relations
             # between the playerlibraries and the face
             image, dataperplayerforface = facerecognition(image, x, y, w, h, directory, detectedface,
@@ -301,7 +305,7 @@ def facialrecognition():
             # Remove all appearances of those coords and player from the list, since these were matched together
             dataperplayer.pop(player)
             for i in dataperplayer:
-                if len(dataperplayer[i]) != 0:
+                if len(dataperplayer[i]) != 0 and coords in dataperplayer[i]:
                     dataperplayer[i].pop(coords)
 
             # Replace the "No Match" rectangle with the recognition rectangle
@@ -371,7 +375,7 @@ def __main__():
     """Face Recognition based on Images from the Camera"""
 
     while True:
-        facialrecognition()
+        facialrecognition(eigenvectorsperplayer, averagefaceperplayer, thresholdperplayer, weightsperplayer)
 
 
 def __alt__():

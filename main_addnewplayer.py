@@ -4,14 +4,6 @@ import os
 import mediapipe as mp
 from PIL import Image
 
-directory = r'C:\Users\bram\testfolder'
-faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-width = 30
-height = 40
-playernumber = 2
-number_of_faces_per_library = 50
-
 
 def createFolder(directory):
     try:
@@ -22,7 +14,7 @@ def createFolder(directory):
     return directory
 
 
-def imagesizeconverter(x, y, w, h, gray):
+def imagesizeconverter(x, y, w, h, gray, width, height):
     heighttowidthratio = width/height
     x += 0.2*w
     w -= 0.4*w
@@ -118,7 +110,9 @@ def libraryimprint(direction, new_directory, convertedimage, rightlookingfaces, 
     return rightlookingfaces, centeredlookingfaces, leftlookingfaces
 
 
-def singlefacelibrarymaker(new_directory, numberoffacesperlibrary):
+def singlefacelibrarymaker(new_directory, numberoffacesperlibrary, width = 30, height = 40):
+    cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    faceDetect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
     rightlookingfaces = 0
     centeredlookingfaces = 0
     leftlookingfaces = 0
@@ -128,7 +122,7 @@ def singlefacelibrarymaker(new_directory, numberoffacesperlibrary):
         faces = faceDetect.detectMultiScale(gray, 1.3, 5)  # This detects faces in a matrix
         for (x, y, w, h) in faces:
             if w >= width and h >= height:
-                convertedimage = imagesizeconverter(x, y, w, h, gray)
+                convertedimage = imagesizeconverter(x, y, w, h, gray, width, height)
                 direction, img = lookingdirection(img)
                 convertedimage = normalise_lightlevel(convertedimage)
                 rightlookingfaces, centeredlookingfaces, leftlookingfaces = libraryimprint(direction, new_directory, convertedimage,
@@ -150,7 +144,8 @@ def singlefacelibrarymaker(new_directory, numberoffacesperlibrary):
     cv2.destroyAllWindows()
 
 
-def __main__():
+def __main_addnewplayer__(playernumber, directory, number_of_faces_per_library):
+    cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     new_directory = createFolder(directory + str(r"\player") + str(playernumber))
     print("Press Enter to engage library_create for player" + str(playernumber))
     while True:
@@ -164,4 +159,24 @@ def __main__():
             break
 
 
-__main__()
+class addPlayer:
+    def __init__(self, directory, imagesperlibrary=50, playernumber=1):
+        self.directory = directory
+        self.currentplayernumber = playernumber
+        self.imagesperlibrary = imagesperlibrary
+
+    def add_newplayer(self, playernumber=None):
+        isNone = 0
+        if playernumber is None:
+            playernumber = self.currentplayernumber
+            isNone = 1
+        __main_addnewplayer__(playernumber, self.directory, self.imagesperlibrary)
+        if isNone == 1:
+            self.currentplayernumber += 1
+        return True
+
+
+# library = addPlayer(r'C:\Users\bram\testfolder', 2, 1)
+# library.add_newplayer()
+# library.add_newplayer(5)
+
