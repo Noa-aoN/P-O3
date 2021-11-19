@@ -28,7 +28,7 @@ class gesture_recognition:
                 hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y:
             cv2.putText(
                 img=img,
-                text=str("Lower"),
+                text=str("Lower / down"),
                 org=(0, 20),
                 fontFace=cv2.FONT_HERSHEY_DUPLEX,
                 fontScale=0.5,
@@ -283,4 +283,4 @@ class gesture_recognition:
         cv2.destroyAllWindows()
 
 # om programma te runnen:
-# gesture_recognition().recognition()
+gesture_recognition().recognition()
