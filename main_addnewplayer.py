@@ -146,7 +146,10 @@ def singlefacelibrarymaker(new_directory, numberoffacesperlibrary, width = 30, h
 
 def __main_addnewplayer__(playernumber, directory, number_of_faces_per_library):
     cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    new_directory = createFolder(directory + str(r"\player") + str(playernumber))
+    if isinstance(playernumber, str):
+        new_directory = createFolder(directory + str(r"\\") + str(playernumber))
+    else:
+        new_directory = createFolder(directory + str(r"\player") + str(playernumber))
     print("Press Enter to engage library_create for player" + str(playernumber))
     while True:
         ret, img = cam.read()
@@ -166,17 +169,15 @@ class addPlayer:
         self.imagesperlibrary = imagesperlibrary
 
     def add_newplayer(self, playernumber=None):
-        isNone = 0
         if playernumber is None:
             playernumber = self.currentplayernumber
-            isNone = 1
         __main_addnewplayer__(playernumber, self.directory, self.imagesperlibrary)
-        if isNone == 1:
+        if playernumber not in os.listdir(self.directory):
             self.currentplayernumber += 1
         return True
 
 
-# library = addPlayer(r'C:\Users\bram\testfolder', 2, 1)
-# library.add_newplayer()
-# library.add_newplayer(5)
+library = addPlayer(r'C:\Users\bram\testfolder', 50, 1)
+library.add_newplayer('Noa')
+
 

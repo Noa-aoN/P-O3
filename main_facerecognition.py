@@ -6,6 +6,7 @@ from numpy import linalg
 from tqdm import tqdm
 import mediapipe as mp
 from math import sqrt
+from time import sleep
 
 
 # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
@@ -27,7 +28,6 @@ def lookingdirection(frame):
                 x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
                 # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
                 y = int(pointcoords.y * height)
-                cv2.circle(img, (x, y), 1, (0, 255, 0))
             if face_landmarks.landmark[454].x - face_landmarks.landmark[1].x < 1 / 3 * (
                     face_landmarks.landmark[454].x - face_landmarks.landmark[234].x):
                 return "Right", img
@@ -165,7 +165,7 @@ def euclidiandistance(weights_eigenvectors, weights_detectedface):
 def eigenvectorselection(eigenvalues, eigenvectors):
     accuracy = 0
     numberofvectors = 0
-    while accuracy < 0.95:
+    while accuracy < 0.99:
         numberofvectors += 1
         accuracy = np.sum(eigenvalues[:numberofvectors])/np.sum(eigenvalues)
     reducedeigenvectors = eigenvectors[:, :numberofvectors]
@@ -214,7 +214,7 @@ def facerecognition(image, x, y, w, h, directory, detectedface, averagefaceperpl
     # Combine all calculated data for this face into one dictionary for each player
     for i in matchpercentages:
         a = 1
-        if matchpercentages[i] > 0.8:
+        if matchpercentages[i] > 0.7:
             dataperplayer[i] = (a*mineucliddistances[i]/(matchpercentages[i]+1), matchpercentages[i], mineucliddistances[i])
     return image, dataperplayer
 
@@ -264,15 +264,6 @@ def facialrecognition(image, eigenvectorsperplayer, averagefaceperplayer, thresh
             detectedface = imagetoarray(reshapedface)
             direction, image = lookingdirection(image)
 
-            # Print the lookingdirection on the screen
-            cv2.putText(
-                img=image,
-                text=str("looking" + str(direction)),
-                org=(x + 10, y - 20),
-                fontFace=cv2.FONT_HERSHEY_DUPLEX,
-                fontScale=0.5,
-                color=(0, 255, 0),
-                thickness=1)
             if direction is not None:
 
                 # Perform the recognitionprogram on the face, returning a processed image and all data on the relations
@@ -335,8 +326,8 @@ def libraryprocessing(directory):
         weightsperplayer[i] = {}
         thresholdperplayer[i] = {}
 
-        for j in os.listdir(directory + str(r"\p") + str(i[1:])):
-            new_directory = directory + str(r"\p") + str(i[1:]) + str(r"\l") + str(j[1:])
+        for j in os.listdir(directory + str(r"\\") + str(i)):
+            new_directory = directory + str(r"\\") + str(i) + str(r"\\") + str(j)
 
             # Convert the library of images into vectors and put them in a matrix
             librarymatrix = imagelibrarytomatrix(new_directory)
@@ -394,13 +385,14 @@ class face_recognition:
         return editedimage, resulting_matches
 
 
-# cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# instance = face_recognition(r'C:\Users\bram\testfolder')
-# while True:
-#     ret, img = cam.read()
-#     image, resultingmatches = instance.faceRecognition(img)
-#     cv2.imshow("Face", image)
-#     cv2.waitKey(1)
+cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+instance = face_recognition(r'C:\Users\bram\testfolder')
+while True:
+    ret, img = cam.read()
+    image, resultingmatches = instance.faceRecognition(img)
+    cv2.imshow("Face", image)
+    cv2.waitKey(1)
+    print(resultingmatches)
 
 
 
