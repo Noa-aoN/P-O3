@@ -20,7 +20,7 @@ class gesture_recognition:
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands()
 
-    def pointer_down(self, img, hand_landmarks):
+    def index_down(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
                 hand_landmarks.landmark[5].y and \
                 hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
@@ -68,7 +68,7 @@ class gesture_recognition:
                 thickness=1)
             return True
 
-    def finger_higher(self, img, hand_landmarks):
+    def index_up(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
                 hand_landmarks.landmark[5].y and \
                 hand_landmarks.landmark[12].y > hand_landmarks.landmark[11].y > hand_landmarks.landmark[10].y and \
@@ -152,8 +152,7 @@ class gesture_recognition:
                 thickness=1)
             return True
 
-    # Thumb:
-    def draw_hand(self, img, hand_landmarks, width, height):
+    def draw_thumb(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[3].x * width), int(hand_landmarks.landmark[3].y * height)),
                  (int(hand_landmarks.landmark[4].x * width), int(hand_landmarks.landmark[4].y * height)),
                  (0, 255, 0), thickness=1)
@@ -161,7 +160,7 @@ class gesture_recognition:
                  (int(hand_landmarks.landmark[3].x * width), int(hand_landmarks.landmark[3].y * height)),
                  (0, 255, 0), thickness=1)
 
-        # IndexFinger:
+    def draw_index(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[7].x * width), int(hand_landmarks.landmark[7].y * height)),
                  (int(hand_landmarks.landmark[8].x * width), int(hand_landmarks.landmark[8].y * height)),
                  (0, 255, 0), thickness=1)
@@ -172,7 +171,7 @@ class gesture_recognition:
                  (int(hand_landmarks.landmark[6].x * width), int(hand_landmarks.landmark[6].y * height)),
                  (0, 255, 0), thickness=1)
 
-        # MiddleFinger:
+    def draw_middle(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[11].x * width), int(hand_landmarks.landmark[11].y * height)),
                  (int(hand_landmarks.landmark[12].x * width), int(hand_landmarks.landmark[12].y * height)),
                  (0, 255, 0), thickness=1)
@@ -182,8 +181,7 @@ class gesture_recognition:
         cv2.line(img, (int(hand_landmarks.landmark[9].x * width), int(hand_landmarks.landmark[9].y * height)),
                  (int(hand_landmarks.landmark[10].x * width), int(hand_landmarks.landmark[10].y * height)),
                  (0, 255, 0), thickness=1)
-
-        # RingFinger:
+    def draw_ring(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[15].x * width), int(hand_landmarks.landmark[15].y * height)),
                  (int(hand_landmarks.landmark[16].x * width), int(hand_landmarks.landmark[16].y * height)),
                  (0, 255, 0), thickness=1)
@@ -194,7 +192,7 @@ class gesture_recognition:
                  (int(hand_landmarks.landmark[13].x * width), int(hand_landmarks.landmark[13].y * height)),
                  (0, 255, 0), thickness=1)
 
-        # Pinky:
+    def draw_pinky(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[19].x * width), int(hand_landmarks.landmark[19].y * height)),
                  (int(hand_landmarks.landmark[20].x * width), int(hand_landmarks.landmark[20].y * height)),
                  (0, 255, 0), thickness=1)
@@ -205,8 +203,7 @@ class gesture_recognition:
                  (int(hand_landmarks.landmark[18].x * width), int(hand_landmarks.landmark[18].y * height)),
                  (0, 255, 0), thickness=1)
 
-        # Palm:
-
+    def draw_palm(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[13].x * width), int(hand_landmarks.landmark[13].y * height)),
                  (int(hand_landmarks.landmark[17].x * width), int(hand_landmarks.landmark[17].y * height)),
                  (0, 255, 0), thickness=1)
@@ -228,6 +225,14 @@ class gesture_recognition:
         cv2.line(img, (int(hand_landmarks.landmark[0].x * width), int(hand_landmarks.landmark[0].y * height)),
                  (int(hand_landmarks.landmark[17].x * width), int(hand_landmarks.landmark[17].y * height)),
                  (0, 255, 0), thickness=1)
+
+    def draw_hand(self, img, hand_landmarks, width, height):
+        self.draw_thumb(img, hand_landmarks, width, height)
+        self.draw_index(img, hand_landmarks, width, height)
+        self.draw_middle(img, hand_landmarks, width, height)
+        self.draw_ring(img, hand_landmarks, width, height)
+        self.draw_pinky(img, hand_landmarks, width, height)
+        self.draw_palm(img, hand_landmarks, width, height)
 
     def recognition(self):
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -265,10 +270,10 @@ class gesture_recognition:
                     """ Gesture Recognition"""
 
                     # all recognizable gestures, more can be implemented
-                    self.pointer_down(img, hand_landmarks)
+                    self.index_down(img, hand_landmarks)
                     self.thumbs_up(img, hand_landmarks)
                     self.thumbs_down(img, hand_landmarks)
-                    self.finger_higher(img, hand_landmarks)
+                    self.index_up(img, hand_landmarks)
                     self.fingers_two(img, hand_landmarks)
                     self.fingers_three(img, hand_landmarks)
                     self.fingers_four(img, hand_landmarks)
@@ -276,11 +281,11 @@ class gesture_recognition:
 
             cv2.imshow('Raw Webcam Feed', img)
 
-            if cv2.waitKey(10) & 0xFF == ord('q'):  # exit main loop
+            if cv2.waitKey(10) & 0xFF == ord('q'):  # q om te stoppen
                 break
 
         cap.release()
         cv2.destroyAllWindows()
 
 # om programma te runnen:
-# gesture_recognition().recognition()
+gesture_recognition().recognition()
