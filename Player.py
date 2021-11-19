@@ -55,10 +55,10 @@ class Player:
     def value_count_bj(self):
         value_list = []
         for card in self.cards:
-            if card.value == 0:
+            if card.bj_value == 0:
                 value_list.append(11)
             else:
-                value_list.append(card.value)
+                value_list.append(card.bj_value)
         som = sum(value_list)
         if som < 22:
             return som

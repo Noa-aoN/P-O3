@@ -1,38 +1,45 @@
 import cv2
 
-import urllib.request
 import numpy as np
 import time
 
 FONT = cv2.FONT_HERSHEY_PLAIN
 
-MAX_CARD_AREA = 4000000
+MAX_CARD_AREA = 400000
 MIN_CARD_AREA = 10000
+
+RANK_DIFF_MAX = 3000
+SUIT_DIFF_MAX = 1500
+
+RANK_WIDTH = 70
+RANK_HEIGHT = 100
+
+SUIT_WIDTH = 100
+SUIT_HEIGHT = 100
 
 URL = "http://192.168.43.1:8080/shot.jpg"
 
-RANKS_IMG = cv2.imread("References/Rank_Pixels.jpg", 0)
-BLACK_SUITS_IMG = cv2.imread("References/Black_Pixels.png", 0)
-RED_SUITS_IMG = cv2.imread("References/Red_Pixels.png", 0)
-SUITS_IMG = {"r": RED_SUITS_IMG, "b": BLACK_SUITS_IMG}
+SUITS = ("Hearts", "Diamonds", "Spades", "Clubs")
+RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Joker")
 
-SUITS = {"r": ("Hearts", "Diamonds"), "b": ("Spades", "Clubs")}
-RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King")
+SUITS_IMG = [cv2.imread(f"MyMoulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
+RANKS_IMG = [cv2.imread(f"MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
+
+TEMPLATE_SUITS_IMG = cv2.imread("ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
+TEMPLATE_RANKS_IMG = cv2.imread("ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
+
 
 class Card:
-    def __init__(self, contour, pts, w, h, center, rank, suit, color):
+    def __init__(self, contour, pts, w, h, center, rank, suit):
         self.contour = contour  # Contour of card
         self.corner_pts = pts  # Corner points of card
         self.dim = (w, h)  # Width and height of card
         self.center = center  # Center point of card
-        self.color = color
         self.rank = rank
         self.suit = suit
 
     def get_rank_suit(self):
-        if self.color == "w":
-            return None
-        suit = SUITS[self.color][self.suit]
+        suit = SUITS[self.suit]
         rank = RANKS[self.rank]
         return rank, suit
 
@@ -44,7 +51,7 @@ def empty(_):
 cv2.namedWindow("Parameters")
 cv2.resizeWindow("Parameters", 600, 120)
 cv2.createTrackbar("Contour", "Parameters", 140, 255, empty)
-cv2.createTrackbar("Thresh Card", "Parameters", 170, 255, empty)
+cv2.createTrackbar("Thresh Card", "Parameters", 190, 255, empty)
 
 
 def timeit(method):
@@ -105,31 +112,53 @@ def create_card(contour, pts, image):
     thresh_level = cv2.getTrackbarPos("Thresh Card", "Parameters")
     retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
-    tol = 1
+    rank_img = corner_thresh[4:66, 0:50]
+    suit_img = corner_thresh[62:110, 0:48]
 
-    rank_img = corner_thresh[4 + tol:66 - tol, 0 + tol:50 - tol]
-    suit_img = corner_thresh[62 + tol:110 - tol, 0 + tol:48 - tol]
-    suit_colored = corner_zoom[62 + tol:110 - tol, 0 + tol:48 - tol]
+    if rank_img.all() == 0 and suit_img.all() == 0:
+        return Card(contour, pts, w, h, center, 14, 14), Card(contour, pts, w, h, center, 14, 14)
 
-    cv2.imshow("Rank", rank_img)
-    rank = find_match(rank_img, "rank")
+    disp_rank = rank_img.copy()
 
-    y, x = suit_colored.shape
-    pixel_val = suit_colored[int(y / 2), int(x / 2)]
+    # Inverting!
+    rank_cnts, hier = cv2.findContours(np.invert(rank_img), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    rank_cnts = sorted(rank_cnts, key=cv2.contourArea, reverse=True)
+    rank_cnts = list(filter(lambda cnt: cv2.contourArea(cnt) > 350, rank_cnts))
 
-    if pixel_val < 50:
-        color = "b"
-    elif 50 <= pixel_val < 150:
-        color = "r"
-    else:
-        color = "w"
+    rank = -1
+    suit = -1
+    t_rank = -1
+    t_suit = -1
 
-    cv2.imshow("Suit", suit_colored)
-    suit = find_match(suit_img, "suit", color)
+    if len(rank_cnts) > 0:
+        x1, y1, w1, h1 = cv2.boundingRect(rank_cnts[0])
+        rank_img = rank_img[y1:y1 + h1, x1:x1 + w1]
+        cv2.rectangle(disp_rank, (x1, y1), (x1 + w1, y1 + h1), (0, 0, 0), 2)
+        rank_img = cv2.resize(rank_img, (RANK_WIDTH, RANK_HEIGHT), 0, 0)
+        rank = find_match(rank_img, RANKS_IMG, RANK_DIFF_MAX)
+        t_rank = template_matching(rank_img, "template rank", 14, TEMPLATE_RANKS_IMG.copy())
 
-    card = Card(contour, pts, w, h, center, rank, suit, color)
+    suit_cnts, hier = cv2.findContours(np.invert(suit_img), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    suit_cnts = sorted(suit_cnts, key=cv2.contourArea, reverse=True)
 
-    return card
+    disp_suit = suit_img.copy()
+
+    if len(suit_cnts) > 0:
+        x1, y1, w1, h1 = cv2.boundingRect(suit_cnts[0])
+        suit_img = suit_img[y1:y1 + h1, x1:x1 + w1]
+        cv2.rectangle(disp_suit, (x1, y1), (x1 + w1, y1 + h1), (0, 0, 0), 2)
+        suit_img = cv2.resize(suit_img, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
+        suit = find_match(suit_img, SUITS_IMG, SUIT_DIFF_MAX)
+        t_suit = template_matching(suit_img, "template suit", 4, TEMPLATE_SUITS_IMG.copy())
+
+    cv2.imshow("Rank / Suit", cv2.vconcat([disp_rank, disp_suit]))
+    # cv2.imshow("Suit Cut", suit_img)
+    # cv2.imshow("Rank Cut", rank_img)
+
+    mould_card = Card(contour, pts, w, h, center, rank, suit)
+    tm_card = Card(contour, pts, w, h, center, t_rank, t_suit)
+
+    return mould_card, tm_card
 
 
 def transform(image, pts, w, h):
@@ -194,21 +223,26 @@ def transform(image, pts, w, h):
     return warp
 
 
-def find_match(template, kind, color=None):
-    if kind == "rank":
-        # Copy otherwise rect don't disappear
-        ref_img = RANKS_IMG.copy()
-        parts = 13
-    elif kind == "suit":
-        if color == "b":
-            ref_img = BLACK_SUITS_IMG.copy()
-        elif color == "r":
-            ref_img = RED_SUITS_IMG.copy()
-        else:
-            return -1
-        parts = 2
-    else:
-        return -1
+def find_match(img, moulds, diff_max):
+    best_match_diff = 10000
+
+    for i, mould in enumerate(moulds):
+        diff_img = cv2.absdiff(img, mould)
+        diff = int(np.sum(diff_img) / 255)
+
+        if diff < best_match_diff:
+            best_diff_img = diff_img
+            cv2.imshow("Difference", best_diff_img)
+            best_match_diff = diff
+            best_value = i
+
+    if best_match_diff < diff_max:
+        return best_value  # best_match_diff
+
+    return -1
+
+
+def template_matching(template, kind, parts, ref_img):
 
     h, w = ref_img.shape
     h1, w1 = template.shape
@@ -224,7 +258,7 @@ def find_match(template, kind, color=None):
 
     cv2.rectangle(ref_img, max_loc, bottom_right, (0, 0, 0), 2)
 
-    ref_sized = cv2.resize(ref_img, (0, 0), fx=2, fy=2)
+    ref_sized = cv2.resize(ref_img, (0, 0), fx=1, fy=1)
 
     cv2.imshow(kind, ref_sized)
 
@@ -243,7 +277,15 @@ def display_cards(img, cards):
         x, y = card.center
         cv2.drawContours(img, [card.contour], -1, (255, 0, 0), 3)
 
-        if card.rank == -1 or card.suit == -1 or card.color == "w":
+        if card.rank == 14:
+            cv2.putText(img, "Facedown", (x - 100, y - 20), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, "Facedown", (x - 100, y - 20), FONT, size, (255, 0, 0), 2, cv2.LINE_AA)
+
+        elif card.rank == 13:
+            cv2.putText(img, "Joker", (x - 90, y - 20), FONT, size+1, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, "Joker", (x - 90, y - 20), FONT, size+1, (255, 0, 0), 2, cv2.LINE_AA)
+
+        elif card.rank == -1 or card.suit == -1:
             cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
             cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 255), 2, cv2.LINE_AA)
 
@@ -263,26 +305,31 @@ def display_cards(img, cards):
 
 def get_cards(img):
     thresh = binary_threshold(img)
-    contours_pts = detect_cards(thresh)
+    contours_pts = detect_cards(thresh) + detect_cards(np.invert(thresh))
     cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
+    m_cards = [i[0] for i in cards]
+    tm_cards = [i[1] for i in cards]
 
-    return cards
+    return m_cards, tm_cards
 
 
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1080) #960
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720) #540
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1440)  # 1920
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 810)  # 1080
 prev_cards = []
 
 while True:
     ret, img = cap.read()
-    #img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()), dtype=np.uint8)
-    # img = cv2.imdecode(img_arr, -1)
 
-    cards = get_cards(img)
-    img = display_cards(img, cards)
+    norm = np.zeros(img.shape)
+    img1 = cv2.normalize(img, norm, 0, 255, cv2.NORM_MINMAX)
+    img2 = cv2.normalize(img.copy(), norm, 0, 255, cv2.NORM_MINMAX)
 
-    cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=1, fy=1))
+    m_cards, tm_cards = get_cards(img)
+    moulds = display_cards(img1, m_cards)
+    tm = display_cards(img2, tm_cards)
+
+    cv2.imshow('Colored', cv2.resize(cv2.hconcat([moulds, tm]), (0, 0), fx=0.5, fy=0.5))
 
     q = cv2.waitKey(1)
     if q == ord("q"):

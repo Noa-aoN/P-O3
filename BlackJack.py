@@ -213,8 +213,8 @@ def blackjack(screen, clock):
             screen.fill((31, 171, 57))
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
-            screen.blit(pygame.transform.rotozoom(S1.load_image(), 10, 1), (510, 250))
-            screen.blit(pygame.transform.rotozoom(H1.load_image(), -10, 1), (590, 250))
+            screen.blit(pygame.transform.rotozoom(Deck[26].load_image(), 10, 1), (510, 250))
+            screen.blit(pygame.transform.rotozoom(Deck[0].load_image(), -10, 1), (590, 250))
 
             for event in pygame.event.get():
                 exit_pygame(event)
