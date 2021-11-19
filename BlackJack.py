@@ -7,10 +7,9 @@ from AudioPlay import playsound
 
 '''
 Bugs: 
-- if a person except player 1 goes bankrupt the name and balance still show when first player picks his bet.
+- Fix first item on To Do.
 
 To DO:
-- Adding double down feature.
 - Dealer has to check if he has Blackjack to terminate the round immediately.
 - Adding delay with generating cards.
 - Entering player names and amount of players.
@@ -33,8 +32,9 @@ def blackjack(screen, clock):
     game_active = False
 
     start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
-    yes_button = Button((0, 0, 0), (400, 250), (110, 60), 'Hit')
-    no_button = Button((0, 0, 0), (700, 250), (110, 60), 'Stand')
+    yes_button = Button((0, 0, 0), (330, 250), (110, 60), 'Hit')
+    no_button = Button((0, 0, 0), (770, 250), (110, 60), 'Stand')
+    double_button = Button((0, 0, 0), (475, 250), (250, 60), 'Double Down')
     again_button = Button((0, 0, 0), (530, 260), (200, 65), 'Play again!')
     exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
     place_bets = True
@@ -60,18 +60,18 @@ def blackjack(screen, clock):
 
             if place_bets:
                 if j < len(players):
-                    if players[j].balance == 0:
-                        players.remove(players[j])
-                    else:
-                        if players[j].wants_bet:
-                            pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 300), 0, -1)
-                            status = players[j].place_bet(screen, exit_button)
-                            if status == 'exit':
-                                return 'Done'
-                        if players[j].bet != 0:
-                            players[j].wants_bet = False
-                        if not players[j].wants_bet:
-                            j += 1
+                    for player in players:
+                        if player.balance == 0:
+                            players.remove(player)
+                    if players[j].wants_bet:
+                        pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 300), 0, -1)
+                        status = players[j].place_bet(screen, exit_button)
+                        if status == 'exit':
+                            return 'Done'
+                    if players[j].bet != 0:
+                        players[j].wants_bet = False
+                    if not players[j].wants_bet:
+                        j += 1
                 else:
                     place_bets = False
                     deal_2_cards = True
@@ -96,7 +96,7 @@ def blackjack(screen, clock):
                         player.add_card(random_card)
                 if player0.cards is None:
                     player0.cards = []
-                while len(player0.cards) < 1:
+                while len(player0.cards) < 2:
                     random_card = random.choice(Deck)
                     Deck.remove(random_card)
                     player0.add_card(random_card)
@@ -119,17 +119,39 @@ def blackjack(screen, clock):
                             screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600, 200)))
                             yes_button.draw(screen)
                             no_button.draw(screen)
-                            for event in pygame.event.get():
-                                if button_pressed(yes_button, event):
-                                    random_card = random.choice(Deck)
-                                    Deck.remove(random_card)
-                                    players[i].add_card(random_card)
-                                    players[i].show_cards(screen)
-                                    players[i].display_score_bj(screen)
-                                elif button_pressed(no_button, event):
-                                    players[i].wants_card = False
-                                elif button_pressed(exit_button, event):
-                                    return 'Done'
+                            if len(players[i].cards) == 2:
+                                double_button.draw(screen)
+                                for event in pygame.event.get():
+                                    if button_pressed(yes_button, event):
+                                        random_card = random.choice(Deck)
+                                        Deck.remove(random_card)
+                                        players[i].add_card(random_card)
+                                        players[i].show_cards(screen)
+                                        players[i].display_score_bj(screen)
+                                    elif button_pressed(no_button, event):
+                                        players[i].wants_card = False
+                                    elif button_pressed(double_button, event):
+                                        players[i].bet = players[i].bet*2
+                                        random_card = random.choice(Deck)
+                                        Deck.remove(random_card)
+                                        players[i].add_card(random_card)
+                                        players[i].show_cards(screen)
+                                        players[i].display_score_bj(screen)
+                                        players[i].wants_card = False
+                                    elif button_pressed(exit_button, event):
+                                        return 'Done'
+                            else:
+                                for event in pygame.event.get():
+                                    if button_pressed(yes_button, event):
+                                        random_card = random.choice(Deck)
+                                        Deck.remove(random_card)
+                                        players[i].add_card(random_card)
+                                        players[i].show_cards(screen)
+                                        players[i].display_score_bj(screen)
+                                    elif button_pressed(no_button, event):
+                                        players[i].wants_card = False
+                                    elif button_pressed(exit_button, event):
+                                        return 'Done'
                         if i >= len(players):
                             pass
                         else:

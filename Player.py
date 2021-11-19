@@ -1,6 +1,6 @@
 import pygame
 from Button import Button, turn_white, button_pressed
-
+from Deck import BACK
 
 class Player:
     def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000, wants_bet=True):
@@ -39,9 +39,18 @@ class Player:
                             (100 + 300 * (self.number - 1) + 25 * i, 400))
                 i += 1
         else:
-            for card in self.cards:
-                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
-                i += 1
+            if len(self.cards) == 2:
+                if self.value_count_hl() == 21:
+                    for card in self.cards:
+                        window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
+                        i += 1
+                else:
+                    window.blit(pygame.transform.rotozoom(self.cards[0].load_image(), 0, 1), (560, 50))
+                    window.blit(pygame.transform.rotozoom(BACK.load_image(), 0, 1), (585, 50))
+            else:
+                for card in self.cards:
+                    window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
+                    i += 1
 
     def value_count_bj(self):
         value_list = []

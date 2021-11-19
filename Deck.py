@@ -66,6 +66,8 @@ K11 = Card('PNG-cards-1.3/jack_of_clubs2.png', 10)
 K12 = Card('PNG-cards-1.3/queen_of_clubs2.png', 10)
 K13 = Card('PNG-cards-1.3/king_of_clubs2.png', 10)
 
+BACK = Card('PNG-cards-1.3/Back.png', 0)
+
 deck = [K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K12, K13,
         S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13,
         R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13,
