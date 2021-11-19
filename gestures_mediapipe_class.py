@@ -283,4 +283,4 @@ class gesture_recognition:
         cv2.destroyAllWindows()
 
 # om programma te runnen:
-gesture_recognition().recognition()
+# gesture_recognition().recognition()
