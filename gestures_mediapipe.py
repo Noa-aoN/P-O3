@@ -10,16 +10,11 @@ functionaliteiten:
 link: 
 https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapipe/#:~:text=MediaPipe%20Hand%20is%20a%20machine%20learning%20employed%20high-fidelity,help%20of%20multiple%20models%20which%20are%20working%20simultaneously.
 """
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands()
 
 
 # mp_drawing.DrawingSpec(color = (0, 255, 0), thickness = 1, circle_radius = 1)
-def pointer_up():
+def pointer_down(img, hand_landmarks):
     if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
@@ -34,11 +29,9 @@ def pointer_up():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def thumbs_up():
+def thumbs_up(img, hand_landmarks):
     if hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[9].y > hand_landmarks.landmark[2].y and \
@@ -53,11 +46,9 @@ def thumbs_up():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def thumbs_down():
+def thumbs_down(img, hand_landmarks):
     if hand_landmarks.landmark[4].y > hand_landmarks.landmark[3].y > \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[9].y < hand_landmarks.landmark[2].y and \
@@ -72,11 +63,9 @@ def thumbs_down():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def finger_higher():
+def finger_higher(img, hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y > hand_landmarks.landmark[11].y > hand_landmarks.landmark[10].y and \
@@ -91,11 +80,9 @@ def finger_higher():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def fingers_two():
+def fingers_two(img, hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
@@ -110,11 +97,9 @@ def fingers_two():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def fingers_three():
+def fingers_three(img, hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
@@ -129,16 +114,15 @@ def fingers_three():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def fingers_four():
+def fingers_four(img, hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
             hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
-            hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y:
+            hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and not \
+            fingers_five(img, hand_landmarks): # vier herkennen is minder streng dan vijf herkennen
         cv2.putText(
             img=img,
             text=str("Four"),
@@ -148,19 +132,16 @@ def fingers_four():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
-def fingers_five():
+def fingers_five(img, hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
             hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
             hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
-            abs(hand_landmarks.landmark[4].x - hand_landmarks.landmark[17].x) > \
-            abs(hand_landmarks.landmark[4].x - hand_landmarks.landmark[
-                5].x):  # afstand duim en pink vergelijken
+            abs(hand_landmarks.landmark[4].x - hand_landmarks.landmark[5].x) < \
+            abs(hand_landmarks.landmark[4].x - hand_landmarks.landmark[9].x): # afstand van bovenkant duim tot onderkant van wijsvinger en middelvinger vergelijken
         cv2.putText(
             img=img,
             text=str("Five"),
@@ -170,12 +151,10 @@ def fingers_five():
             color=(0, 0, 255),
             thickness=1)
         return True
-    else:
-        return False
 
 
 # Thumb:
-def draw_thumb(img, hand_landmarks, width, height):
+def draw_hand(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[3].x * width), int(hand_landmarks.landmark[3].y * height)),
              (int(hand_landmarks.landmark[4].x * width), int(hand_landmarks.landmark[4].y * height)),
              (0, 255, 0), thickness=1)
@@ -185,7 +164,6 @@ def draw_thumb(img, hand_landmarks, width, height):
 
 
 # IndexFinger:
-def draw_indexfinger(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[7].x * width), int(hand_landmarks.landmark[7].y * height)),
              (int(hand_landmarks.landmark[8].x * width), int(hand_landmarks.landmark[8].y * height)),
              (0, 255, 0), thickness=1)
@@ -198,7 +176,6 @@ def draw_indexfinger(img, hand_landmarks, width, height):
 
 
 # MiddleFinger:
-def draw_middlefinger(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[11].x * width), int(hand_landmarks.landmark[11].y * height)),
              (int(hand_landmarks.landmark[12].x * width), int(hand_landmarks.landmark[12].y * height)),
              (0, 255, 0), thickness=1)
@@ -211,7 +188,6 @@ def draw_middlefinger(img, hand_landmarks, width, height):
 
 
 # RingFinger:
-def draw_ringfinger(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[15].x * width), int(hand_landmarks.landmark[15].y * height)),
              (int(hand_landmarks.landmark[16].x * width), int(hand_landmarks.landmark[16].y * height)),
              (0, 255, 0), thickness=1)
@@ -224,7 +200,6 @@ def draw_ringfinger(img, hand_landmarks, width, height):
 
 
 # Pinky:
-def draw_pinky(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[19].x * width), int(hand_landmarks.landmark[19].y * height)),
              (int(hand_landmarks.landmark[20].x * width), int(hand_landmarks.landmark[20].y * height)),
              (0, 255, 0), thickness=1)
@@ -238,7 +213,6 @@ def draw_pinky(img, hand_landmarks, width, height):
 
 # Palm:
 
-def draw_palm(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[13].x * width), int(hand_landmarks.landmark[13].y * height)),
              (int(hand_landmarks.landmark[17].x * width), int(hand_landmarks.landmark[17].y * height)),
              (0, 255, 0), thickness=1)
@@ -260,54 +234,60 @@ def draw_palm(img, hand_landmarks, width, height):
     cv2.line(img, (int(hand_landmarks.landmark[0].x * width), int(hand_landmarks.landmark[0].y * height)),
              (int(hand_landmarks.landmark[17].x * width), int(hand_landmarks.landmark[17].y * height)),
              (0, 255, 0), thickness=1)
+def main():
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+    mp_hands = mp.solutions.hands
+    hands = mp_hands.Hands()
+
+    while cap.isOpened(): # main loop
+        ret, frame = cap.read()
+
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        result = hands.process(img)
+
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # opencv gebruikt bgr!
+        if result.multi_hand_landmarks is not None:
+            for hand_landmarks in result.multi_hand_landmarks:
+                for point in range(21):
+                    height, width, _ = frame.shape
+                    pointcoords = hand_landmarks.landmark[point]
+                    x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
+                    # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
+                    y = int(pointcoords.y * height)
+                    # cv2.line(img, (points[0]), (points[1]), (0, 255, 0), thickness=3, lineType=8)
+                    cv2.circle(img, (x, y), 2, (0, 0, 255))
+
+                """
+                Drawing the hands by connecting dots
+                """
+
+                draw_hand(img, hand_landmarks, width, height)
 
 
-while cap.isOpened(): # main loop
-    ret, frame = cap.read()
+                """ Gesture Recognition"""
 
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                # all recognizable gestures, more can be implemented
+                pointer_down(img, hand_landmarks)
+                thumbs_up(img, hand_landmarks)
+                thumbs_down(img, hand_landmarks)
+                finger_higher(img, hand_landmarks)
+                fingers_two(img, hand_landmarks)
+                fingers_three(img, hand_landmarks)
+                fingers_five(img, hand_landmarks)
+                fingers_four(img, hand_landmarks)
 
-    result = hands.process(img)
+        cv2.imshow('Raw Webcam Feed', img)
 
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # opencv gebruikt bgr!
-    if result.multi_hand_landmarks is not None:
-        for hand_landmarks in result.multi_hand_landmarks:
-            for point in range(21):
-                height, width, _ = frame.shape
-                pointcoords = hand_landmarks.landmark[point]
-                x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
-                # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
-                y = int(pointcoords.y * height)
-                # cv2.line(img, (points[0]), (points[1]), (0, 255, 0), thickness=3, lineType=8)
-                cv2.circle(img, (x, y), 2, (0, 0, 255))
+        if cv2.waitKey(10) & 0xFF == ord('q'): # exit main loop
+            break
 
-            """
-            Drawing the hands by connecting dots
-            """
+    cap.release()
+    cv2.destroyAllWindows()
 
-            draw_palm(img, hand_landmarks, width, height)
-            draw_thumb(img, hand_landmarks, width, height)
-            draw_indexfinger(img, hand_landmarks, width, height)
-            draw_middlefinger(img, hand_landmarks, width, height)
-            draw_ringfinger(img, hand_landmarks, width, height)
-            draw_pinky(img, hand_landmarks, width, height)
 
-            """ Gesture Recognition"""
-
-            # all recognizable gestures, more can be implemented
-            pointer_up()
-            thumbs_up()
-            thumbs_down()
-            finger_higher()
-            fingers_two()
-            fingers_three()
-            fingers_five()
-            fingers_four()
-
-    cv2.imshow('Raw Webcam Feed', img)
-
-    if cv2.waitKey(10) & 0xFF == ord('q'): # exit main loop
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()
