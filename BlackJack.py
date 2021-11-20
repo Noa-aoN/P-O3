@@ -82,7 +82,7 @@ def blackjack(screen, clock):
                     player.show_cards(screen)
                     player.display_score_bj(screen)
 
-            if not place_bets:
+            if not place_bets and not check_results:
                 player0.show_cards(screen)
                 player0.display_score_bj(screen)
 
@@ -100,10 +100,15 @@ def blackjack(screen, clock):
                     random_card = random.choice(Deck)
                     Deck.remove(random_card)
                     player0.add_card(random_card)
-                for player in players:
-                    player.wants_card = True
-                deal_2_cards = False
-                deal_cards = True
+                if not player0.value_count_bj() == 21:
+                    for player in players:
+                        player.wants_card = True
+                    deal_2_cards = False
+                    deal_cards = True
+                else:
+                    change_bal = True
+                    check_results = True
+                    deal_2_cards = False
 
             if deal_cards:
                 if i < len(players):
@@ -185,10 +190,14 @@ def blackjack(screen, clock):
 
             if check_results:
                 dealer_score = player0.value_count_bj()
+                dealer_blackjack = False
                 pygame.draw.rect(screen, (31, 171, 57), (0, 360, 1200, 25), 0)
+                if dealer_score == 21 and len(player0.cards) == 2:
+                    dealer_blackjack = True
                 for player in players:
-                    player.display_results(screen, dealer_score, 'bj')
-
+                    player.display_results(screen, dealer_score, 'bj', dealer_blackjack)
+                player0.show_cards(screen, True)
+                player0.display_score_bj(screen, True)
                 again_button.draw(screen)
                 for event in pygame.event.get():
                     if button_pressed(again_button, event):
