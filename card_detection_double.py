@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import time
 
+from Deck import Card, SUITS, RANKS
+
 FONT = cv2.FONT_HERSHEY_PLAIN
 
 MAX_CARD_AREA = 400000
@@ -19,29 +21,11 @@ SUIT_HEIGHT = 100
 
 URL = "http://192.168.43.1:8080/shot.jpg"
 
-SUITS = ("Hearts", "Diamonds", "Spades", "Clubs")
-RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Joker")
-
-SUITS_IMG = [cv2.imread(f"MyMoulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
-RANKS_IMG = [cv2.imread(f"MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
+SUITS_IMG = [cv2.imread(f"Images/Moulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
+RANKS_IMG = [cv2.imread(f"Images/MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
 
 TEMPLATE_SUITS_IMG = cv2.imread("ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
 TEMPLATE_RANKS_IMG = cv2.imread("ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
-
-
-class Card:
-    def __init__(self, contour, pts, w, h, center, rank, suit):
-        self.contour = contour  # Contour of card
-        self.corner_pts = pts  # Corner points of card
-        self.dim = (w, h)  # Width and height of card
-        self.center = center  # Center point of card
-        self.rank = rank
-        self.suit = suit
-
-    def get_rank_suit(self):
-        suit = SUITS[self.suit]
-        rank = RANKS[self.rank]
-        return rank, suit
 
 
 def empty(_):
@@ -115,8 +99,8 @@ def create_card(contour, pts, image):
     rank_img = corner_thresh[4:66, 0:50]
     suit_img = corner_thresh[62:110, 0:48]
 
-    if rank_img.all() == 0 and suit_img.all() == 0:
-        return Card(contour, pts, w, h, center, 14, 14), Card(contour, pts, w, h, center, 14, 14)
+    """if rank_img.all() == 0 and suit_img.all() == 0:
+        return Card(contour, pts, w, h, center, 14, 14), Card(contour, pts, w, h, center, 14, 14)"""
 
     disp_rank = rank_img.copy()
 
@@ -232,7 +216,7 @@ def find_match(img, moulds, diff_max):
 
         if diff < best_match_diff:
             best_diff_img = diff_img
-            cv2.imshow("Difference", best_diff_img)
+            cv2.imshow(f"Difference{len(moulds)}", best_diff_img)
             best_match_diff = diff
             best_value = i
 
@@ -243,7 +227,6 @@ def find_match(img, moulds, diff_max):
 
 
 def template_matching(template, kind, parts, ref_img):
-
     h, w = ref_img.shape
     h1, w1 = template.shape
 
@@ -282,8 +265,8 @@ def display_cards(img, cards):
             cv2.putText(img, "Facedown", (x - 100, y - 20), FONT, size, (255, 0, 0), 2, cv2.LINE_AA)
 
         elif card.rank == 13:
-            cv2.putText(img, "Joker", (x - 90, y - 20), FONT, size+1, (0, 0, 0), 5, cv2.LINE_AA)
-            cv2.putText(img, "Joker", (x - 90, y - 20), FONT, size+1, (255, 0, 0), 2, cv2.LINE_AA)
+            cv2.putText(img, "Joker", (x - 90, y - 20), FONT, size + 1, (0, 0, 0), 5, cv2.LINE_AA)
+            cv2.putText(img, "Joker", (x - 90, y - 20), FONT, size + 1, (255, 0, 0), 2, cv2.LINE_AA)
 
         elif card.rank == -1 or card.suit == -1:
             cv2.putText(img, "Unknown", (x - 140, y - 25), FONT, size, (0, 0, 0), 5, cv2.LINE_AA)
@@ -305,7 +288,7 @@ def display_cards(img, cards):
 
 def get_cards(img):
     thresh = binary_threshold(img)
-    contours_pts = detect_cards(thresh) + detect_cards(np.invert(thresh))
+    contours_pts = detect_cards(thresh)  # + detect_cards(np.invert(thresh))
     cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
     m_cards = [i[0] for i in cards]
     tm_cards = [i[1] for i in cards]
@@ -322,12 +305,12 @@ while True:
     ret, img = cap.read()
 
     norm = np.zeros(img.shape)
-    img1 = cv2.normalize(img, norm, 0, 255, cv2.NORM_MINMAX)
-    img2 = cv2.normalize(img.copy(), norm, 0, 255, cv2.NORM_MINMAX)
+    # img1 = cv2.normalize(img, norm, 0, 255, cv2.NORM_MINMAX)
+    # img2 = cv2.normalize(img.copy(), norm, 0, 255, cv2.NORM_MINMAX)
 
     m_cards, tm_cards = get_cards(img)
-    moulds = display_cards(img1, m_cards)
-    tm = display_cards(img2, tm_cards)
+    moulds = display_cards(img.copy(), m_cards)
+    tm = display_cards(img.copy(), tm_cards)
 
     cv2.imshow('Colored', cv2.resize(cv2.hconcat([moulds, tm]), (0, 0), fx=0.5, fy=0.5))
 
