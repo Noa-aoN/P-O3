@@ -312,17 +312,17 @@ class PlayerRegistration:
 
 
 # library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
-# library.registerplayer("Bram")
-#
-# imagesize=160
-# margin=0.2
-# mtcnn, resnet = facenet_setup(imagesize, margin)
+# library.registerplayer("Karel")
+# #
+# # imagesize=160
+# # margin=0.2
+# # mtcnn, resnet = facenet_setup(imagesize, margin)
 # libraryembedding = {}
 # libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
-# cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-# cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-# # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
+# # cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+# # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+# # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+# # # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
 # while True:
 #     ret, img = cam.read()
 #     img, resultingmatches = library.identifyface(img, libraryembedding)
