@@ -83,8 +83,9 @@ def create_folder(directory):
         if not os.path.exists(directory):
             os.makedirs(directory)
         elif len(os.listdir(directory)) > 0:
-            ans = input('A library with this directory already exists. Replace? (type yes or 1 if you want to replace)')
-            if ans == 'yes' or ans == 1:
+            ans = input('A library with this directory already exists. Do you want to replace its contents? '
+                        '(type yes or 1 if you want to replace)')
+            if ans == 'yes' or ans == '1':
                 for i in os.listdir(directory):
                     os.remove(os.path.join(directory, i))
     except OSError:
@@ -156,6 +157,8 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     numberofimages = 0
+    if len(os.listdir(directory)) > 0:
+        numberofimages += len(os.listdir(directory))
     embeddings = []
     directions = set()
     while numberofimages < imagesperlibrary:
@@ -195,6 +198,21 @@ def create_player_library(player, directory, imagesperlibrary, mtcnn, resnet):
         return None
     while True:
         ret, img = cam.read()
+        if cv2.waitKey(1) & 0xff == 13:  # If you press Enter
+            embeddings = library_imprint(new_directory, imagesperlibrary, mtcnn, resnet)
+            cv2.putText(img=img, text=str("Succesfully created library"), org=(0, 20),
+                        fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
+                        color=(0, 0, 255), thickness=1)
+            cv2.imshow("Face", img)
+            cv2.waitKey(1)
+            return embeddings
+        elif cv2.waitKey(1) & 0xff == 27:  # If you press Escape
+            cv2.putText(img=img, text=str("Disengaging library_create for player" + str(player)), org=(0, 20),
+                        fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
+                        color=(0, 0, 255), thickness=1)
+            cv2.imshow("Face", img)
+            cv2.waitKey(1)
+            return None
         cv2.putText(img=img, text=str("Press Enter to start taking pictures"), org=(0, 20),
                     fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
                     color=(0, 0, 255), thickness=1)
@@ -202,12 +220,6 @@ def create_player_library(player, directory, imagesperlibrary, mtcnn, resnet):
                     fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
                     color=(0, 0, 255), thickness=1)
         cv2.imshow("Face", img)
-        if cv2.waitKey(1) & 0xff == 13:  # If you press Enter
-            embeddings = library_imprint(new_directory, imagesperlibrary, mtcnn, resnet)
-            return embeddings
-        elif cv2.waitKey(1) & 0xff == 27:  # If you press Escape
-            print("Disengaging library_create for player" + str(player))
-            return None
 
 
 def library_embeddings(librarydirectory, mtcnn, resnet):
@@ -255,10 +267,12 @@ def search_player(player, image, mtcnn, resnet, library):
 
     # Crop all faces from the image and measure their distance from the library embeddings
     coordlist = []
+    maxconvpercent = 0
     faces = cropped_faces_from_image(image)
     for face in faces:
         result = comparison_with_library(image, library_embedding, mtcnn, resnet)
-        if result[0] > 0.6 and result[1] > 0.85:
+        if result[0] > 0.6 and result[1] > 0.85 and result[0]*(result[1]**2) > maxconvpercent:
+            maxconvpercent = result[0]*(result[1]**2)
             coordlist.append(face[1])
     return coordlist
 
@@ -273,15 +287,20 @@ class PlayerRegistration:
         self._imagesperlibrary = imagesperlibrary
         self._mtcnn, self._resnet = facenet_setup(imagesize, margin)
         self._libraryembeddings = {}
+        if len(os.listdir(librarydirectory)) > 0:
+            for i in os.listdir(librarydirectory):
+                self._libraryembeddings[i] = library_embeddings(os.path.join(librarydirectory, i), self._mtcnn,
+                                                                self._resnet)
 
     def registerplayer(self, player=None):
         assert player is None or isinstance(player, str) or isinstance(player, int)
         if player is None:
             player = str(player) + str(self._playernr)
         embeddings = create_player_library(player, self._directory, self._imagesperlibrary, self._mtcnn, self._resnet)
-        if embeddings is not None:
-            assert isinstance(embeddings, tuple)
+        if embeddings is not None and player not in self._libraryembeddings:
             self._libraryembeddings[player] = embeddings
+        elif embeddings is not None:
+            self._libraryembeddings[player] = self._libraryembeddings[player] + embeddings
         if player not in os.listdir(self._directory):
             self._playernr += 1
 
@@ -292,9 +311,11 @@ class PlayerRegistration:
         image, matches = face_recognition(image, self._mtcnn, self._resnet, libraryembeddings)
         return image, matches
 
-    def searchplayer(self, player, image):
+    def searchplayer(self, player, image, libraryembeddings=None):
+        if libraryembeddings is None:
+            libraryembeddings = self._libraryembeddings
         assert player in os.listdir(self._directory)
-        coordlist = search_player(player, image, self._mtcnn, self._resnet, self._libraryembeddings)
+        coordlist = search_player(player, image, self._mtcnn, self._resnet, libraryembeddings)
         return coordlist
 
 
@@ -311,18 +332,18 @@ class PlayerRegistration:
 # print(looking_direction(Image.open(r'C:\Users\bram\facenetLibraries\Bram\image8.jpg')))
 
 
-# library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
-# library.registerplayer("Bram")
-#
-# imagesize=160
-# margin=0.2
-# mtcnn, resnet = facenet_setup(imagesize, margin)
+library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
+library.registerplayer("Bram")
+# #
+# # imagesize=160
+# # margin=0.2
+# # mtcnn, resnet = facenet_setup(imagesize, margin)
 # libraryembedding = {}
 # libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
-# cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-# cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-# # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
+# # cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+# # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+# # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+# # # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
 # while True:
 #     ret, img = cam.read()
 #     img, resultingmatches = library.identifyface(img, libraryembedding)
