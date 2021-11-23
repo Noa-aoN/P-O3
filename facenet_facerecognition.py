@@ -255,10 +255,12 @@ def search_player(player, image, mtcnn, resnet, library):
 
     # Crop all faces from the image and measure their distance from the library embeddings
     coordlist = []
+    maxmatchpercent = 0
     faces = cropped_faces_from_image(image)
     for face in faces:
         result = comparison_with_library(image, library_embedding, mtcnn, resnet)
-        if result[0] > 0.6 and result[1] > 0.85:
+        if result[0] > 0.65 and result[1] > 0.8 and maxmatchpercent < result[0]*result[1]:
+            maxmatchpercent = result[0]*result[1]
             coordlist.append(face[1])
     return coordlist
 
@@ -295,6 +297,10 @@ class PlayerRegistration:
     def searchplayer(self, player, image, libraryembeddings = None):
         if libraryembeddings is None:
             libraryembeddings = self._libraryembeddings
+            # Make sure the image is a numpy array
+        if image is not np.array:
+            image = np.array(image)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         assert player in os.listdir(self._directory)
         coordlist = search_player(player, image, self._mtcnn, self._resnet, libraryembeddings)
         return coordlist
@@ -302,7 +308,7 @@ class PlayerRegistration:
 
 # Bram1 = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Bram1.jpg")
 # Bram2 = Image.open(r'C:\Users\bram\facenetLibraries\Bram\image4.jpg')
-# Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg")
+Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg")
 # print(embedding_matching(Bram1, Gorjan1))
 
 #
@@ -318,20 +324,20 @@ library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
 # library.registerplayer("Karel")
 #
 
-imagesize=160
-margin=0.2
+imagesize = 160
+margin = 0.2
 mtcnn, resnet = facenet_setup(imagesize, margin)
 libraryembedding = {}
 libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
 libraryembedding["Karel"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Karel', mtcnn, resnet)
 cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
 # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
 while True:
     ret, img = cam.read()
-    # img, resultingmatches = library.identifyface(img, libraryembedding)
+    img, resultingmatches = library.identifyface(img, libraryembedding)
     # print(resultingmatches)
-    print(library.searchplayer('Karel', img))
+    # result = library.searchplayer('Bram', img, libraryembedding)
+    # print(result)
     cv2.imshow("Face", img)
     cv2.waitKey(1)
