@@ -2,65 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Card_Back.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Hears.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Clubs.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Diamonds.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Hearts.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Spades.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/References/Clubs_Pixel.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/References/Diamond_Pixel.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/References/Heart_Pixel.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/References/Heart_Pixel_Mold.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Images/References/Spade_Pixel.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deck.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -102,6 +44,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\noapa\P-O3" />
       <recent name="C:\Users\bram\P-O3" />
     </key>
   </component>
