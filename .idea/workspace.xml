@@ -1,7 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="" />
+=======
+    <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ace_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Card_Back.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Eight_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Five_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Four_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Jack_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/King_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Hears.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Nine_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Queen_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Seven_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Six_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Ten_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Three_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Clubs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Diamonds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Hearts.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/Cards/Two_Spades.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/References/Clubs_Pixel.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/References/Diamond_Pixel.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/References/Heart_Pixel.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/References/Heart_Pixel_Mold.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/References/Spade_Pixel.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deck.py" afterDir="false" />
+    </list>
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,8 +109,18 @@
       <recent name="C:\Users\bram\P-O3" />
     </key>
   </component>
+<<<<<<< HEAD
   <component name="RunManager" selected="Python.carddispencer_functies">
+=======
+<<<<<<< HEAD
+  <component name="RunManager" selected="Python.facenet_facerecognition (1)">
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
     <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
+  <component name="RunManager" selected="Python.BlackJack">
+    <configuration name="BlackJack" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="P-O3" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -56,8 +131,12 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+<<<<<<< HEAD
       <module name="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
+=======
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/BlackJack.py" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -66,13 +145,23 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+=======
+<<<<<<< HEAD
+    <configuration name="facenet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
+    <configuration name="Deck" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="P-O3" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
+<<<<<<< HEAD
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -94,12 +183,22 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="C:\Users\jaspe\miniconda3\envs\test\python.exe" />
+=======
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+<<<<<<< HEAD
       <module name="" />
+<<<<<<< HEAD
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/carddispencer_functies.py" />
+=======
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet.py" />
+=======
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Deck.py" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -108,7 +207,15 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="facenet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
+<<<<<<< HEAD
+    <configuration name="facenet_facerecognition (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
+    <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -120,7 +227,15 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
+<<<<<<< HEAD
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet.py" />
+=======
+<<<<<<< HEAD
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet_facerecognition.py" />
+=======
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -232,6 +347,11 @@
       <method v="2" />
     </configuration>
     <list>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+      <item itemvalue="Python.main_facerecognition" />
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <item itemvalue="Python.facenet" />
       <item itemvalue="Python.FaceRecognition" />
       <item itemvalue="Python.facenet_facerecognition" />
@@ -245,6 +365,25 @@
         <item itemvalue="Python.facenet_facerecognition" />
         <item itemvalue="Python.FaceRecognition" />
         <item itemvalue="Python.facenet" />
+<<<<<<< HEAD
+=======
+        <item itemvalue="Python.main_facerecognition" />
+=======
+      <item itemvalue="Python.FaceRecognition" />
+      <item itemvalue="Python.facenet_facerecognition" />
+      <item itemvalue="Python.facenet_facerecognition (1)" />
+      <item itemvalue="Python.Deck" />
+      <item itemvalue="Python.BlackJack" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.BlackJack" />
+        <item itemvalue="Python.Deck" />
+        <item itemvalue="Python.facenet_facerecognition (1)" />
+        <item itemvalue="Python.facenet_facerecognition" />
+        <item itemvalue="Python.FaceRecognition" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       </list>
     </recent_temporary>
   </component>
@@ -257,6 +396,14 @@
       <option name="presentableId" value="Default" />
       <updated>1634057612792</updated>
     </task>
+    <task id="LOCAL-00001" summary="Class Card merged">
+      <created>1637684633981</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1637684633981</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -271,18 +418,17 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Class Card merged" />
+    <option name="LAST_COMMIT_MESSAGE" value="Class Card merged" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
-          <line>221</line>
+          <line>216</line>
           <option name="timeStamp" value="135" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
-          <line>154</line>
-          <option name="timeStamp" value="145" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
