@@ -5,6 +5,7 @@ from Deck import load_deck, get_random_card
 from Player import Player
 from AudioPlay import playsound
 from time import sleep
+import pygame
 
 '''
 Bugs: 
@@ -226,8 +227,10 @@ def blackjack(screen, clock):
             screen.fill((31, 171, 57))
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
-            screen.blit(pygame.transform.rotozoom(Deck[26].load_image(), 10, 1), (510, 250))
-            screen.blit(pygame.transform.rotozoom(Deck[0].load_image(), -10, 1), (590, 250))
+            H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
+            S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
+            screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
+            screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
 
             for event in pygame.event.get():
                 exit_pygame(event)
