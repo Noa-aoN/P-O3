@@ -25,7 +25,8 @@ class Card:
         return rank, suit
 
     def load_image(self):
-        file = f"Images/Cards/{self.rank}_{self.suit}.png"
+        rank, suit = self.get_rank_suit()
+        file = f"Images/Cards/{rank}_{suit}.png"
         return pygame.transform.rotozoom(pygame.image.load(file), 0, 0.15)
 
 
@@ -46,9 +47,12 @@ def load_random_deck():
 
 
 def get_random_card(deck):
+    if not deck:
+        deck = load_random_deck()
+
     rank, suit = deck.pop()
 
-    return Card(0, 0, 0, 0, 0, rank, suit)
+    return Card(0, 0, 0, 0, 0, rank, suit), deck
 
 
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)
