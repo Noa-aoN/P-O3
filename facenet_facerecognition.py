@@ -292,9 +292,11 @@ class PlayerRegistration:
         image, matches = face_recognition(image, self._mtcnn, self._resnet, libraryembeddings)
         return image, matches
 
-    def searchplayer(self, player, image):
+    def searchplayer(self, player, image, libraryembeddings=None):
+        if libraryembeddings is None:
+            libraryembeddings = self._libraryembeddings
         assert player in os.listdir(self._directory)
-        coordlist = search_player(player, image, self._mtcnn, self._resnet, self._libraryembeddings)
+        coordlist = search_player(player, image, self._mtcnn, self._resnet, libraryembeddings)
         return coordlist
 
 
