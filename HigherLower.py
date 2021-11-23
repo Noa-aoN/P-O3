@@ -27,11 +27,11 @@ def last_two_cards(player):
     return vorige_kaart, huidige_kaart
 
 
-def wrong_guess(player, huidige_kaart):
-    screen.fill((31, 171, 57))
-    screen.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
-    player.show_cards(screen)
-    screen.blit(pygame.transform.rotozoom(huidige_kaart.load_image(), 0, 2), (520, 200))
+def wrong_guess(player, huidige_kaart, window):
+    window.fill((31, 171, 57))
+    window.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
+    player.show_cards(window)
+    window.blit(pygame.transform.rotozoom(huidige_kaart.load_image(), 0, 2), (520, 200))
 
 
 def higherlower(screen, clock):
@@ -75,7 +75,7 @@ def higherlower(screen, clock):
                         low = button_pressed(low_button, event) and vorige.hl_value < huidige.hl_value
                         if high or low:
                             lost = True
-                            wrong_guess(player1, huidige)
+                            wrong_guess(player1, huidige, screen)
 
                     elif button_pressed(exit_button, event):
                         return 'Done'

@@ -7,10 +7,8 @@ from AudioPlay import playsound
 
 '''
 Bugs: 
-- Fix first item on To Do.
 
 To DO:
-- Dealer has to check if he has Blackjack to terminate the round immediately.
 - Adding delay with generating cards.
 - Entering player names and amount of players.
 - Entering starting balance.

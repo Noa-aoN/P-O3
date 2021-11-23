@@ -92,11 +92,11 @@ class Player:
         else:
             if len(self.cards) == 2:
                 if not result:
-                    if self.cards[0].value == 0:
+                    if self.cards[0].bj_value == 0:
                         score_surf = self.font.render(str(11), False, (10, 10, 10))
                         window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
                     else:
-                        score_surf = self.font.render(str(self.cards[0].value), False, (10, 10, 10))
+                        score_surf = self.font.render(str(self.cards[0].bj_value), False, (10, 10, 10))
                         window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
                 else:
                     if self.value_count_bj() == 21:
