@@ -1,5 +1,5 @@
 import pygame
-from random import choice
+from random import shuffle
 
 SUITS = ("Hearts", "Diamonds", "Spades", "Clubs")
 RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
@@ -39,19 +39,16 @@ class SpecialCard:
         return pygame.transform.rotozoom(pygame.image.load(self.file), 0, 0.15)
 
 
-def load_deck():
-    return [[(rank, suit) for rank in range(len(RANKS))] for suit in range(len(SUITS))]
+def load_random_deck():
+    deck = [(rank, suit) for rank in range(len(RANKS[:-1])) for suit in range(len(SUITS))]
+    shuffle(deck)
+    return deck
 
 
 def get_random_card(deck):
-    suit_list = choice(deck)
-    i, j = choice(suit_list)
+    rank, suit = deck.pop()
 
-    del deck[j][i]
-
-    card = Card(0, 0, 0, 0, 0, i, j)
-
-    return card, deck
+    return Card(0, 0, 0, 0, 0, rank, suit)
 
 
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)

@@ -22,7 +22,7 @@ def blackjack(screen, clock):
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
-    Deck = load_deck()
+    Deck = load_random_deck()
 
     player0 = Player('Dealer', 0, 0)
     names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
@@ -210,7 +210,7 @@ def blackjack(screen, clock):
                             player.wants_bet = True
                             player.wants_card = False
                         player0.cards = None
-                        Deck = load_deck()
+                        Deck = load_random_deck()
                     elif button_pressed(exit_button, event):
                         return 'Done'
 
@@ -220,8 +220,10 @@ def blackjack(screen, clock):
             screen.fill((31, 171, 57))
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
-            screen.blit(pygame.transform.rotozoom(Deck[26].load_image(), 10, 1), (510, 250))
-            screen.blit(pygame.transform.rotozoom(Deck[0].load_image(), -10, 1), (590, 250))
+            H = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Hearts.png"), 0, 0.15)
+            S = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Spades.png"), 0, 0.15)
+            screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
+            screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
 
             for event in pygame.event.get():
                 exit_pygame(event)
