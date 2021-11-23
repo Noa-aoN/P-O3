@@ -216,7 +216,7 @@ def blackjack(screen, clock):
                             player.wants_bet = True
                             player.wants_card = False
                         player0.cards = None
-                        Deck = deck.copy()
+                        Deck = load_deck()
                     elif button_pressed(exit_button, event):
                         return 'Done'
 

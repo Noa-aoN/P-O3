@@ -11,9 +11,9 @@ MIN_CARD_AREA = 10000
 
 URL = "http://192.168.43.1:8080/shot.jpg"
 
-RANKS_IMG = cv2.imread("References/Rank_Pixels.jpg", 0)
-BLACK_SUITS_IMG = cv2.imread("References/Black_Pixels.png", 0)
-RED_SUITS_IMG = cv2.imread("References/Red_Pixels.png", 0)
+RANKS_IMG = cv2.imread("Images/References/Rank_Pixels.jpg", 0)
+BLACK_SUITS_IMG = cv2.imread("Images/References/Black_Pixels.png", 0)
+RED_SUITS_IMG = cv2.imread("Images/References/Red_Pixels.png", 0)
 SUITS_IMG = {"r": RED_SUITS_IMG, "b": BLACK_SUITS_IMG}
 
 SUITS = {"r": ("Hearts", "Diamonds"), "b": ("Spades", "Clubs")}
