@@ -151,11 +151,6 @@ def comparison_with_library(image, libraryembeddings, mtcnn, resnet):
     return [matchaverage, highestmatchpercentage]
 
 
-"""Idea for library_imprint: use mediapipe to derive where the person is looking, and make sure there is at least
-one picture for every direction. This means there should be one picture that looks straight forward, 
-straight up, straight down, left forward, right forward, left up, right up, left down and right down"""
-
-
 def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
     cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
