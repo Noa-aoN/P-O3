@@ -22,7 +22,7 @@ def blackjack(screen, clock):
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
-    Deck = deck.copy()
+    Deck = load_deck()
 
     player0 = Player('Dealer', 0, 0)
     names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
@@ -210,7 +210,7 @@ def blackjack(screen, clock):
                             player.wants_bet = True
                             player.wants_card = False
                         player0.cards = None
-                        Deck = deck.copy()
+                        Deck = load_deck()
                     elif button_pressed(exit_button, event):
                         return 'Done'
 

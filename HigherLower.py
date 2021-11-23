@@ -32,11 +32,13 @@ def wrong_guess(player, huidige_kaart, window):
     window.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
     player.show_cards(window)
     window.blit(pygame.transform.rotozoom(huidige_kaart.load_image(), 0, 2), (520, 200))
+    pygame.display.update()
+    time.sleep(3)
 
 
 def higherlower(screen, clock):
     screen.fill((31, 171, 57))
-    player_deck = deck.copy()
+    player_deck = load_deck()
     player1 = Player('Matthias', 10000, 1)
     game_active = False
 
@@ -80,14 +82,13 @@ def higherlower(screen, clock):
                     elif button_pressed(exit_button, event):
                         return 'Done'
             else:
-                time.sleep(3)
                 screen.fill((31, 171, 57))
                 again_button.draw(screen)
 
                 for event in pygame.event.get():
                     if button_pressed(again_button, event):
                         player1.cards = []
-                        player_deck = deck.copy()
+                        player_deck = load_deck()
                         lost = False
 
                     if button_pressed(exit_button, event):
