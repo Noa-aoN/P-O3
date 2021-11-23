@@ -53,4 +53,5 @@ def get_random_card(deck):
 
     return card, deck
 
+
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)
