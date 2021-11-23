@@ -6,7 +6,6 @@
 so will perform best if applied to images resized to this shape.
 For best results, images should also be cropped to the face using MTCNN (see below)."""
 
-
 from PIL import Image
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from typing import Any
@@ -104,12 +103,6 @@ def looking_direction(face):
     yaxis = None
     if result.multi_face_landmarks is not None:
         for face_landmarks in result.multi_face_landmarks:
-            # for point in range(468):
-            #     height, width, _ = frame.shape
-            #     pointcoords = face_landmarks.landmark[point]
-            #     x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
-            #     # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
-            #     y = int(pointcoords.y * height)
 
             # Face rotation around the y-axis
             if face_landmarks.landmark[454].x - face_landmarks.landmark[1].x < 1 / 3 * (
@@ -122,11 +115,11 @@ def looking_direction(face):
                 yaxis = "Straight"
 
             # Face rotation around the x-axis
-            landmark1 = face_landmarks.landmark[454].y
-            landmark2 = face_landmarks.landmark[1].y
-            if (face_landmarks.landmark[454].y+face_landmarks.landmark[234].y)/2 - face_landmarks.landmark[1].y > 0.05:
+            if (face_landmarks.landmark[454].y + face_landmarks.landmark[234].y) / 2 - face_landmarks.landmark[
+                1].y > 0.05:
                 xaxis = "Up"
-            elif (face_landmarks.landmark[454].y+face_landmarks.landmark[234].y)/2 - face_landmarks.landmark[1].y < -0.12:
+            elif (face_landmarks.landmark[454].y + face_landmarks.landmark[234].y) / 2 - face_landmarks.landmark[
+                1].y < -0.12:
                 xaxis = "Down"
             else:
                 xaxis = "Centered"
@@ -168,7 +161,8 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
             face_embedding = get_embedding(faces[0][0], mtcnn, resnet)
             direction = looking_direction(faces[0][0])
             if face_embedding is not None:
-                if len(directions) < 9 and direction[0] is not None and direction[1] is not None and direction not in directions:
+                if len(directions) < 9 and direction[0] is not None and direction[1] is not None and \
+                        direction not in directions:
                     embeddings.append(face_embedding)
                     directions.add(direction)
                     numberofimages += 1
@@ -225,7 +219,7 @@ def create_player_library(player, directory, imagesperlibrary, mtcnn, resnet):
 def library_embeddings(librarydirectory, mtcnn, resnet):
     embeddings = []
     for i in os.listdir(librarydirectory):
-        face_embedding = get_embedding(os.path.join(librarydirectory,i), mtcnn, resnet)
+        face_embedding = get_embedding(os.path.join(librarydirectory, i), mtcnn, resnet)
         embeddings.append(face_embedding)
     return tuple(embeddings)
 
@@ -252,18 +246,26 @@ def face_recognition(image, mtcnn, resnet, libraryembeddings):
 
 
 def search_player(player, image, mtcnn, resnet, library):
+
     # Get the embeddings for only the registered faces of player in library
     if isinstance(library, str):
+        if player not in os.listdir(library):
+            print("Player not in Library")
+            return []
         try:
             library_embedding = library_embeddings(os.path.join(library, player), mtcnn, resnet)
         except:
-            print("Player not in Library")
+            print("An Error occured while matching " + str(player) + " with the library.")
+            print("Make sure you are using the correct directory.")
             return []
     elif isinstance(library, dict):
         if player not in library:
             print("Player not in Library")
             return []
         library_embedding = library[player]
+    else:
+        print("Incorrect Library Input")
+        return []
 
     # Crop all faces from the image and measure their distance from the library embeddings
     coordlist = []
@@ -271,8 +273,8 @@ def search_player(player, image, mtcnn, resnet, library):
     faces = cropped_faces_from_image(image)
     for face in faces:
         result = comparison_with_library(image, library_embedding, mtcnn, resnet)
-        if result[0] > 0.6 and result[1] > 0.85 and result[0]*(result[1]**2) > maxconvpercent:
-            maxconvpercent = result[0]*(result[1]**2)
+        if result[0] > 0.65 and result[1] > 0.8 and result[0] * (result[1] ** 2) > maxconvpercent:
+            maxconvpercent = result[0] * (result[1] ** 2)
             coordlist.append(face[1])
     return coordlist
 
@@ -285,7 +287,11 @@ class PlayerRegistration:
         self._playernr = playernr
         assert isinstance(imagesperlibrary, int)
         self._imagesperlibrary = imagesperlibrary
+
+        # Facenet Set-Up
         self._mtcnn, self._resnet = facenet_setup(imagesize, margin)
+
+        # If there are already libraries registered in the current directory, add them to the embeddingslist
         self._libraryembeddings = {}
         if len(os.listdir(librarydirectory)) > 0:
             for i in os.listdir(librarydirectory):
@@ -314,10 +320,8 @@ class PlayerRegistration:
     def searchplayer(self, player, image, libraryembeddings=None):
         if libraryembeddings is None:
             libraryembeddings = self._libraryembeddings
-        assert player in os.listdir(self._directory)
         coordlist = search_player(player, image, self._mtcnn, self._resnet, libraryembeddings)
         return coordlist
-
 
 # Bram1 = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Bram1.jpg")
 # Bram2 = Image.open(r'C:\Users\bram\facenetLibraries\Bram\image4.jpg')
@@ -332,8 +336,8 @@ class PlayerRegistration:
 # print(looking_direction(Image.open(r'C:\Users\bram\facenetLibraries\Bram\image8.jpg')))
 
 
-library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
-library.registerplayer("Bram")
+# library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
+# library.registerplayer("Bram")
 # #
 # # imagesize=160
 # # margin=0.2
