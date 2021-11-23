@@ -2,6 +2,11 @@
 # Pip install facenet-pytorch
 # Type jupyter notebook in terminal
 
+"""Both pretrained models were trained on 160x160 px images,
+so will perform best if applied to images resized to this shape.
+For best results, images should also be cropped to the face using MTCNN (see below)."""
+
+
 from PIL import Image
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from typing import Any
