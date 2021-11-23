@@ -2,7 +2,7 @@ import traceback
 import cv2
 import numpy as np
 import math
-
+import mediapipe
 """
 link: https://stackoverflow.com/questions/57525324/how-to-detect-number-of-fingers-and-add-double-digits-using-opencv
 uitleg convex hull: http://www.ripublication.com/ijaer17/ijaerv12n18_04.pdf 
