@@ -13,7 +13,7 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 
 class gesture_recognition:
     def __init__(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # webcam opstarten
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
@@ -288,4 +288,4 @@ class gesture_recognition:
         cv2.destroyAllWindows()
 
 # om programma te runnen:
-gesture_recognition().recognition()
+# gesture_recognition().recognition()
