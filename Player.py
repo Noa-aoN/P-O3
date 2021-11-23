@@ -1,6 +1,7 @@
 import pygame
 from Button import Button, turn_white, button_pressed
 from Deck import BACK
+from time import sleep
 
 class Player:
     def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000, wants_bet=True):

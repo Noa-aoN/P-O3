@@ -1,9 +1,10 @@
 from sys import exit
 import random
 from Button import Button, button_pressed, exit_pygame
-from Deck import *
+from Deck import load_deck, get_random_card
 from Player import Player
 from AudioPlay import playsound
+from time import sleep
 
 '''
 Bugs: 
@@ -22,7 +23,7 @@ def blackjack(screen, clock):
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
-    Deck = deck.copy()
+    Deck = load_deck()
 
     player0 = Player('Dealer', 0, 0)
     names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
@@ -89,9 +90,14 @@ def blackjack(screen, clock):
                     if player.cards is None:
                         player.cards = []
                     while len(player.cards) < 2:
-                        random_card = random.choice(Deck)
+                        random_card, deck = get_random_card(Deck)
                         Deck.remove(random_card)
                         player.add_card(random_card)
+                        pygame.display.update()
+                        sleep(1)
+                        player.show_cards(screen)
+                        player.display_score_bj(screen)
+
                 if player0.cards is None:
                     player0.cards = []
                 while len(player0.cards) < 2:
