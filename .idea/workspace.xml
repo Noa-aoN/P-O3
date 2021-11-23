@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deck.py" afterDir="false" />
-    </list>
+    <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,28 +44,7 @@
       <recent name="C:\Users\bram\P-O3" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Deck">
-    <configuration name="Deck" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="P-O3" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Deck.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.facenet_facerecognition (1)">
     <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -152,20 +129,41 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main_facerecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_facerecognition.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+      <item itemvalue="Python.main_facerecognition" />
       <item itemvalue="Python.facenet" />
       <item itemvalue="Python.FaceRecognition" />
       <item itemvalue="Python.facenet_facerecognition" />
       <item itemvalue="Python.facenet_facerecognition (1)" />
-      <item itemvalue="Python.Deck" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Deck" />
         <item itemvalue="Python.facenet_facerecognition (1)" />
         <item itemvalue="Python.facenet_facerecognition" />
         <item itemvalue="Python.FaceRecognition" />
         <item itemvalue="Python.facenet" />
+        <item itemvalue="Python.main_facerecognition" />
       </list>
     </recent_temporary>
   </component>
@@ -197,13 +195,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
-          <line>221</line>
+          <line>216</line>
           <option name="timeStamp" value="135" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
-          <line>154</line>
-          <option name="timeStamp" value="145" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
