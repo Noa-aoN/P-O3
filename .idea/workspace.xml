@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="" />
+=======
     <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
     </list>
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,20 +51,41 @@
       <recent name="C:\Users\bram\P-O3" />
     </key>
   </component>
+<<<<<<< HEAD
+  <component name="RunManager" selected="Python.facenet_facerecognition (1)">
+    <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
   <component name="RunManager" selected="Python.BlackJack">
     <configuration name="BlackJack" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+<<<<<<< HEAD
+=======
+      <module name="P-O3" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
+<<<<<<< HEAD
       <option name="SDK_HOME" value="C:\Users\matth\Documents\python\miniconda\python.exe" />
+=======
+      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+<<<<<<< HEAD
       <module name="" />
+=======
+<<<<<<< HEAD
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
+=======
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/BlackJack.py" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -69,8 +94,12 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
+    <configuration name="facenet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
     <configuration name="Deck" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="P-O3" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -81,7 +110,12 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+<<<<<<< HEAD
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet.py" />
+=======
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Deck.py" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -90,28 +124,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+<<<<<<< HEAD
     <configuration name="facenet_facerecognition (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+=======
+    <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -123,7 +140,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
+<<<<<<< HEAD
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet_facerecognition.py" />
+=======
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -153,7 +174,43 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main_facerecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_facerecognition.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+<<<<<<< HEAD
+      <item itemvalue="Python.main_facerecognition" />
+      <item itemvalue="Python.facenet" />
+      <item itemvalue="Python.FaceRecognition" />
+      <item itemvalue="Python.facenet_facerecognition" />
+      <item itemvalue="Python.facenet_facerecognition (1)" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.facenet_facerecognition (1)" />
+        <item itemvalue="Python.facenet_facerecognition" />
+        <item itemvalue="Python.FaceRecognition" />
+        <item itemvalue="Python.facenet" />
+        <item itemvalue="Python.main_facerecognition" />
+=======
       <item itemvalue="Python.FaceRecognition" />
       <item itemvalue="Python.facenet_facerecognition" />
       <item itemvalue="Python.facenet_facerecognition (1)" />
@@ -167,6 +224,7 @@
         <item itemvalue="Python.facenet_facerecognition (1)" />
         <item itemvalue="Python.facenet_facerecognition" />
         <item itemvalue="Python.FaceRecognition" />
+>>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
       </list>
     </recent_temporary>
   </component>
@@ -201,11 +259,14 @@
           <line>216</line>
           <option name="timeStamp" value="135" />
         </line-breakpoint>
+<<<<<<< HEAD
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
           <line>153</line>
           <option name="timeStamp" value="145" />
         </line-breakpoint>
+=======
+>>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>

@@ -25,7 +25,8 @@ class Card:
         return rank, suit
 
     def load_image(self):
-        file = f"Images/Cards/{self.rank}_{self.suit}.png"
+        rank, suit = self.get_rank_suit()
+        file = f"Images/Cards/{rank}_{suit}.png"
         return pygame.transform.rotozoom(pygame.image.load(file), 0, 0.15)
 
 
@@ -40,12 +41,13 @@ class SpecialCard:
 
 
 def load_deck():
-    return [[(rank, suit) for rank in range(len(RANKS))] for suit in range(len(SUITS))]
+    return [[(rank, suit) for rank in range(len(RANKS[:-1]))] for suit in range(len(SUITS))]
 
 
 def get_random_card(deck):
     suit_list = choice(deck)
     i, j = choice(suit_list)
+    print(i, j)
 
     del deck[j][i]
 

@@ -92,10 +92,9 @@ def blackjack(screen, clock):
                         player.cards = []
                     while len(player.cards) < 2:
                         random_card, deck = get_random_card(Deck)
-                        Deck.remove(random_card)
                         player.add_card(random_card)
-                        pygame.display.update()
-                        sleep(1)
+                        #pygame.display.update()
+                        #sleep(1)
                         player.show_cards(screen)
                         player.display_score_bj(screen)
 
