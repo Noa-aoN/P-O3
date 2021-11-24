@@ -49,6 +49,7 @@ def load_random_deck():
 def get_random_card(deck):
     if not deck:
         deck = load_random_deck()
+        print("A new deck was created")
 
     rank, suit = deck.pop()
 
