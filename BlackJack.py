@@ -114,7 +114,7 @@ def blackjack(screen, clock):
                         if players[i].value_count_bj() == 'bust':
                             players[i].wants_card = False
                         if players[i].value_count_bj() == 21:
-                            playsound("Applause.wav")
+                            playsound("Sounds/Applause.wav")
                             i += 1
                         else:
                             another_card_surf = test_font.render(players[i].name + ', do you want another card?',
