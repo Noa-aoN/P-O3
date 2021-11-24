@@ -5,8 +5,13 @@
     <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="" />
 =======
     <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deck.py" afterDir="false" />
+>>>>>>> 810354b62c38a607b4d1094752b6bad32eaff34f
     </list>
 >>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
     <option name="SHOW_DIALOG" value="false" />
@@ -48,6 +53,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\noapa\P-O3" />
       <recent name="C:\Users\bram\P-O3" />
     </key>
   </component>

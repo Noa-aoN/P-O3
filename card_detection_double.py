@@ -24,8 +24,8 @@ URL = "http://192.168.43.1:8080/shot.jpg"
 SUITS_IMG = [cv2.imread(f"Images/Moulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
 RANKS_IMG = [cv2.imread(f"Images/MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
 
-TEMPLATE_SUITS_IMG = cv2.imread("ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
-TEMPLATE_RANKS_IMG = cv2.imread("ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
+TEMPLATE_SUITS_IMG = cv2.imread("Images/References/ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
+TEMPLATE_RANKS_IMG = cv2.imread("Images/References/ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
 
 
 def empty(_):

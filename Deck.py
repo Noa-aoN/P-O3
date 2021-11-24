@@ -1,5 +1,5 @@
 import pygame
-from random import choice
+from random import shuffle
 
 SUITS = ("Hearts", "Diamonds", "Spades", "Clubs")
 RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
@@ -44,16 +44,21 @@ def load_deck():
     return [[(rank, suit) for rank in range(len(RANKS[:-1]))] for suit in range(len(SUITS))]
 
 
+def load_random_deck():
+    deck = [(rank, suit) for rank in range(len(RANKS[:-1])) for suit in range(len(SUITS))]
+    shuffle(deck)
+    return deck
+
+
 def get_random_card(deck):
-    suit_list = choice(deck)
-    i, j = choice(suit_list)
-    print(i, j)
+    if not deck:
+        deck = load_random_deck()
+        print("A new deck was created")
 
-    del deck[j][i]
 
-    card = Card(0, 0, 0, 0, 0, i, j)
+    rank, suit = deck.pop()
 
-    return card, deck
+    return Card(0, 0, 0, 0, 0, rank, suit), deck
 
 
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)

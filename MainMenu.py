@@ -28,10 +28,10 @@ def main_menu():
         for event in pygame.event.get():
             exit_pygame(event)
             if button_pressed(bj_button, event):
-                playsound("DroppingChips.wav")
+                playsound("Sounds/DroppingChips.wav")
                 status_bj = blackjack(screen, clock)
             elif button_pressed(hl_button, event):
-                playsound("DroppingChips.wav")
+                playsound("Sounds/DroppingChips.wav")
                 status_bj = higherlower(screen, clock)
 
         clock.tick(60)

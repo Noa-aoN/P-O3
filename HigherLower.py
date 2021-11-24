@@ -8,14 +8,14 @@ import time
 test_font_big = pygame.font.SysFont('comicsans', 80)
 test_font = pygame.font.SysFont('comicsans', 25)
 
-Higherlower_surf = test_font_big.render('Higher Lower', False, (0, 0, 0))
-False_surf = test_font_big.render('Wrong!', False, (0, 0, 0))
+HigherLower_surf = test_font_big.render('Higher Lower', False, (0, 0, 0))
+Wrong_surf = test_font_big.render('Wrong!', False, (0, 0, 0))
 
 
 def add_new_card(deck, player):
-    random_card = choice(deck)
-    deck.remove(random_card)
+    random_card, deck = get_random_card(deck)
     player.add_card(random_card)
+    return deck
 
 
 def last_two_cards(player):
@@ -29,7 +29,7 @@ def last_two_cards(player):
 
 def wrong_guess(player, huidige_kaart, window):
     window.fill((31, 171, 57))
-    window.blit(False_surf, False_surf.get_rect(midbottom=(600, 150)))
+    window.blit(Wrong_surf, Wrong_surf.get_rect(midbottom=(600, 150)))
     player.show_cards(window)
     window.blit(pygame.transform.rotozoom(huidige_kaart.load_image(), 0, 2), (520, 200))
     pygame.display.update()
@@ -38,7 +38,7 @@ def wrong_guess(player, huidige_kaart, window):
 
 def higherlower(screen, clock):
     screen.fill((31, 171, 57))
-    player_deck = load_deck()
+    deck = load_random_deck()
     player1 = Player('Matthias', 10000, 1)
     game_active = False
 
@@ -58,7 +58,7 @@ def higherlower(screen, clock):
                 player1.display_score_hl(screen)
 
                 if len(player1.cards) < 1:
-                    add_new_card(player_deck, player1)
+                    deck = add_new_card(deck, player1)
 
                 player1.show_cards(screen)
                 pick_higher_lower_surf = test_font.render(
@@ -69,7 +69,7 @@ def higherlower(screen, clock):
 
                 for event in pygame.event.get():
                     if button_pressed(high_button, event) or button_pressed(low_button, event):
-                        add_new_card(player_deck, player1)
+                        deck = add_new_card(deck, player1)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
 
@@ -88,7 +88,7 @@ def higherlower(screen, clock):
                 for event in pygame.event.get():
                     if button_pressed(again_button, event):
                         player1.cards = []
-                        player_deck = load_deck()
+                        deck = load_random_deck()
                         lost = False
 
                     if button_pressed(exit_button, event):
@@ -97,7 +97,7 @@ def higherlower(screen, clock):
             exit_button.draw(screen)
 
         else:
-            screen.blit(Higherlower_surf, Higherlower_surf.get_rect(midbottom=(600, 150)))
+            screen.blit(HigherLower_surf, HigherLower_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
 
             for event in pygame.event.get():
