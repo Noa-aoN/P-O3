@@ -274,7 +274,7 @@ class gesture_recognition:
                     """ Gesture Recognition"""
 
                     # all recognizable gestures, more can be implemented
-                    # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden
+                    # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden, simpelste gebaren vanboven
                     if self.index_down(img, hand_landmarks):
                         self.index_down(img, hand_landmarks)
                     elif self.thumbs_up(img, hand_landmarks):
@@ -283,14 +283,14 @@ class gesture_recognition:
                         self.thumbs_down(img, hand_landmarks)
                     elif self.index_up(img, hand_landmarks):
                         self.index_up(img, hand_landmarks)
-                    elif self.fingers_two(img, hand_landmarks):
-                        self.fingers_two(img, hand_landmarks)
-                    elif self.fingers_three(img, hand_landmarks):
-                        self.fingers_three(img, hand_landmarks)
-                    elif self.fingers_four(img, hand_landmarks):
-                        self.fingers_four(img, hand_landmarks)
                     elif self.fingers_five(img, hand_landmarks):
                         self.fingers_five(img, hand_landmarks)
+                    elif self.fingers_four(img, hand_landmarks):
+                        self.fingers_four(img, hand_landmarks)
+                    elif self.fingers_three(img, hand_landmarks):
+                        self.fingers_three(img, hand_landmarks)
+                    elif self.fingers_two(img, hand_landmarks):
+                        self.fingers_two(img, hand_landmarks)
 
             cv2.imshow('Raw Webcam Feed', img)
 
