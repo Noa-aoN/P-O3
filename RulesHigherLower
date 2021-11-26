@@ -1,0 +1,14 @@
+Rules Higher Lower.
+
+The dealer gives you one card. You need to guess if the next card is higher or lower.
+If you guessed correct, the game continues. If you guessed wrong the game ends.
+If the next card is the same rank then the current card, the game continues.
+
+e.g The given card is a 5, you guess that the next card will be higher.
+If next card is a 5 or higher you win. If the next card is a 4 or lower you lose.
+
+You can chose higher or lower by pressing on the right button or by gesture.
+
+Gestures:
+            Thumb down = lower
+            Thumb up = higher

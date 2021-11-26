@@ -42,7 +42,6 @@ def blackjack(screen, clock):
     exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
     rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
 
-
     place_bets = True
     deal_2_cards = False
     dealer_cards = False
