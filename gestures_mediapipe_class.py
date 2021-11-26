@@ -5,7 +5,6 @@ import mediapipe as mp
 kan een heleboel gebaren herkennen via het vergelijken van de coordinaten van de 'landmarks'
 er kunnen nog meer gebaren geimplementeerd worden
 zelfde programma als 'gestures_mediapipe.py' maar dan in een klasse
-
 link: 
 https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapipe/#:~:text=MediaPipe%20Hand%20is%20a%20machine%20learning%20employed%20high-fidelity,help%20of%20multiple%20models%20which%20are%20working%20simultaneously.
 """
@@ -277,20 +276,28 @@ class gesture_recognition:
                     # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden, simpelste gebaren vanboven
                     if self.index_down(img, hand_landmarks):
                         self.index_down(img, hand_landmarks)
+                        return "index_down"
                     elif self.thumbs_up(img, hand_landmarks):
                         self.thumbs_up(img, hand_landmarks)
+                        return "thumbs_up"
                     elif self.thumbs_down(img, hand_landmarks):
                         self.thumbs_down(img, hand_landmarks)
+                        return "thumbs_down"
                     elif self.index_up(img, hand_landmarks):
                         self.index_up(img, hand_landmarks)
+                        return "index_up"
                     elif self.fingers_five(img, hand_landmarks):
                         self.fingers_five(img, hand_landmarks)
+                        return "five"
                     elif self.fingers_four(img, hand_landmarks):
                         self.fingers_four(img, hand_landmarks)
+                        return "four"
                     elif self.fingers_three(img, hand_landmarks):
                         self.fingers_three(img, hand_landmarks)
+                        return "three"
                     elif self.fingers_two(img, hand_landmarks):
                         self.fingers_two(img, hand_landmarks)
+                        return "two"
 
             cv2.imshow('Raw Webcam Feed', img)
 
