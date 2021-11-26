@@ -1,8 +1,10 @@
 from sys import exit
-from random import choice
+import pygame
 from Button import Button, button_pressed, exit_pygame
-from Deck import *
+from Deck import get_random_card, load_random_deck
 from Player import Player
+from card_double_detection import get_card
+from Camera import init_camera, opencv_to_pygame
 import time
 
 test_font_big = pygame.font.SysFont('comicsans', 80)
@@ -13,16 +15,46 @@ HigherLower_surf = test_font_big.render('Higher Lower', False, (0, 0, 0))
 Wrong_surf = test_font_big.render('Wrong!', False, (0, 0, 0))
 
 
-def add_new_card(deck, player):
-    random_card, deck = get_random_card(deck)
-    player.add_card(random_card)
-    return deck
+def get_camera_card(deck, player, screen):
+    cap = init_camera()
+    i = 1
+    while True:
+        if i > 9:
+            i = 1
+        time.sleep(0.05)
+        print("Trying again")
+        ret, img = cap.read()
+        card = get_card(img)
+        img = opencv_to_pygame(img)
+        surface = pygame.surfarray.make_surface(img)
+        scale = pygame.transform.rotozoom(surface, -90, 0.45)
+        screen.fill((31, 171, 57))
+        screen.blit(scale, scale.get_rect(midbottom=(600, 550)))
+        surf = test_font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
+
+        if card:
+            cardname = card.get_rank_suit()
+            if cardname in deck:
+                deck.remove(cardname)
+                player.add_card(card)
+                cap.release()
+                return deck
+            else:
+                rank, suit = cardname
+                if rank == "Joker":
+                    surf = test_font.render("Why so serious? - The Joker", False, (0, 0, 0))
+                else:
+                    surf = test_font.render(f"{rank} of {suit} was already seen.", False, (0, 0, 0))
+
+        screen.blit(surf, surf.get_rect(midbottom=(600, 50)))
+        pygame.display.update()
+        i += 1
 
 
 def last_two_cards(player):
-    aantal_kaarten = len(player.cards)-1
+    aantal_kaarten = len(player.cards) - 1
 
-    vorige_kaart = player.cards[aantal_kaarten-1]
+    vorige_kaart = player.cards[aantal_kaarten - 1]
     huidige_kaart = player.cards[aantal_kaarten]
 
     return vorige_kaart, huidige_kaart
@@ -41,7 +73,7 @@ def higherlower(screen, clock, players):
     screen.fill((31, 171, 57))
     deck = load_random_deck()
     player1 = players[1]
-    game_active = False
+
     f = open('RulesHigherLower', 'r')
     content = f.read()
 
@@ -52,8 +84,16 @@ def higherlower(screen, clock, players):
     exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
     rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
 
+    game_active = False
     lost = False
     rules = False
+
+    with_camera = False
+
+    if with_camera:
+        get_card_func = get_camera_card
+    else:
+        get_card_func = get_random_card
 
     while True:
         pygame.display.update()
@@ -64,7 +104,7 @@ def higherlower(screen, clock, players):
                 player1.display_score_hl(screen)
 
                 if len(player1.cards) < 1:
-                    deck = add_new_card(deck, player1)
+                    deck = get_card_func(deck, player1, screen)
 
                 player1.show_cards(screen)
                 pick_higher_lower_surf = test_font.render(
@@ -75,7 +115,7 @@ def higherlower(screen, clock, players):
 
                 for event in pygame.event.get():
                     if button_pressed(high_button, event) or button_pressed(low_button, event):
-                        deck = add_new_card(deck, player1)
+                        deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
 
@@ -115,9 +155,9 @@ def higherlower(screen, clock, players):
                 x = 10
                 y = 10
                 for i, line in enumerate(splittedcontent):
-                    rules_surf = test_font_small.render(line, False, (0, 0, 0))
+                    rules_surf = test_font.render(line, False, (0, 0, 0))
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
-                    y += 15
+                    y += 30
 
             for event in pygame.event.get():
                 exit_pygame(event)
@@ -136,4 +176,4 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
     clock = pygame.time.Clock()
-    higherlower(screen, clock)
+    higherlower(screen, clock, [0, Player('Matthias', 10000, 1)])

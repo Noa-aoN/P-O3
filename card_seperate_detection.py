@@ -315,3 +315,5 @@ while True:
         break
 
 cv2.destroyAllWindows()
+
+# How to make it faster -> find threshsholds beforehand
