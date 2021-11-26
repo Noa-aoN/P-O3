@@ -12,13 +12,6 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 
 
 class gesture_recognition:
-    def __init__(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # webcam opstarten
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-
-        mp_hands = mp.solutions.hands
-        hands = mp_hands.Hands()
 
     def index_down(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
@@ -181,6 +174,7 @@ class gesture_recognition:
         cv2.line(img, (int(hand_landmarks.landmark[9].x * width), int(hand_landmarks.landmark[9].y * height)),
                  (int(hand_landmarks.landmark[10].x * width), int(hand_landmarks.landmark[10].y * height)),
                  (0, 255, 0), thickness=1)
+
     def draw_ring(self, img, hand_landmarks, width, height):
         cv2.line(img, (int(hand_landmarks.landmark[15].x * width), int(hand_landmarks.landmark[15].y * height)),
                  (int(hand_landmarks.landmark[16].x * width), int(hand_landmarks.landmark[16].y * height)),
@@ -287,5 +281,7 @@ class gesture_recognition:
         cap.release()
         cv2.destroyAllWindows()
 
+
 # om programma te runnen:
+# from gestures_mediapipe_class.py import gesture_recognition
 # gesture_recognition().recognition()
