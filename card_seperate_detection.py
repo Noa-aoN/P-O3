@@ -19,9 +19,7 @@ RANK_HEIGHT = 100
 SUIT_WIDTH = 100
 SUIT_HEIGHT = 100
 
-URL = "http://192.168.43.1:8080/shot.jpg"
-
-SUITS_IMG = [cv2.imread(f"Images/Moulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
+SUITS_IMG = [cv2.imread(f"Images/MyMoulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
 RANKS_IMG = [cv2.imread(f"Images/MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
 
 TEMPLATE_SUITS_IMG = cv2.imread("Images/References/ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
@@ -74,10 +72,9 @@ def detect_cards(thresh):
     for i, contour in enumerate(cnts):
         area = cv2.contourArea(contour)
         peri = cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
+        pts = cv2.approxPolyDP(contour, 0.01 * peri, True)
 
-        if MIN_CARD_AREA < area < MAX_CARD_AREA and hiers[0][i][3] == -1 and len(approx) == 4:
-            pts = np.float32(approx)
+        if MIN_CARD_AREA < area < MAX_CARD_AREA and hiers[0][i][3] == -1 and len(pts) == 4:
             card_cnts_pts.append((contour, pts))
 
     return card_cnts_pts
@@ -102,17 +99,17 @@ def create_card(contour, pts, image):
     """if rank_img.all() == 0 and suit_img.all() == 0:
         return Card(contour, pts, w, h, center, 14, 14), Card(contour, pts, w, h, center, 14, 14)"""
 
+    rank = -1
+    suit = -1
+    t_rank = -1
+    t_suit = -1
+
     disp_rank = rank_img.copy()
 
     # Inverting!
     rank_cnts, hier = cv2.findContours(np.invert(rank_img), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     rank_cnts = sorted(rank_cnts, key=cv2.contourArea, reverse=True)
     rank_cnts = list(filter(lambda cnt: cv2.contourArea(cnt) > 350, rank_cnts))
-
-    rank = -1
-    suit = -1
-    t_rank = -1
-    t_suit = -1
 
     if len(rank_cnts) > 0:
         x1, y1, w1, h1 = cv2.boundingRect(rank_cnts[0])
@@ -299,7 +296,6 @@ def get_cards(img):
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1440)  # 1920
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 810)  # 1080
-prev_cards = []
 
 while True:
     ret, img = cap.read()
