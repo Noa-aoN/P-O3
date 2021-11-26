@@ -299,13 +299,13 @@ class gesture_recognition:
                         self.fingers_two(img, hand_landmarks)
                         return "two"
 
-            cv2.imshow('Raw Webcam Feed', img)
+            # cv2.imshow('Raw Webcam Feed', img)
 
             if cv2.waitKey(10) & 0xFF == ord('q'):  # q om te stoppen
                 break
 
-        cap.release()
-        cv2.destroyAllWindows()
+        # cap.release()
+        # cv2.destroyAllWindows()
 
 
 # om programma te runnen:
