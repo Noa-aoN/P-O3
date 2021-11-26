@@ -12,13 +12,6 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 
 
 class gesture_recognition:
-    def __init__(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # webcam opstarten
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-
-        mp_hands = mp.solutions.hands
-        hands = mp_hands.Hands()
 
     def index_down(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
@@ -34,6 +27,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("Lower/down")
             return True
 
     def thumbs_up(self, img, hand_landmarks):
@@ -50,6 +44,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("Thumbs up")
             return True
 
     def thumbs_down(self, img, hand_landmarks):
@@ -66,6 +61,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("Thumbs down")
             return True
 
     def index_up(self, img, hand_landmarks):
@@ -82,6 +78,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("Higher/one")
             return True
 
     def fingers_two(self, img, hand_landmarks):
@@ -98,6 +95,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("two")
             return True
 
     def fingers_three(self, img, hand_landmarks):
@@ -114,6 +112,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("three")
             return True
 
     def fingers_five(self, img, hand_landmarks):
@@ -133,6 +132,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("five")
             return True
 
     def fingers_four(self, img, hand_landmarks):
@@ -150,6 +150,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
+            print("four")
             return True
 
     def draw_thumb(self, img, hand_landmarks, width, height):
@@ -287,7 +288,6 @@ class gesture_recognition:
 
         cap.release()
         cv2.destroyAllWindows()
-
 
 # om programma te runnen:
 # from gestures_mediapipe_class import gesture_recognition
