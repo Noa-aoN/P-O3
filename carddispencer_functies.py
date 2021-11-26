@@ -7,7 +7,7 @@ servo = Servo(4)
 def setup():
     Motor1A = 24
     Motor1B = 23
-    Motor1E = 25
+    Motor1E = 22
     GPIO.setmode(GPIO.BCM)  # GPIO Numbering
     GPIO.setup(Motor1A, GPIO.OUT)  # All pins as Outputs
     GPIO.setup(Motor1B, GPIO.OUT)
