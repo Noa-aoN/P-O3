@@ -18,7 +18,7 @@ To DO:
 '''
 
 
-def blackjack(screen, clock, players):
+def blackjack(screen, clock, players=[]):
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
     test_font_small = pygame.font.Font('Font/Roboto-Regular.ttf', 11)
@@ -28,11 +28,12 @@ def blackjack(screen, clock, players):
     content = f.read()
 
     deck = load_random_deck()
-    '''
-    player0 = Player('Dealer', 0, 0)
-    names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
-    players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
-    '''
+
+    if players == []:
+        player0 = Player('Dealer', 0, 0)
+        names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
+        players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
+
 
     game_active = False
 
