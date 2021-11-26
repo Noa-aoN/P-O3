@@ -7,6 +7,7 @@ import time
 
 test_font_big = pygame.font.SysFont('comicsans', 80)
 test_font = pygame.font.SysFont('comicsans', 25)
+test_font_small = pygame.font.SysFont('comicsans', 15)
 
 HigherLower_surf = test_font_big.render('Higher Lower', False, (0, 0, 0))
 Wrong_surf = test_font_big.render('Wrong!', False, (0, 0, 0))
@@ -41,13 +42,18 @@ def higherlower(screen, clock, players):
     deck = load_random_deck()
     player1 = players[1]
     game_active = False
+    f = open('RulesHigherLower', 'r')
+    content = f.read()
 
     start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
     again_button = Button((0, 0, 0), (480, 480), (240, 65), 'Play again?')
     high_button = Button((0, 0, 0), (380, 250), (150, 60), 'Higher')
     low_button = Button((0, 0, 0), (680, 250), (150, 60), 'Lower')
     exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
+    rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
+
     lost = False
+    rules = False
 
     while True:
         pygame.display.update()
@@ -97,13 +103,31 @@ def higherlower(screen, clock, players):
             exit_button.draw(screen)
 
         else:
+            screen.fill((31, 171, 57))
             screen.blit(HigherLower_surf, HigherLower_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
+            rules_button.draw(screen)
+            if rules:
+                pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 600))
+                pygame.draw.rect(screen, (0, 0, 0), (0, 0, 1200, 600), 2, 1)
+                exit_button.draw(screen)
+                splittedcontent = content.splitlines()
+                x = 10
+                y = 10
+                for i, line in enumerate(splittedcontent):
+                    rules_surf = test_font_small.render(line, False, (0, 0, 0))
+                    screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
+                    y += 15
 
             for event in pygame.event.get():
                 exit_pygame(event)
                 if button_pressed(start_button, event):
                     game_active = True
+                if not rules:
+                    if button_pressed(rules_button, event):
+                        rules = True
+                elif button_pressed(exit_button, event):
+                    rules = False
 
         clock.tick(60)
 
