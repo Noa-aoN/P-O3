@@ -1,0 +1,2 @@
+from gestures_mediapipe_class import gesture_recognition
+gesture_recognition().recognition()
