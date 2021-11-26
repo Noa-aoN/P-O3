@@ -20,8 +20,11 @@ To DO:
 def blackjack(screen, clock):
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
+    test_font_small = pygame.font.Font('Font/Roboto-Regular.ttf', 11)
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
+    f = open('blackjackrules.txt', 'r')
+    content = f.read()
 
     deck = load_random_deck()
 
@@ -36,6 +39,8 @@ def blackjack(screen, clock):
     double_button = Button((0, 0, 0), (475, 250), (250, 60), 'Double Down')
     again_button = Button((0, 0, 0), (530, 260), (200, 65), 'Play again!')
     exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
+    rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
+
 
     place_bets = True
     deal_2_cards = False
@@ -43,6 +48,7 @@ def blackjack(screen, clock):
     change_bal = False
     deal_cards = False
     check_results = False
+    rules = False
     i = 0
     j = 0
 
@@ -230,15 +236,32 @@ def blackjack(screen, clock):
             screen.fill((31, 171, 57))
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
+            rules_button.draw(screen)
             H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
             S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
             screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
             screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
+            if rules:
+                pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 600))
+                pygame.draw.rect(screen, (0, 0, 0), (0, 0, 1200, 600), 2, 1)
+                exit_button.draw(screen)
+                splittedcontent = content.splitlines()
+                x = 10
+                y = 10
+                for i, line in enumerate(splittedcontent):
+                    rules_surf = test_font_small.render(line, False, (0, 0, 0))
+                    screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
+                    y += 12
 
             for event in pygame.event.get():
                 exit_pygame(event)
                 if button_pressed(start_button, event):
                     game_active = True
+                if not rules:
+                    if button_pressed(rules_button, event):
+                        rules = True
+                elif button_pressed(exit_button, event):
+                    rules = False
 
         clock.tick(60)
 
