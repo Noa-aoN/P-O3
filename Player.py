@@ -4,6 +4,42 @@ from Deck import BACK
 from time import sleep
 
 
+def add_player(window, players, skip_button, active, player_name):
+    font = pygame.font.SysFont('comicsans', 20)
+    name_surf_active = font.render(f'Enter name of player {len(players)}!', False, (255, 255, 255))
+    name_surf = font.render(player_name, False, (0, 0, 0))
+    name_surf_inactive = font.render(f'Enter name of player {len(players)}!', False, (0, 0, 0))
+    name_box = pygame.Rect(490, 250, 220, 40)
+
+    for event in pygame.event.get():
+        if button_pressed(skip_button, event):
+            return 'skip', None
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if name_box.collidepoint(event.pos):
+                active = True
+            else:
+                active = False
+        if event.type == pygame.KEYDOWN:
+            if active:
+                if event.key == pygame.K_RETURN:
+                    players.append(Player(player_name, 10000, len(players)))
+                    player_name = ''
+                    active = False
+                elif event.key == pygame.K_BACKSPACE:
+                    player_name = player_name[:-1]
+                else:
+                    player_name += event.unicode
+
+    if not active:
+        window.blit(name_surf_inactive, name_surf_inactive.get_rect(topleft=(490, 250)))
+    else:
+        if player_name == '':
+            window.blit(name_surf_active, name_surf_active.get_rect(topleft=(490, 250)))
+        else:
+            window.blit(name_surf, name_surf.get_rect(topleft=(490, 250)))
+    return active, player_name
+
+
 class Player:
     def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000, wants_bet=True):
         self.font = pygame.font.SysFont('comicsans', 20)
@@ -41,18 +77,14 @@ class Player:
                             (100 + 300 * (self.number - 1) + 25 * i, 400))
 
         else:
-            if len(self.cards) == 2:
-                if not result:
-                    if self.value_count_bj() == 21:
-                        for i, card in enumerate(self.cards):
-                            window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
-
-                    else:
-                        window.blit(pygame.transform.rotozoom(self.cards[0].load_image(), 0, 1), (560, 50))
-                        window.blit(pygame.transform.scale(BACK.load_image(), (500 * 0.15, 726 * 0.15)), (585, 50))
-                else:
+            if len(self.cards) == 2 and not result:
+                if self.value_count_bj() == 21:
                     for i, card in enumerate(self.cards):
                         window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
+
+                else:
+                    window.blit(pygame.transform.rotozoom(self.cards[0].load_image(), 0, 1), (560, 50))
+                    window.blit(pygame.transform.scale(BACK.load_image(), (500 * 0.15, 726 * 0.15)), (585, 50))
 
             else:
                 for i, card in enumerate(self.cards):

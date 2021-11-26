@@ -36,10 +36,10 @@ def wrong_guess(player, huidige_kaart, window):
     time.sleep(3)
 
 
-def higherlower(screen, clock):
+def higherlower(screen, clock, players):
     screen.fill((31, 171, 57))
     deck = load_random_deck()
-    player1 = Player('Matthias', 10000, 1)
+    player1 = players[1]
     game_active = False
 
     start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')

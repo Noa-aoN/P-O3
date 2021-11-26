@@ -10,24 +10,26 @@ import pygame
 Bugs: 
 
 To DO:
-- Adding delay with generating cards.
 - Entering player names and amount of players.
 - Entering starting balance.
+- If BlackJack 3:2 payment.
 - ...
 '''
 
 
-def blackjack(screen, clock):
+def blackjack(screen, clock, players):
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
 
     deck = load_random_deck()
-
+    '''
     player0 = Player('Dealer', 0, 0)
     names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
     players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
+    '''
+
     game_active = False
 
     start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
@@ -175,6 +177,8 @@ def blackjack(screen, clock):
                             if not players[i].wants_card:
                                 i += 1
                 else:
+                    pygame.display.update()
+                    sleep(1)
                     dealer_cards = True
 
             if dealer_cards:
