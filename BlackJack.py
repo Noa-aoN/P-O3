@@ -5,6 +5,7 @@ from Player import Player
 from AudioPlay import playsound
 from time import sleep
 import pygame
+from gestures_mediapipe_class import gesture_recognition
 
 '''
 Bugs: 
