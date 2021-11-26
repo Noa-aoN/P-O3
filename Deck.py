@@ -40,6 +40,10 @@ class SpecialCard:
         return pygame.transform.rotozoom(pygame.image.load(self.file), 0, 0.15)
 
 
+def load_deck():
+    return [[(rank, suit) for rank in range(len(RANKS[:-1]))] for suit in range(len(SUITS))]
+
+
 def load_random_deck():
     deck = [(rank, suit) for rank in range(len(RANKS[:-1])) for suit in range(len(SUITS))]
     shuffle(deck)
@@ -50,6 +54,7 @@ def get_random_card(deck):
     if not deck:
         deck = load_random_deck()
         print("A new deck was created")
+
 
     rank, suit = deck.pop()
 

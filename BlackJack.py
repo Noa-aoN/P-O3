@@ -1,8 +1,10 @@
 from sys import exit
 from Button import Button, button_pressed, exit_pygame
-from Deck import *
+from Deck import load_deck, get_random_card, load_random_deck
 from Player import Player
 from AudioPlay import playsound
+from time import sleep
+import pygame
 
 '''
 Bugs: 
@@ -91,12 +93,27 @@ def blackjack(screen, clock):
                     while len(player.cards) < 2:
                         random_card, deck = get_random_card(deck)
                         player.add_card(random_card)
+                        player.show_cards(screen)
+                        player.display_score_bj(screen)
+                        pygame.display.update()
+                        sleep(1)
+                        random_card, deck = get_random_card(deck)
+                        player.add_card(random_card)
+                for player in players:
+                    player.show_cards(screen)
+                    player.display_score_bj(screen)
+                    pygame.display.update()
+                    sleep(1)
 
                 if player0.cards is None:
                     player0.cards = []
                 while len(player0.cards) < 2:
                     random_card, deck = get_random_card(deck)
                     player0.add_card(random_card)
+                    player0.show_cards(screen)
+                    player0.display_score_bj(screen)
+                    pygame.display.update()
+                    sleep(1)
 
                 if not player0.value_count_bj() == 21:
                     for player in players:
@@ -161,15 +178,13 @@ def blackjack(screen, clock):
                     dealer_cards = True
 
             if dealer_cards:
-                if len(player0.cards) == 1:
+                while 0 < player0.value_count_bj() < 17:
+                    player0.show_cards(screen, True)
+                    player0.display_score_bj(screen, True)
+                    pygame.display.update()
+                    sleep(1)
                     random_card, deck = get_random_card(deck)
                     player0.add_card(random_card)
-                if player0.value_count_bj() == 0:
-                    pass
-                else:
-                    while 0 < player0.value_count_bj() < 17:
-                        random_card, deck = get_random_card(deck)
-                        player0.add_card(random_card)
                 deal_cards = False
                 dealer_cards = False
                 change_bal = True
@@ -215,8 +230,8 @@ def blackjack(screen, clock):
             screen.fill((31, 171, 57))
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
-            H = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Hearts.png"), 0, 0.15)
-            S = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Spades.png"), 0, 0.15)
+            H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
+            S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
             screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
             screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
 
