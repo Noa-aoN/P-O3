@@ -5,7 +5,6 @@ import mediapipe as mp
 kan een heleboel gebaren herkennen via het vergelijken van de coordinaten van de 'landmarks'
 er kunnen nog meer gebaren geimplementeerd worden
 zelfde programma als 'gestures_mediapipe.py' maar dan in een klasse
-
 link: 
 https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapipe/#:~:text=MediaPipe%20Hand%20is%20a%20machine%20learning%20employed%20high-fidelity,help%20of%20multiple%20models%20which%20are%20working%20simultaneously.
 """
@@ -21,13 +20,13 @@ class gesture_recognition:
                 hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y:
             cv2.putText(
                 img=img,
-                text=str("Lower / down"),
+                text=str("Lower"),
                 org=(0, 20),
                 fontFace=cv2.FONT_HERSHEY_DUPLEX,
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
-            print("Lower/down")
+            print("lower")
             return True
 
     def thumbs_up(self, img, hand_landmarks):
@@ -44,7 +43,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
-            print("Thumbs up")
+            print("thumbs up")
             return True
 
     def thumbs_down(self, img, hand_landmarks):
@@ -61,7 +60,7 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
-            print("Thumbs down")
+            print("thumbs down")
             return True
 
     def index_up(self, img, hand_landmarks):
@@ -78,8 +77,9 @@ class gesture_recognition:
                 fontScale=0.5,
                 color=(0, 0, 255),
                 thickness=1)
-            print("Higher/one")
+            print("higher/one")
             return True
+
 
     def fingers_two(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
@@ -97,6 +97,7 @@ class gesture_recognition:
                 thickness=1)
             print("two")
             return True
+
 
     def fingers_three(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
@@ -237,7 +238,7 @@ class gesture_recognition:
         self.draw_palm(img, hand_landmarks, width, height)
 
     def recognition(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # , cv2.CAP_DSHOW
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
@@ -272,14 +273,31 @@ class gesture_recognition:
                     """ Gesture Recognition"""
 
                     # all recognizable gestures, more can be implemented
-                    self.index_down(img, hand_landmarks)
-                    self.thumbs_up(img, hand_landmarks)
-                    self.thumbs_down(img, hand_landmarks)
-                    self.index_up(img, hand_landmarks)
-                    self.fingers_two(img, hand_landmarks)
-                    self.fingers_three(img, hand_landmarks)
-                    self.fingers_four(img, hand_landmarks)
-                    self.fingers_five(img, hand_landmarks)
+                    # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden, simpelste gebaren vanboven
+                    if self.index_down(img, hand_landmarks):
+                        self.index_down(img, hand_landmarks)
+                        return "index_down"
+                    elif self.thumbs_up(img, hand_landmarks):
+                        self.thumbs_up(img, hand_landmarks)
+                        return "thumbs_up"
+                    elif self.thumbs_down(img, hand_landmarks):
+                        self.thumbs_down(img, hand_landmarks)
+                        return "thumbs_down"
+                    elif self.index_up(img, hand_landmarks):
+                        self.index_up(img, hand_landmarks)
+                        return "index_up"
+                    elif self.fingers_five(img, hand_landmarks):
+                        self.fingers_five(img, hand_landmarks)
+                        return "five"
+                    elif self.fingers_four(img, hand_landmarks):
+                        self.fingers_four(img, hand_landmarks)
+                        return "four"
+                    elif self.fingers_three(img, hand_landmarks):
+                        self.fingers_three(img, hand_landmarks)
+                        return "three"
+                    elif self.fingers_two(img, hand_landmarks):
+                        self.fingers_two(img, hand_landmarks)
+                        return "two"
 
             cv2.imshow('Raw Webcam Feed', img)
 
@@ -289,6 +307,7 @@ class gesture_recognition:
         cap.release()
         cv2.destroyAllWindows()
 
+
 # om programma te runnen:
-# from gestures_mediapipe_class import gesture_recognition
+# from gestures_mediapipe_class.py import gesture_recognition
 # gesture_recognition().recognition()
