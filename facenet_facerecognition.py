@@ -336,22 +336,22 @@ class PlayerRegistration:
 # print(looking_direction(Image.open(r'C:\Users\bram\facenetLibraries\Bram\image8.jpg')))
 
 
-# library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
+library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
 # library.registerplayer("Bram")
 # #
-# # imagesize=160
-# # margin=0.2
-# # mtcnn, resnet = facenet_setup(imagesize, margin)
+imagesize=160
+margin=0.2
+mtcnn, resnet = facenet_setup(imagesize, margin)
 # libraryembedding = {}
 # libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
-# # cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-# # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-# # # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
-# while True:
-#     ret, img = cam.read()
-#     img, resultingmatches = library.identifyface(img, libraryembedding)
+cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+# # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
+while True:
+    ret, img = cam.read()
+    # img, resultingmatches = library.identifyface(img, libraryembedding)
 #     print(resultingmatches)
-#     # print(library.searchplayer('Bram', img))
-#     cv2.imshow("Face", img)
-#     cv2.waitKey(1)
+    print(library.searchplayer('Bram', img))
+    cv2.imshow("Face", img)
+    cv2.waitKey(1)
