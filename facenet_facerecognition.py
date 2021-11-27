@@ -81,16 +81,21 @@ def create_folder(directory):
     try:
         if not os.path.exists(directory):
             os.makedirs(directory)
-        elif len(os.listdir(directory)) > 0:
-            ans = input('A library with this directory already exists. Do you want to replace its contents? '
-                        '(type yes or 1 if you want to replace)')
-            if ans == 'yes' or ans == '1':
-                for i in os.listdir(directory):
-                    os.remove(os.path.join(directory, i))
+        # elif len(os.listdir(directory)) > 0:
+        #     return 'exists'
+            # ans = input('A library with this directory already exists. Do you want to replace its contents? '
+            #             '(type yes or 1 if you want to replace)')
+            # if ans == 'yes' or ans == '1':
+            #     clear_folder_contents(directory)
     except OSError:
         print('Error: Creating directory. ' + directory)
         return None
     return directory
+
+
+def clear_folder_contents(directory):
+    for i in os.listdir(directory):
+        os.remove(os.path.join(directory, i))
 
 
 def looking_direction(face):
@@ -199,6 +204,8 @@ def create_player_library(player, directory, imagesperlibrary, mtcnn, resnet):
                         color=(0, 0, 255), thickness=1)
             cv2.imshow("Face", img)
             cv2.waitKey(1)
+            cap.release()
+            cv2.destroyAllWindows()
             return embeddings
         elif cv2.waitKey(1) & 0xff == 27:  # If you press Escape
             cv2.putText(img=img, text=str("Disengaging library_create for player" + str(player)), org=(0, 20),
@@ -206,6 +213,8 @@ def create_player_library(player, directory, imagesperlibrary, mtcnn, resnet):
                         color=(0, 0, 255), thickness=1)
             cv2.imshow("Face", img)
             cv2.waitKey(1)
+            cap.release()
+            cv2.destroyAllWindows()
             return None
         cv2.putText(img=img, text=str("Press Enter to start taking pictures"), org=(0, 20),
                     fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
@@ -282,7 +291,7 @@ def search_player(player, image, mtcnn, resnet, library):
 class PlayerRegistration:
     def __init__(self, librarydirectory, imagesperlibrary=9, playernr=1, imagesize=160, margin=0.2):
         assert isinstance(librarydirectory, str)
-        self._directory = librarydirectory
+        self.directory = librarydirectory
         assert isinstance(playernr, int)
         self._playernr = playernr
         assert isinstance(imagesperlibrary, int)
@@ -302,12 +311,12 @@ class PlayerRegistration:
         assert player is None or isinstance(player, str) or isinstance(player, int)
         if player is None:
             player = str(player) + str(self._playernr)
-        embeddings = create_player_library(player, self._directory, self._imagesperlibrary, self._mtcnn, self._resnet)
+        embeddings = create_player_library(player, self.directory, self._imagesperlibrary, self._mtcnn, self._resnet)
         if embeddings is not None and player not in self._libraryembeddings:
             self._libraryembeddings[player] = embeddings
         elif embeddings is not None:
             self._libraryembeddings[player] = self._libraryembeddings[player] + embeddings
-        if player not in os.listdir(self._directory):
+        if player not in os.listdir(self.directory):
             self._playernr += 1
 
     def identifyface(self, image, libraryembeddings=None):
@@ -323,6 +332,9 @@ class PlayerRegistration:
         coordlist = search_player(player, image, self._mtcnn, self._resnet, libraryembeddings)
         return coordlist
 
+    def get_directory(self):
+        return self.directory
+
 # Bram1 = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Bram1.jpg")
 # Bram2 = Image.open(r'C:\Users\bram\facenetLibraries\Bram\image4.jpg')
 # Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg")
@@ -337,6 +349,7 @@ class PlayerRegistration:
 
 
 # library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
+# print(library.get_directory())
 # # library.registerplayer("Bram")
 # # #
 # imagesize=160

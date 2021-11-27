@@ -1,7 +1,7 @@
 import os
 
 
-def local_directory(memorydrive=r"C:\Users", lookingfor='P-O3', path = ""):
+def local_directory(memorydrive=r"C:\Users", lookingfor='P-O3',  path = ""):
     try:
         if path == lookingfor:
             return path
@@ -20,11 +20,11 @@ def local_directory(memorydrive=r"C:\Users", lookingfor='P-O3', path = ""):
         return None
 
 
-try1 = local_directory(r"C:\Users")
-try2 = local_directory(r"C:\Gebruikers")
-if try1 is not None:
-    print(try1)
-elif try2 is not None:
-    print(try2)
-else:
-    print(None)
+# try1 = local_directory(r"C:\Users")
+# try2 = local_directory(r"C:\Gebruikers")
+# if try1 is not None:
+#     print(try1)
+# elif try2 is not None:
+#     print(try2)
+# else:
+#     print(None)

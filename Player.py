@@ -3,9 +3,11 @@ from Button import Button, turn_white, button_pressed
 from Deck import BACK
 from time import sleep
 from facenet_pytorch import MTCNN, InceptionResnetV1
+from facenet_facerecognition import PlayerRegistration
+import os
 
 
-def add_player(window, players, skip_button, active, player_name):
+def add_player(window, players, skip_button, active, player_name, library):
     font = pygame.font.SysFont('comicsans', 20)
     name_surf_active = font.render(f'Enter name of player {len(players)}!', False, (255, 255, 255))
     name_surf = font.render(player_name, False, (0, 0, 0))
@@ -24,8 +26,8 @@ def add_player(window, players, skip_button, active, player_name):
             if active:
                 if event.key == pygame.K_RETURN:
                     players.append(Player(player_name, 10000, len(players)))
-                    player_name = ''
-                    active = False
+                    full_name = player_name
+                    return False, full_name
                 elif event.key == pygame.K_BACKSPACE:
                     player_name = player_name[:-1]
                 else:
@@ -208,5 +210,8 @@ class Player:
             for bet_amount, button in bet_buttons:
                 if button_pressed(button, event) and bal >= bet_amount:
                     self.bet = bet_amount
+
+    def create_library(self):
+        return
 
 
