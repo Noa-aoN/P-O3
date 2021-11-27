@@ -1,4 +1,3 @@
-from sys import exit
 from Button import Button, button_pressed, exit_pygame
 from Deck import load_deck, get_random_card, load_random_deck
 from Player import Player
@@ -100,14 +99,12 @@ def blackjack(screen, clock, players=[]):
                     if player.cards is None:
                         player.cards = []
                     while len(player.cards) < 2:
-                        random_card, deck = get_random_card(deck)
-                        player.add_card(random_card)
+                        deck = get_random_card(deck, player, screen)
                         player.show_cards(screen)
                         player.display_score_bj(screen)
                         pygame.display.update()
                         sleep(1)
-                        random_card, deck = get_random_card(deck)
-                        player.add_card(random_card)
+                        deck = get_random_card(deck, player, screen)
                 for player in players:
                     player.show_cards(screen)
                     player.display_score_bj(screen)
@@ -117,8 +114,7 @@ def blackjack(screen, clock, players=[]):
                 if player0.cards is None:
                     player0.cards = []
                 while len(player0.cards) < 2:
-                    random_card, deck = get_random_card(deck)
-                    player0.add_card(random_card)
+                    deck = get_random_card(deck, player0, screen)
                     player0.show_cards(screen)
                     player0.display_score_bj(screen)
                     pygame.display.update()
@@ -152,16 +148,14 @@ def blackjack(screen, clock, players=[]):
                                 double_button.draw(screen)
                                 for event in pygame.event.get():
                                     if button_pressed(yes_button, event):
-                                        random_card, deck = get_random_card(deck)
-                                        players[i].add_card(random_card)
+                                        deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                     elif button_pressed(no_button, event):
                                         players[i].wants_card = False
                                     elif button_pressed(double_button, event):
                                         players[i].bet = players[i].bet*2
-                                        random_card, deck = get_random_card(deck)
-                                        players[i].add_card(random_card)
+                                        deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                         players[i].wants_card = False
@@ -170,8 +164,7 @@ def blackjack(screen, clock, players=[]):
                             else:
                                 for event in pygame.event.get():
                                     if button_pressed(yes_button, event):
-                                        random_card, deck = get_random_card(deck)
-                                        players[i].add_card(random_card)
+                                        deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                     elif button_pressed(no_button, event):
@@ -194,8 +187,7 @@ def blackjack(screen, clock, players=[]):
                     player0.display_score_bj(screen, True)
                     pygame.display.update()
                     sleep(1)
-                    random_card, deck = get_random_card(deck)
-                    player0.add_card(random_card)
+                    deck = get_random_card(deck, player0, screen)
                 deal_cards = False
                 dealer_cards = False
                 change_bal = True
