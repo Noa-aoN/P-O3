@@ -211,7 +211,5 @@ class Player:
                 if button_pressed(button, event) and bal >= bet_amount:
                     self.bet = bet_amount
 
-    def create_library(self):
-        return
 
 

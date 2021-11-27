@@ -22,6 +22,7 @@ def main_menu():
 
     bj_button = Button((0, 0, 0), (300, 480), (180, 65), 'Blackjack')
     hl_button = Button((0, 0, 0), (550, 480), (260, 65), 'Higher Lower')
+    newpl_button = Button((0, 0, 0), (1080, 20), (100, 25), 'New Players', 'small')
     skip_button = Button((0, 0, 0), (650, 340), (70, 25), 'Skip', 'small')
 
     player0 = Player('Dealer', 0, 0)
@@ -95,6 +96,7 @@ def main_menu():
             screen.blit(choose_game, choose_game.get_rect(midbottom=(600, 150)))
             bj_button.draw(screen)
             hl_button.draw(screen)
+            newpl_button.draw(screen)
 
             for event in pygame.event.get():
                 exit_pygame(event)
@@ -104,7 +106,11 @@ def main_menu():
                 elif button_pressed(hl_button, event):
                     playsound("Sounds/DroppingChips.wav")
                     status_bj = higherlower(screen, clock, players)
-
+                elif button_pressed(newpl_button, event):
+                    add_players = True
+                    bool = False
+                    name_text = ''
+                    players = [player0]
 
         clock.tick(60)
 
