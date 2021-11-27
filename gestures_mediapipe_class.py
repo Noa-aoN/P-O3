@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-
+import time
 """
 kan een heleboel gebaren herkennen via het vergelijken van de coordinaten van de 'landmarks'
 er kunnen nog meer gebaren geimplementeerd worden
@@ -11,7 +11,9 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 
 
 class gesture_recognition:
-
+    def hand_position(self, hand_landmarks):
+        print((hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y))
+        return (hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y)
     def index_down(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
                 hand_landmarks.landmark[5].y and \
@@ -251,11 +253,10 @@ class gesture_recognition:
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             result = hands.process(img)
-
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # opencv gebruikt bgr!
             if result.multi_hand_landmarks is not None:
                 for hand_landmarks in result.multi_hand_landmarks:
-                    for point in range(21):
+                    for point in range(21): # 0-20
                         height, width, _ = frame.shape
                         pointcoords = hand_landmarks.landmark[point]
                         x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
@@ -267,8 +268,8 @@ class gesture_recognition:
                     """
                     Drawing the hands by connecting dots
                     """
-
-                    self.draw_hand(img, hand_landmarks, width, height)
+                    # self.hand_position(hand_landmarks) # positie handpalm weergeven
+                    # self.draw_hand(img, hand_landmarks, width, height) # hand tekenen niet nodig voor uiteindelijke herkenning
 
                     """ Gesture Recognition"""
 
@@ -310,4 +311,5 @@ class gesture_recognition:
 
 # om programma te runnen:
 # from gestures_mediapipe_class.py import gesture_recognition
-# gesture_recognition().recognition()
+if __name__ == "__main__":
+    gesture_recognition().recognition()

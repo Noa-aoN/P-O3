@@ -26,7 +26,10 @@ class Card:
 
     def load_image(self):
         rank, suit = self.get_rank_suit()
-        file = f"Images/Cards/{rank}_{suit}.png"
+        if rank == "Joker":
+            file = f"Images/Cards/Ace_Hearts.png"
+        else:
+            file = f"Images/Cards/{rank}_{suit}.png"
         return pygame.transform.rotozoom(pygame.image.load(file), 0, 0.15)
 
 
@@ -45,20 +48,24 @@ def load_deck():
 
 
 def load_random_deck():
-    deck = [(rank, suit) for rank in range(len(RANKS[:-1])) for suit in range(len(SUITS))]
+    deck = [(rank, suit) for rank in RANKS[:-1] for suit in SUITS]
     shuffle(deck)
     return deck
 
 
-def get_random_card(deck):
+def get_random_card(deck, player, screen):
     if not deck:
         deck = load_random_deck()
         print("A new deck was created")
 
+    cardname = deck.pop()
+    rank, suit = cardname
+    i = RANKS.index(rank)
+    j = SUITS.index(suit)
 
-    rank, suit = deck.pop()
+    player.add_card(Card(0, 0, 0, 0, 0, i, j))
 
-    return Card(0, 0, 0, 0, 0, rank, suit), deck
+    return deck
 
 
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)

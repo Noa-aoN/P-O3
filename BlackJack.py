@@ -1,4 +1,3 @@
-from sys import exit
 from Button import Button, button_pressed, exit_pygame
 from Deck import load_deck, get_random_card, load_random_deck
 from Player import Player
@@ -11,14 +10,14 @@ from gestures_mediapipe_class import gesture_recognition
 Bugs: 
 
 To DO:
-- Adding delay with generating cards.
 - Entering player names and amount of players.
 - Entering starting balance.
+- If BlackJack 3:2 payment.
 - ...
 '''
 
 
-def blackjack(screen, clock):
+def blackjack(screen, clock, players=[]):
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
     test_font_small = pygame.font.SysFont('comicsans', 12)
@@ -29,9 +28,12 @@ def blackjack(screen, clock):
 
     deck = load_random_deck()
 
-    player0 = Player('Dealer', 0, 0)
-    names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
-    players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
+    if players == []:
+        player0 = Player('Dealer', 0, 0)
+        names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
+        players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
+
+
     game_active = False
 
     start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
@@ -97,14 +99,12 @@ def blackjack(screen, clock):
                     if player.cards is None:
                         player.cards = []
                     while len(player.cards) < 2:
-                        random_card, deck = get_random_card(deck)
-                        player.add_card(random_card)
+                        deck = get_random_card(deck, player, screen)
                         player.show_cards(screen)
                         player.display_score_bj(screen)
                         pygame.display.update()
                         sleep(1)
-                        random_card, deck = get_random_card(deck)
-                        player.add_card(random_card)
+                        deck = get_random_card(deck, player, screen)
                 for player in players:
                     player.show_cards(screen)
                     player.display_score_bj(screen)
@@ -114,8 +114,7 @@ def blackjack(screen, clock):
                 if player0.cards is None:
                     player0.cards = []
                 while len(player0.cards) < 2:
-                    random_card, deck = get_random_card(deck)
-                    player0.add_card(random_card)
+                    deck = get_random_card(deck, player0, screen)
                     player0.show_cards(screen)
                     player0.display_score_bj(screen)
                     pygame.display.update()
@@ -149,16 +148,14 @@ def blackjack(screen, clock):
                                 double_button.draw(screen)
                                 for event in pygame.event.get():
                                     if button_pressed(yes_button, event):
-                                        random_card, deck = get_random_card(deck)
-                                        players[i].add_card(random_card)
+                                        deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                     elif button_pressed(no_button, event):
                                         players[i].wants_card = False
                                     elif button_pressed(double_button, event):
                                         players[i].bet = players[i].bet*2
-                                        random_card, deck = get_random_card(deck)
-                                        players[i].add_card(random_card)
+                                        deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                         players[i].wants_card = False
@@ -167,8 +164,7 @@ def blackjack(screen, clock):
                             else:
                                 for event in pygame.event.get():
                                     if button_pressed(yes_button, event):
-                                        random_card, deck = get_random_card(deck)
-                                        players[i].add_card(random_card)
+                                        deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                     elif button_pressed(no_button, event):
@@ -181,6 +177,8 @@ def blackjack(screen, clock):
                             if not players[i].wants_card:
                                 i += 1
                 else:
+                    pygame.display.update()
+                    sleep(1)
                     dealer_cards = True
 
             if dealer_cards:
@@ -189,8 +187,7 @@ def blackjack(screen, clock):
                     player0.display_score_bj(screen, True)
                     pygame.display.update()
                     sleep(1)
-                    random_card, deck = get_random_card(deck)
-                    player0.add_card(random_card)
+                    deck = get_random_card(deck, player0, screen)
                 deal_cards = False
                 dealer_cards = False
                 change_bal = True

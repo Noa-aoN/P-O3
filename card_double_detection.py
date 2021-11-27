@@ -2,6 +2,7 @@ import cv2
 
 import numpy as np
 import time
+from Camera import init_camera
 
 from Deck import Card, SUITS, RANKS
 
@@ -47,7 +48,7 @@ def binary_threshold(image):
 
     threshs = []
 
-    for thresh_level in range(160, 130, -10):
+    for thresh_level in range(180, 130, -10):
         retval, thresh = cv2.threshold(blur, thresh_level, 255, cv2.THRESH_BINARY)
         threshs.append(thresh)
 
@@ -81,7 +82,7 @@ def create_card(contour, pts, image):
 
     corner_zoom = warp[2:110, 2:45]
 
-    #thresh_level = cv2.getTrackbarPos("Thresh Card", "Parameters")
+    # thresh_level = cv2.getTrackbarPos("Thresh Card", "Parameters")
     for thresh_level in range(190, 130, -10):
         retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
@@ -117,10 +118,10 @@ def create_card(contour, pts, image):
             suit = find_match(suit_img, SUITS_IMG, SUIT_DIFF_MAX)
             t_suit = template_matching(suit_img, "Template suit", 4, TEMPLATE_SUITS_IMG.copy())
 
-            #cv2.imshow("Rank / Suit", cv2.vconcat([disp_rank, disp_suit]))
+            # cv2.imshow("Rank / Suit", cv2.vconcat([disp_rank, disp_suit]))
 
             if t_rank == rank and t_suit == suit:
-                #print(RANKS[rank], SUITS[suit], thresh_level)
+                # print(RANKS[rank], SUITS[suit], thresh_level)
                 return Card(contour, pts, w, h, center, rank, suit)
 
     return None
@@ -189,14 +190,13 @@ def transform(image, pts, w, h):
 
 
 def find_match(img, moulds, diff_max):
-
     diff_imgs = [cv2.absdiff(img, mould) for mould in moulds]
     differences = [int(np.sum(diff_img) / 255) for diff_img in diff_imgs]
 
     i = np.where(differences == np.amin(differences, initial=diff_max))
 
     if i[0].size > 0:
-        #cv2.imshow(f"Difference{len(moulds)}", diff_imgs[i[0][0]])
+        # cv2.imshow(f"Difference{len(moulds)}", diff_imgs[i[0][0]])
         return i[0][0]
 
     return -1
@@ -219,7 +219,7 @@ def template_matching(template, kind, parts, ref_img):
 
     ref_sized = cv2.resize(ref_img, (0, 0), fx=1, fy=1)
 
-    #cv2.imshow(kind, ref_sized)
+    # cv2.imshow(kind, ref_sized)
 
     # Cut the reference image in parts
     w_part = w / parts
@@ -279,29 +279,36 @@ def get_cards(img, amount):
     return []
 
 
-cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+def get_card(img):
+    if cards := get_cards(img, 1):
+        return cards[0]
+    return None
 
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+def card_double_detection():
+    cap = init_camera()
+    while True:
+
+        ret, img = cap.read()
+
+        """img = cv2.imread("10_kaarten.jpg")
+        y, x, c = img.shape
+    
+        norm = np.zeros(img.shape)
+        norm = cv2.normalize(img, norm, 0, 255, cv2.NORM_MINMAX)"""
+
+        cards = get_cards(img, 1)
+        img = display_cards(img, cards)
+
+        cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.5, fy=0.5))
+        print("-----------------------------")
+
+        q = cv2.waitKey(1)
+        if q == ord("q"):
+            break
+
+    cv2.destroyAllWindows()
 
 
-while True:
-    ret, img = cap.read()
-
-    """img = cv2.imread("10_kaarten.jpg")
-    y, x, c = img.shape
-
-    norm = np.zeros(img.shape)
-    norm = cv2.normalize(img, norm, 0, 255, cv2.NORM_MINMAX)"""
-
-    cards = get_cards(img, 4)
-    img = display_cards(img, cards)
-
-    cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.5, fy=0.5))
-    print("-----------------------------")
-
-    q = cv2.waitKey(1)
-    if q == ord("q"):
-        break
-
-cv2.destroyAllWindows()
+if __name__ == '__main__':
+    card_double_detection()
