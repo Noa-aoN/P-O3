@@ -2,13 +2,13 @@ import os
 
 
 def local_directory(memorydrive=r"C:\Users", lookingfor='P-O3', path = ""):
-    if path == lookingfor:
-        return path
-    elif lookingfor in os.listdir(memorydrive):
-        return os.path.join(memorydrive,lookingfor)
-    if os.path.isfile(os.path.join(memorydrive, path)):
-        return None
     try:
+        if path == lookingfor:
+            return path
+        elif lookingfor in os.listdir(memorydrive):
+            return os.path.join(memorydrive,lookingfor)
+        if os.path.isfile(os.path.join(memorydrive, path)):
+            return None
         for i in os.listdir(memorydrive):
             result = local_directory(os.path.join(memorydrive, i), lookingfor, i)
             if result is not None:
@@ -20,4 +20,11 @@ def local_directory(memorydrive=r"C:\Users", lookingfor='P-O3', path = ""):
         return None
 
 
-print(local_directory())
+try1 = local_directory(r"C:\Users")
+try2 = local_directory(r"C:\Gebruikers")
+if try1 is not None:
+    print(try1)
+elif try2 is not None:
+    print(try2)
+else:
+    print(None)
