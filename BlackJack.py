@@ -21,7 +21,7 @@ To DO:
 def blackjack(screen, clock):
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
-    test_font_small = pygame.font.Font('Font/Roboto-Regular.ttf', 11)
+    test_font_small = pygame.font.SysFont('comicsans', 12)
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
     f = open('blackjackrules.txt', 'r')

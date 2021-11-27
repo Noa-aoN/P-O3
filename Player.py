@@ -2,6 +2,7 @@ import pygame
 from Button import Button, turn_white, button_pressed
 from Deck import BACK
 from time import sleep
+from facenet_pytorch import MTCNN, InceptionResnetV1
 
 
 class Player:
@@ -175,3 +176,5 @@ class Player:
             for bet_amount, button in bet_buttons:
                 if button_pressed(button, event) and bal >= bet_amount:
                     self.bet = bet_amount
+
+
