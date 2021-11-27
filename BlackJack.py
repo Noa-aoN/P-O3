@@ -32,6 +32,8 @@ def blackjack(screen, clock, players=[]):
         player0 = Player('Dealer', 0, 0)
         names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
         players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
+    else:
+        player0 = players.pop(0)
 
 
     game_active = False
