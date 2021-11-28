@@ -96,7 +96,9 @@ def higherlower(screen, clock, players):
         get_card_func = get_camera_card
     else:
         get_card_func = get_random_card
-    cap = init_camera(0)
+    cap = init_camera()
+    ret, img = cap.read()
+    cv2.imshow("bla", img)
     while True:
         pygame.display.update()
         if game_active:
@@ -115,16 +117,30 @@ def higherlower(screen, clock, players):
                 high_button.draw(screen)
                 low_button.draw(screen)
 
+                gest_read = gesture_recognition().recognition(cap)
+                if gest_read == "thumbs up" or gest_read == "thumbs down":
+                    pygame.display.update()
+                    deck = get_card_func(deck, player1, screen)
+                    player1.show_cards(screen)
+                    vorige, huidige = last_two_cards(player1)
+                    pygame.display.update()
+                    high = gesture_recognition().recognition() == "thumbs up" and vorige.hl_value > huidige.hl_value
+                    low = gesture_recognition().recognition() == "thumbs down" and vorige.hl_value < huidige.hl_value
+                    pygame.display.update()
+                    if high or low:
+                        lost = True
+                        wrong_guess(player1, huidige, screen)
+
                 for event in pygame.event.get():
                     pygame.display.update()
-                    if (button_pressed(high_button, event) or gesture_recognition().recognition() == "thumbs up") or (button_pressed(low_button, event) or gesture_recognition().recognition() == "thumbs down"):
+                    if button_pressed(high_button, event) or button_pressed(low_button, event):
                         pygame.display.update()
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
                         pygame.display.update()
-                        high = (button_pressed(high_button, event) or gesture_recognition().recognition() == "thumbs up") and vorige.hl_value > huidige.hl_value
-                        low = (button_pressed(low_button, event) or gesture_recognition().recognition() == "thumbs down") and vorige.hl_value < huidige.hl_value
+                        high = button_pressed(high_button, event) and vorige.hl_value > huidige.hl_value
+                        low = button_pressed(low_button, event) and vorige.hl_value < huidige.hl_value
                         pygame.display.update()
                         if high or low:
                             lost = True

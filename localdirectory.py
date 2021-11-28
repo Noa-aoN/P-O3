@@ -21,9 +21,9 @@ def local_directory(memorydrive=r"C:\Users", lookingfor='P-O3',  path = ""):
 
 
 # try1 = local_directory(r"C:\Users")
-# try2 = local_directory(r"C:\Gebruikers")
+# # try2 = local_directory(r"C:\Gebruikers")
 # if try1 is not None:
-#     print(try1)
+#   print(try1)
 # elif try2 is not None:
 #     print(try2)
 # else:

@@ -29,7 +29,6 @@ def main_menu():
     players = [player0]
 
     choose_game = font_big.render('Choose Game', False, (0, 0, 0))
-
     if os.path.exists(r"C:\Users"):
         projectdirectory = local_directory(r"C:\Users")
     elif os.path.exists(r"C:\Gebruikers"):
