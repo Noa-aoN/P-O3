@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import time
+from Camera import init_camera
 """
 kan een heleboel gebaren herkennen via het vergelijken van de coordinaten van de 'landmarks'
 er kunnen nog meer gebaren geimplementeerd worden
@@ -156,7 +157,7 @@ class gesture_recognition:
             print("four")
             return True
 
-    def draw_thumb(self, img, hand_landmarks, width, height):
+    def draw_thumb(self, img, hand_landmarks, width, height): # draw functions not used in final version
         cv2.line(img, (int(hand_landmarks.landmark[3].x * width), int(hand_landmarks.landmark[3].y * height)),
                  (int(hand_landmarks.landmark[4].x * width), int(hand_landmarks.landmark[4].y * height)),
                  (0, 255, 0), thickness=1)
@@ -240,9 +241,7 @@ class gesture_recognition:
         self.draw_palm(img, hand_landmarks, width, height)
 
     def recognition(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # , cv2.CAP_DSHOW
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        cap = init_camera(0)
 
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands()
@@ -276,29 +275,30 @@ class gesture_recognition:
                     # all recognizable gestures, more can be implemented
                     # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden, simpelste gebaren vanboven
                     if self.index_down(img, hand_landmarks):
-                        self.index_down(img, hand_landmarks)
-                        return "index_down"
+                        return "index down"
                     elif self.thumbs_up(img, hand_landmarks):
-                        self.thumbs_up(img, hand_landmarks)
-                        return "thumbs_up"
+                        return "thumbs up"
                     elif self.thumbs_down(img, hand_landmarks):
-                        self.thumbs_down(img, hand_landmarks)
-                        return "thumbs_down"
+                        return "thumbs down"
                     elif self.index_up(img, hand_landmarks):
-                        self.index_up(img, hand_landmarks)
-                        return "index_up"
+                        return "index up"
                     elif self.fingers_five(img, hand_landmarks):
-                        self.fingers_five(img, hand_landmarks)
                         return "five"
                     elif self.fingers_four(img, hand_landmarks):
-                        self.fingers_four(img, hand_landmarks)
                         return "four"
                     elif self.fingers_three(img, hand_landmarks):
-                        self.fingers_three(img, hand_landmarks)
                         return "three"
                     elif self.fingers_two(img, hand_landmarks):
-                        self.fingers_two(img, hand_landmarks)
                         return "two"
+                    # self.draw_hand(img, hand_landmarks, width, height)
+                    # self.index_down(img, hand_landmarks)
+                    # self.thumbs_up(img, hand_landmarks)
+                    # self.thumbs_down(img, hand_landmarks)
+                    # self.index_up(img, hand_landmarks)
+                    # self.fingers_five(img, hand_landmarks)
+                    # self.fingers_four(img, hand_landmarks)
+                    # self.fingers_three(img, hand_landmarks)
+                    # self.fingers_two(img, hand_landmarks)
 
             # cv2.imshow('Raw Webcam Feed', img)
 

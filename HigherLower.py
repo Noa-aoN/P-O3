@@ -6,6 +6,8 @@ from Player import Player
 from card_double_detection import get_card
 from Camera import init_camera, opencv_to_pygame
 import time
+from gestures_mediapipe_class import gesture_recognition
+import cv2
 
 test_font_big = pygame.font.SysFont('comicsans', 80)
 test_font = pygame.font.SysFont('comicsans', 25)
@@ -94,7 +96,7 @@ def higherlower(screen, clock, players):
         get_card_func = get_camera_card
     else:
         get_card_func = get_random_card
-
+    cap = init_camera(0)
     while True:
         pygame.display.update()
         if game_active:
@@ -114,13 +116,16 @@ def higherlower(screen, clock, players):
                 low_button.draw(screen)
 
                 for event in pygame.event.get():
-                    if button_pressed(high_button, event) or button_pressed(low_button, event):
+                    pygame.display.update()
+                    if (button_pressed(high_button, event) or gesture_recognition().recognition() == "thumbs up") or (button_pressed(low_button, event) or gesture_recognition().recognition() == "thumbs down"):
+                        pygame.display.update()
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
-
-                        high = button_pressed(high_button, event) and vorige.hl_value > huidige.hl_value
-                        low = button_pressed(low_button, event) and vorige.hl_value < huidige.hl_value
+                        pygame.display.update()
+                        high = (button_pressed(high_button, event) or gesture_recognition().recognition() == "thumbs up") and vorige.hl_value > huidige.hl_value
+                        low = (button_pressed(low_button, event) or gesture_recognition().recognition() == "thumbs down") and vorige.hl_value < huidige.hl_value
+                        pygame.display.update()
                         if high or low:
                             lost = True
                             wrong_guess(player1, huidige, screen)
@@ -173,7 +178,7 @@ def higherlower(screen, clock, players):
 
 
 if __name__ == '__main__':
-    pygame.init()
-    screen = pygame.display.set_mode((1200, 600))
-    clock = pygame.time.Clock()
-    higherlower(screen, clock, [0, Player('Matthias', 10000, 1)])
+        pygame.init()
+        screen = pygame.display.set_mode((1200, 600))
+        clock = pygame.time.Clock()
+        higherlower(screen, clock, [0, Player('Matthias', 10000, 1)])
