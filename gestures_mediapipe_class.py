@@ -240,69 +240,81 @@ class gesture_recognition:
         self.draw_pinky(img, hand_landmarks, width, height)
         self.draw_palm(img, hand_landmarks, width, height)
 
-    def recognition(self, cap=init_camera()):
+    def get_landmarks(self, frame):
+        mp_hands = mp.solutions.hands
+        hands = mp_hands.Hands()
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = hands.process(img)
+        landmarklist = []
+        if result.multi_hand_landmarks is not None:
+            for hand_landmarks in result.multi_hand_landmarks:
+                landmarklist.append(hand_landmarks)
+        return landmarklist
 
+    def recognition(self):
+        cap = init_camera(0)
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands()
 
+        if cap.isOpened():
         # while cap.isOpened():  # main loop
-        ret, frame = cap.read()
+            ret, frame = cap.read()
 
-        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        result = hands.process(img)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # opencv gebruikt bgr!
-        if result.multi_hand_landmarks is not None:
-            for hand_landmarks in result.multi_hand_landmarks:
-                for point in range(21): # 0-20
-                    height, width, _ = frame.shape
-                    pointcoords = hand_landmarks.landmark[point]
-                    x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
-                    # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
-                    y = int(pointcoords.y * height)
-                    # cv2.line(img, (points[0]), (points[1]), (0, 255, 0), thickness=3, lineType=8)
-                    cv2.circle(img, (x, y), 2, (0, 0, 255))
+            result = hands.process(img)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # opencv gebruikt bgr!
+            if result.multi_hand_landmarks is not None:
+                for hand_landmarks in result.multi_hand_landmarks:
+                    for point in range(21): # 0-20
+                        height, width, _ = frame.shape
+                        pointcoords = hand_landmarks.landmark[point]
+                        x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan
+                        # (als de foto 60 pixels breed is en x = 0.20, spreekt hij over xpixel 12)
+                        y = int(pointcoords.y * height)
+                        # cv2.line(img, (points[0]), (points[1]), (0, 255, 0), thickness=3, lineType=8)
+                        cv2.circle(img, (x, y), 2, (0, 0, 255))
 
-                """
-                Drawing the hands by connecting dots
-                """
-                # self.hand_position(hand_landmarks) # positie handpalm weergeven
-                # self.draw_hand(img, hand_landmarks, width, height) # hand tekenen niet nodig voor uiteindelijke herkenning
+                    """
+                    Drawing the hands by connecting dots
+                    """
+                    # self.hand_position(hand_landmarks) # positie handpalm weergeven
+                    # self.draw_hand(img, hand_landmarks, width, height) # hand tekenen niet nodig voor uiteindelijke herkenning
 
-                """ Gesture Recognition"""
+                    """ Gesture Recognition"""
 
-                # all recognizable gestures, more can be implemented
-                # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden, simpelste gebaren vanboven
-                if self.index_down(img, hand_landmarks):
-                    return "index down"
-                elif self.thumbs_up(img, hand_landmarks):
-                    return "thumbs up"
-                elif self.thumbs_down(img, hand_landmarks):
-                    return "thumbs down"
-                elif self.index_up(img, hand_landmarks):
-                    return "index up"
-                elif self.fingers_five(img, hand_landmarks):
-                    return "five"
-                elif self.fingers_four(img, hand_landmarks):
-                    return "four"
-                elif self.fingers_three(img, hand_landmarks):
-                    return "three"
-                elif self.fingers_two(img, hand_landmarks):
-                    return "two"
-                    # self.draw_hand(img, hand_landmarks, width, height)
-                    # self.index_down(img, hand_landmarks)
-                    # self.thumbs_up(img, hand_landmarks)
-                    # self.thumbs_down(img, hand_landmarks)
-                    # self.index_up(img, hand_landmarks)
-                    # self.fingers_five(img, hand_landmarks)
-                    # self.fingers_four(img, hand_landmarks)
-                    # self.fingers_three(img, hand_landmarks)
-                    # self.fingers_two(img, hand_landmarks)
+                    # all recognizable gestures, more can be implemented
+                    # allemaal if's toegevoegd zodat meerdere gebaren niet tegelijk kunnen herkend worden, simpelste gebaren vanboven
+                    if self.index_down(img, hand_landmarks):
+                        return "index down"
+                    elif self.thumbs_up(img, hand_landmarks):
+                        return "thumbs up"
+                    elif self.thumbs_down(img, hand_landmarks):
+                        return "thumbs down"
+                    elif self.index_up(img, hand_landmarks):
+                        return "index up"
+                    elif self.fingers_five(img, hand_landmarks):
+                        return "five"
+                    elif self.fingers_four(img, hand_landmarks):
+                        return "four"
+                    elif self.fingers_three(img, hand_landmarks):
+                        return "three"
+                    elif self.fingers_two(img, hand_landmarks):
+                        return "two"
+                        # self.draw_hand(img, hand_landmarks, width, height)
+                        # self.index_down(img, hand_landmarks)
+                        # self.thumbs_up(img, hand_landmarks)
+                        # self.thumbs_down(img, hand_landmarks)
+                        # self.index_up(img, hand_landmarks)
+                        # self.fingers_five(img, hand_landmarks)
+                        # self.fingers_four(img, hand_landmarks)
+                        # self.fingers_three(img, hand_landmarks)
+                        # self.fingers_two(img, hand_landmarks)
 
-            # cv2.imshow('Raw Webcam Feed', img)
+                # cv2.imshow('Raw Webcam Feed', img)
 
-            # if cv2.waitKey(10) & 0xFF == ord('q'):  # q om te stoppen
-            #     break
+                # if cv2.waitKey(10) & 0xFF == ord('q'):  # q om te stoppen
+                #     break
 
         cap.release()
         cv2.destroyAllWindows()

@@ -91,14 +91,14 @@ def higherlower(screen, clock, players):
     rules = False
 
     with_camera = False
+    gest_time = 0
+    cameracooldown = True
 
     if with_camera:
         get_card_func = get_camera_card
     else:
         get_card_func = get_random_card
-    cap = init_camera()
-    ret, img = cap.read()
-    cv2.imshow("bla", img)
+    cap = init_camera(0)
     while True:
         pygame.display.update()
         if game_active:
@@ -117,19 +117,28 @@ def higherlower(screen, clock, players):
                 high_button.draw(screen)
                 low_button.draw(screen)
 
-                gest_read = gesture_recognition().recognition(cap)
-                if gest_read == "thumbs up" or gest_read == "thumbs down":
-                    pygame.display.update()
-                    deck = get_card_func(deck, player1, screen)
-                    player1.show_cards(screen)
-                    vorige, huidige = last_two_cards(player1)
-                    pygame.display.update()
-                    high = gesture_recognition().recognition() == "thumbs up" and vorige.hl_value > huidige.hl_value
-                    low = gesture_recognition().recognition() == "thumbs down" and vorige.hl_value < huidige.hl_value
-                    pygame.display.update()
-                    if high or low:
-                        lost = True
-                        wrong_guess(player1, huidige, screen)
+                ret, img = cap.read()
+                gest_rec = gesture_recognition()
+                landmarklist = gest_rec.get_landmarks(img)
+
+                if time.perf_counter() - gest_time >= 2:
+                    cameracooldown = True
+
+                if cameracooldown:
+                    if len(landmarklist) > 0 and (gest_rec.index_up(img, landmarklist[0]) or gest_rec.index_down(img, landmarklist[0])):
+                        pygame.display.update()
+                        deck = get_card_func(deck, player1, screen)
+                        player1.show_cards(screen)
+                        vorige, huidige = last_two_cards(player1)
+                        pygame.display.update()
+                        high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
+                        low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
+                        cameracooldown = False
+                        gest_time = time.perf_counter()
+                        pygame.display.update()
+                        if high or low:
+                            lost = True
+                            wrong_guess(player1, huidige, screen)
 
                 for event in pygame.event.get():
                     pygame.display.update()
