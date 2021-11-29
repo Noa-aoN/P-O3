@@ -101,10 +101,10 @@ def main_menu():
                 exit_pygame(event)
                 if button_pressed(bj_button, event):
                     playsound("Sounds/DroppingChips.wav")
-                    status_bj = blackjack(screen, clock, players)
+                    status_bj = blackjack(screen, clock,library, players)
                 elif button_pressed(hl_button, event):
                     playsound("Sounds/DroppingChips.wav")
-                    status_bj = higherlower(screen, clock, players)
+                    status_bj = higherlower(screen, clock, players, library)
                 elif button_pressed(newpl_button, event):
                     add_players = True
                     bool = False

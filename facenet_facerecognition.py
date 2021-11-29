@@ -301,10 +301,10 @@ class PlayerRegistration:
         self._mtcnn, self._resnet = facenet_setup(imagesize, margin)
 
         # If there are already libraries registered in the current directory, add them to the embeddingslist
-        self._libraryembeddings = {}
+        self.libraryembeddings = {}
         if len(os.listdir(librarydirectory)) > 0:
             for i in os.listdir(librarydirectory):
-                self._libraryembeddings[i] = library_embeddings(os.path.join(librarydirectory, i), self._mtcnn,
+                self.libraryembeddings[i] = library_embeddings(os.path.join(librarydirectory, i), self._mtcnn,
                                                                 self._resnet)
 
     def registerplayer(self, player=None):
@@ -312,23 +312,23 @@ class PlayerRegistration:
         if player is None:
             player = str(player) + str(self._playernr)
         embeddings = create_player_library(player, self.directory, self._imagesperlibrary, self._mtcnn, self._resnet)
-        if embeddings is not None and player not in self._libraryembeddings:
-            self._libraryembeddings[player] = embeddings
+        if embeddings is not None and player not in self.libraryembeddings:
+            self.libraryembeddings[player] = embeddings
         elif embeddings is not None:
-            self._libraryembeddings[player] = self._libraryembeddings[player] + embeddings
+            self.libraryembeddings[player] = self.libraryembeddings[player] + embeddings
         if player not in os.listdir(self.directory):
             self._playernr += 1
 
     def identifyface(self, image, libraryembeddings=None):
         if libraryembeddings is None:
-            libraryembeddings = self._libraryembeddings
+            libraryembeddings = self.libraryembeddings
         assert isinstance(libraryembeddings, dict)
         image, matches = face_recognition(image, self._mtcnn, self._resnet, libraryembeddings)
         return image, matches
 
     def searchplayer(self, player, image, libraryembeddings=None):
         if libraryembeddings is None:
-            libraryembeddings = self._libraryembeddings
+            libraryembeddings = self.libraryembeddings
         coordlist = search_player(player, image, self._mtcnn, self._resnet, libraryembeddings)
         return coordlist
 

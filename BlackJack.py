@@ -3,6 +3,9 @@ from Deck import load_deck, get_random_card, load_random_deck
 from Player import Player
 from AudioPlay import playsound
 from time import sleep
+from Camera import init_camera
+from mediapipe_pose import linkfacewithhand
+import time
 import pygame
 from gestures_mediapipe_class import gesture_recognition
 
@@ -17,7 +20,7 @@ To DO:
 '''
 
 
-def blackjack(screen, clock, players=[]):
+def blackjack(screen, clock, library, players=[]):
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
     test_font_small = pygame.font.SysFont('comicsans', 12)
@@ -47,6 +50,7 @@ def blackjack(screen, clock, players=[]):
     rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
 
     place_bets = True
+    cameracooldown = True
     deal_2_cards = False
     dealer_cards = False
     change_bal = False
@@ -55,9 +59,10 @@ def blackjack(screen, clock, players=[]):
     rules = False
     i = 0
     j = 0
+    gest_time = 0
 
     playing_bj = True
-
+    cap = init_camera(0)
     while playing_bj:
 
         pygame.display.update()
@@ -67,6 +72,9 @@ def blackjack(screen, clock, players=[]):
             if len(players) == 0:
                 game_active = False
             screen.fill((31, 171, 57))
+
+            if time.perf_counter() - gest_time >= 2:
+                cameracooldown = True
 
             if place_bets:
                 if j < len(players):
@@ -78,6 +86,49 @@ def blackjack(screen, clock, players=[]):
                         status = players[j].place_bet(screen, exit_button)
                         if status == 'exit':
                             return 'Done'
+
+                        ret, img = cap.read()
+                        gest_rec = gesture_recognition()
+                        landmarklist = gest_rec.get_landmarks(img)
+
+                        if players[j].name in library.libraryembeddings:
+                            facecoords = library.searchplayer(players[j].name, img)
+                            templandmarklist = []
+                            for landmark in landmarklist:
+                                handcoords = gest_rec.hand_position(landmark)
+                                if len(facecoords) > 0 and len(handcoords) > 0:
+                                    img, bool = linkfacewithhand(img, facecoords[0], handcoords)
+                                    if bool:
+                                        templandmarklist.append(landmark)
+                            landmarklist = templandmarklist
+
+                        if cameracooldown:
+                            if len(landmarklist) > 0 and (gest_rec.index_up(img, landmarklist[0])):
+                                bal = players[j].balance
+                                if bal >= 1000:
+                                    players[j].bet = 1000
+                                    cameracooldown = False
+                            elif len(landmarklist) > 0 and (gest_rec.fingers_two(img, landmarklist[0])):
+                                bal = players[j].balance
+                                if bal >= 2000:
+                                    players[j].bet = 2000
+                                    cameracooldown = False
+                            elif len(landmarklist) > 0 and (gest_rec.fingers_three(img, landmarklist[0])):
+                                bal = players[j].balance
+                                if bal >= 3000:
+                                    players[j].bet = 3000
+                                    cameracooldown = False
+                            elif len(landmarklist) > 0 and (gest_rec.fingers_four(img, landmarklist[0])):
+                                bal = players[j].balance
+                                if bal >= 4000:
+                                    players[j].bet = 4000
+                                    cameracooldown = False
+                            elif len(landmarklist) > 0 and (gest_rec.fingers_five(img, landmarklist[0])):
+                                bal = players[j].balance
+                                if bal >= 5000:
+                                    players[j].bet = 5000
+                                    cameracooldown = False
+
                     if players[j].bet != 0:
                         players[j].wants_bet = False
                     if not players[j].wants_bet:

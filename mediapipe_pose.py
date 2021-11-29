@@ -40,8 +40,8 @@ def linkfacewithhand(image, facecoords, wristcoords):
                         facey < pose_landmarks.landmark[7].y * height < facey + faceh:
                     handpositions = [(pose_landmarks.landmark[15].x * width, pose_landmarks.landmark[15].y * height),
                                         (pose_landmarks.landmark[16].x * width, pose_landmarks.landmark[16].y * height)]
-                    if sqrt((handx - handpositions[0][0]) ** 2 + (handy - handpositions[0][1]) ** 2) < 10 or \
-                            sqrt((handx - handpositions[1][0]) ** 2 + (handy - handpositions[1][1]) ** 2) < 10:
+                    if sqrt((handx - pose_landmarks.landmark[15].x) ** 2 + (handy - pose_landmarks.landmark[15].y) ** 2) < 0.1 or \
+                            sqrt((handx - pose_landmarks.landmark[16].x) ** 2 + (handy - pose_landmarks.landmark[16].y) ** 2) < 0.1:
                         return image, True
         return image, False
     except:

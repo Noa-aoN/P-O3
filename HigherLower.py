@@ -5,6 +5,7 @@ from Deck import get_random_card, load_random_deck
 from Player import Player
 from card_double_detection import get_card
 from Camera import init_camera, opencv_to_pygame
+from mediapipe_pose import linkfacewithhand
 import time
 from gestures_mediapipe_class import gesture_recognition
 import cv2
@@ -71,7 +72,7 @@ def wrong_guess(player, huidige_kaart, window):
     time.sleep(3)
 
 
-def higherlower(screen, clock, players):
+def higherlower(screen, clock, players, library):
     screen.fill((31, 171, 57))
     deck = load_random_deck()
     player1 = players[1]
@@ -123,6 +124,17 @@ def higherlower(screen, clock, players):
 
                 if time.perf_counter() - gest_time >= 2:
                     cameracooldown = True
+
+                if player1.name in library.libraryembeddings:
+                    facecoords = library.searchplayer(player1.name, img)
+                    templandmarklist = []
+                    for i in landmarklist:
+                        handcoords = gest_rec.hand_position(i)
+                        if len(facecoords) > 0 and len(handcoords) > 0:
+                            img, bool = linkfacewithhand(img, facecoords[0], handcoords)
+                            if bool:
+                                templandmarklist.append(i)
+                    landmarklist = templandmarklist
 
                 if cameracooldown:
                     if len(landmarklist) > 0 and (gest_rec.index_up(img, landmarklist[0]) or gest_rec.index_down(img, landmarklist[0])):
