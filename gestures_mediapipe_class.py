@@ -125,7 +125,8 @@ class gesture_recognition:
                 hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
                 hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
                 hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
-                not self.fingers_four(img, hand_landmarks):
+                not ((hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x) or
+                     (hand_landmarks.landmark[17].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x)):
             cv2.putText(
                 img=img,
                 text=str("Five"),
@@ -143,8 +144,9 @@ class gesture_recognition:
                 hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
                 hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
                 hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
-                (hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x or
-                 hand_landmarks.landmark[7].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x):
+                ((hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x) or
+                 (hand_landmarks.landmark[17].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x)):
+            # kijken of duim tussen wijsvinger en pink zit (x-coordinaat)
             cv2.putText(
                 img=img,
                 text=str("Four"),
