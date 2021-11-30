@@ -159,6 +159,9 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
         numberofimages += len(os.listdir(directory))
     embeddings = []
     directions = set()
+    wanteddirections = {("Up", "Left"), ("Up", "Straight"), ("Up", "Right"),
+                        ("Centered", "Left"), ("Centered", "Straight"), ("Centered", "Right"),
+                        ("Down", "Left"), ("Down", "Straight"), ("Down", "Right")}
     while numberofimages < imagesperlibrary:
         ret, img = cam.read()
         faces = cropped_faces_from_image(img)
@@ -168,6 +171,7 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
             if face_embedding is not None:
                 if len(directions) < 9 and direction[0] is not None and direction[1] is not None and \
                         direction not in directions:
+                    wanteddirections.remove(direction)
                     embeddings.append(face_embedding)
                     directions.add(direction)
                     numberofimages += 1
@@ -183,6 +187,12 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
                     " have been taken. " + str(imagesperlibrary - numberofimages) + str(" more to go."))),
                             org=(0, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0, 0, 255),
                             thickness=1)
+                pos = 1
+                for (xaxis, yaxis) in wanteddirections:
+                    cv2.putText(img=img, text=str(xaxis) + str(" ") + str(yaxis),
+                                org=(1380, pos*20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=(0, 0, 255),
+                                thickness=1)
+                    pos += 1
         cv2.imshow("Face", img)
         cv2.waitKey(1)
     return tuple(embeddings)
