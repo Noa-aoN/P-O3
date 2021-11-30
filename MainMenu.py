@@ -1,5 +1,5 @@
 import pygame
-from Button import Button, turn_white, button_pressed, exit_pygame
+from Button import Button,exit_pygame
 from BlackJack import blackjack
 from HigherLower import higherlower
 from AudioPlay import playsound
@@ -65,12 +65,12 @@ def main_menu():
                     yes_button.draw(screen)
                     no_button.draw(screen)
                     for event in pygame.event.get():
-                        if button_pressed(yes_button, event):
+                        if yes_button.button_pressed(event):
                             clear_folder_contents(os.path.join(library.directory, name_text))
                             library.registerplayer(name_text)
                             playeralreadyregistered = None
                             name_text = ''
-                        if button_pressed(no_button, event):
+                        if no_button.button_pressed(event):
                             playeralreadyregistered = None
                             name_text = ''
                 else:
@@ -78,11 +78,11 @@ def main_menu():
                     yes_button.draw(screen)
                     no_button.draw(screen)
                     for event in pygame.event.get():
-                        if button_pressed(yes_button, event):
+                        if yes_button.button_pressed(event):
                             library.registerplayer(name_text)
                             playeralreadyregistered = None
                             name_text = ''
-                        if button_pressed(no_button, event):
+                        if no_button.button_pressed(event):
                             playeralreadyregistered = None
                             name_text = ''
 
@@ -96,14 +96,14 @@ def main_menu():
 
             for event in pygame.event.get():
                 exit_pygame(event)
-                if button_pressed(bj_button, event):
+                if bj_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
                     print(players)
                     players = blackjack(screen, clock, library, players)
-                elif button_pressed(hl_button, event):
+                elif hl_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
                     players = higherlower(screen, clock, players, library)
-                elif button_pressed(newpl_button, event):
+                elif newpl_button.button_pressed(event):
                     add_players = True
                     bool = False
                     name_text = ''

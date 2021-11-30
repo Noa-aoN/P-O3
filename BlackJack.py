@@ -1,20 +1,19 @@
-from Button import Button, button_pressed, exit_pygame
-from Deck import load_deck, get_random_card, load_random_deck
+from Button import Button, exit_pygame
+from Deck import get_random_card, load_random_deck
 from Player import Player, Library
 from AudioPlay import playsound
 from time import sleep
 from Camera import init_camera
 from mediapipe_pose import linkfacewithhand
-from Button import turn_white
 import time
 import pygame
 from gestures_mediapipe_class import gesture_recognition
+
 
 '''
 Bugs: 
 
 To DO:
-- Entering player names and amount of players.
 - Entering starting balance.
 - If BlackJack 3:2 payment.
 - ...
@@ -53,7 +52,9 @@ def camera_button(pressed_button, buttonlist, fingerlist):
     return fingerlist
 
 
-def blackjack(screen, clock, library, players=[]):
+def blackjack(screen, clock, library, players=None):
+    if players is None:
+        players = []
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
     test_font_small = pygame.font.SysFont('comicsans', 12)
@@ -64,12 +65,11 @@ def blackjack(screen, clock, library, players=[]):
 
     deck = load_random_deck()
 
-    if players == []:
+    if not players:
         player0 = Player('Dealer', 0, 0)
         names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
         players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
     else:
-        print(players)
         player0 = players.pop(0)
 
     game_active = False
@@ -209,21 +209,21 @@ def blackjack(screen, clock, library, players=[]):
                                 gest_time = time.perf_counter()
 
                         for event in pygame.event.get():
-                            if button_pressed(exit_button, event):
+                            if exit_button.button_pressed(event):
                                 players_incl = [player0]
                                 for player in players:
                                     players_incl.append(player)
                                 return players_incl
 
-                            if button_pressed(onek_button, event) and bal >= 1000:
+                            if onek_button.button_pressed(event) and bal >= 1000:
                                 players[j].bet = 1000
-                            elif button_pressed(twok_button, event) and bal >= 2000:
+                            elif twok_button.button_pressed(event) and bal >= 2000:
                                 players[j].bet = 2000
-                            elif button_pressed(threek_button, event) and bal >= 3000:
+                            elif threek_button.button_pressed(event) and bal >= 3000:
                                 players[j].bet = 3000
-                            elif button_pressed(fourk_button, event) and bal >= 4000:
+                            elif fourk_button.button_pressed(event) and bal >= 4000:
                                 players[j].bet = 4000
-                            elif button_pressed(fivek_button, event) and bal >= 5000:
+                            elif fivek_button.button_pressed(event) and bal >= 5000:
                                 players[j].bet = 5000
                     if players[j].bet != 0:
                         players[j].wants_bet = False
@@ -348,19 +348,19 @@ def blackjack(screen, clock, library, players=[]):
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
                                 for event in pygame.event.get():
-                                    if button_pressed(yes_button, event):
+                                    if yes_button.button_pressed(event):
                                         deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
-                                    elif button_pressed(no_button, event):
+                                    elif no_button.button_pressed(event):
                                         players[i].wants_card = False
-                                    elif button_pressed(double_button, event):
+                                    elif double_button.button_pressed(event):
                                         players[i].bet = players[i].bet * 2
                                         deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
                                         players[i].wants_card = False
-                                    elif button_pressed(exit_button, event):
+                                    elif exit_button.button_pressed(event):
                                         players_incl = [player0]
                                         for player in players:
                                             players_incl.append(player)
@@ -404,13 +404,13 @@ def blackjack(screen, clock, library, players=[]):
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
                                 for event in pygame.event.get():
-                                    if button_pressed(yes_button, event):
+                                    if yes_button.button_pressed(event):
                                         deck = get_random_card(deck, players[i], screen)
                                         players[i].show_cards(screen)
                                         players[i].display_score_bj(screen)
-                                    elif button_pressed(no_button, event):
+                                    elif no_button.button_pressed(event):
                                         players[i].wants_card = False
-                                    elif button_pressed(exit_button, event):
+                                    elif exit_button.button_pressed(event):
                                         players_incl = [player0]
                                         for player in players:
                                             players_incl.append(player)
@@ -455,7 +455,7 @@ def blackjack(screen, clock, library, players=[]):
                 player0.display_score_bj(screen, True)
                 again_button.draw(screen)
                 for event in pygame.event.get():
-                    if button_pressed(again_button, event):
+                    if again_button.button_pressed(event):
                         one_finger = False
                         two_finger = False
                         three_finger = False
@@ -464,9 +464,11 @@ def blackjack(screen, clock, library, players=[]):
                         hit_clicked = False
                         doubledown_clicked = False
                         stand_clicked = False
-                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players, player0)
-                    elif button_pressed(exit_button, event):
-                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players, player0)
+                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players,
+                                                                                                              player0)
+                    elif exit_button.button_pressed(event):
+                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players,
+                                                                                                              player0)
                         players_incl = [player0]
                         for player in players:
                             players_incl.append(player)
@@ -497,16 +499,15 @@ def blackjack(screen, clock, library, players=[]):
 
             for event in pygame.event.get():
                 exit_pygame(event)
-                if button_pressed(start_button, event):
+                if start_button.button_pressed(event):
                     game_active = True
                 if not rules:
-                    if button_pressed(rules_button, event):
+                    if rules_button.button_pressed(event):
                         rules = True
-                elif button_pressed(exit_button, event):
+                elif exit_button.button_pressed(event):
                     rules = False
 
         clock.tick(60)
-
 
 
 if __name__ == '__main__':

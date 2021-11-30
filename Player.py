@@ -1,5 +1,5 @@
 import pygame
-from Button import Button, turn_white, button_pressed
+from Button import Button
 from Deck import BACK
 from time import sleep
 from facenet_pytorch import MTCNN, InceptionResnetV1
@@ -29,7 +29,7 @@ def add_player(window, players, skip_button, active, player_name, library):
     name_box = pygame.Rect(490, 250, 220, 40)
 
     for event in pygame.event.get():
-        if button_pressed(skip_button, event):
+        if skip_button.button_pressed(event):
             return 'skip', None
         if event.type == pygame.MOUSEBUTTONDOWN:
             if name_box.collidepoint(event.pos):
@@ -218,11 +218,11 @@ class Player:
                 button.draw(window)
 
         for event in pygame.event.get():
-            if button_pressed(exit_button, event):
+            if exit_button.button_pressed(event):
                 return 'exit'
 
             for bet_amount, button in bet_buttons:
-                if button_pressed(button, event) and bal >= bet_amount:
+                if button.button_pressed(event) and bal >= bet_amount:
                     self.bet = bet_amount
 
 
