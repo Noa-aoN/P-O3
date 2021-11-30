@@ -145,6 +145,7 @@ class gesture_recognition:
                 hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
                 (hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x or
                  hand_landmarks.landmark[7].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x):
+            # kijken of duim tussen wijsvinger en pink zit (x-coordinaat)
             cv2.putText(
                 img=img,
                 text=str("Four"),
