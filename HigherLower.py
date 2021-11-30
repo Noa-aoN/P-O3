@@ -214,7 +214,7 @@ def higherlower(screen, clock, players, library):
                         low = False
                         return players
 
-            exit_button.draw(screen)
+                exit_button.draw(screen)
 
         else:
             screen.fill((31, 171, 57))
