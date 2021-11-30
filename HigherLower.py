@@ -1,4 +1,3 @@
-from sys import exit
 import pygame
 from Button import Button, button_pressed, exit_pygame
 from Deck import get_random_card, load_random_deck
@@ -33,7 +32,6 @@ def get_camera_card(deck, player, screen):
         scale = pygame.transform.rotozoom(surface, -90, 0.45)
         screen.fill((31, 171, 57))
         screen.blit(scale, scale.get_rect(midbottom=(600, 550)))
-        surf = test_font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
 
         if card:
             cardname = card.get_rank_suit()
@@ -48,6 +46,8 @@ def get_camera_card(deck, player, screen):
                     surf = test_font.render("Why so serious? - The Joker", False, (0, 0, 0))
                 else:
                     surf = test_font.render(f"{rank} of {suit} was already seen.", False, (0, 0, 0))
+        else:
+            surf = test_font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
 
         screen.blit(surf, surf.get_rect(midbottom=(600, 50)))
         pygame.display.update()
