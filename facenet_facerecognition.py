@@ -204,7 +204,7 @@ def create_player_library(player, directory, imagesperlibrary, mtcnn, resnet):
                         color=(0, 0, 255), thickness=1)
             cv2.imshow("Face", img)
             cv2.waitKey(1)
-            cap.release()
+            cam.release()
             cv2.destroyAllWindows()
             return embeddings
         elif cv2.waitKey(1) & 0xff == 27:  # If you press Escape
