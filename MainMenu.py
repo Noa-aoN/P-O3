@@ -3,7 +3,7 @@ from Button import Button, turn_white, button_pressed, exit_pygame
 from BlackJack import blackjack
 from HigherLower import higherlower
 from AudioPlay import playsound
-from Player import Player, add_player
+from Player import Player, add_player, Library
 from localdirectory import local_directory
 from facenet_facerecognition import create_folder
 from facenet_facerecognition import clear_folder_contents
@@ -29,14 +29,8 @@ def main_menu():
     players = [player0]
 
     choose_game = font_big.render('Choose Game', False, (0, 0, 0))
-    if os.path.exists(r"C:\Users"):
-        projectdirectory = local_directory(r"C:\Users")
-    elif os.path.exists(r"C:\Gebruikers"):
-        projectdirectory = local_directory(r"C:\Gebruikers")
-    else:
-        projectdirectory = None
-    librarydirectory = create_folder(os.path.join(projectdirectory, 'facenetLibraries'))
-    library = PlayerRegistration(librarydirectory, 9)
+
+    library = Library()
 
     libraryexists_surf = small_font.render('A face library already exists for this player. Do you want to replace it?', False, (0, 0, 0))
     newlibrary_surf = small_font.render('A face library doesnt yet exists for this player. Do you want to create one?', False, (0, 0, 0))

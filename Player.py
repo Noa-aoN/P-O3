@@ -4,7 +4,21 @@ from Deck import BACK
 from time import sleep
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from facenet_facerecognition import PlayerRegistration
+from localdirectory import local_directory
+from facenet_facerecognition import create_folder
 import os
+
+
+def Library():
+    if os.path.exists(r"C:\Users"):
+        projectdirectory = local_directory(r"C:\Users")
+    elif os.path.exists(r"C:\Gebruikers"):
+        projectdirectory = local_directory(r"C:\Gebruikers")
+    else:
+        projectdirectory = None
+    librarydirectory = create_folder(os.path.join(projectdirectory, 'facenetLibraries'))
+    library = PlayerRegistration(librarydirectory, 9)
+    return library
 
 
 def add_player(window, players, skip_button, active, player_name, library):

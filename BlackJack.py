@@ -1,6 +1,6 @@
 from Button import Button, button_pressed, exit_pygame
 from Deck import load_deck, get_random_card, load_random_deck
-from Player import Player
+from Player import Player, Library
 from AudioPlay import playsound
 from time import sleep
 from Camera import init_camera
@@ -508,8 +508,9 @@ def blackjack(screen, clock, library, players=[]):
         clock.tick(60)
 
 
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
     clock = pygame.time.Clock()
-    blackjack(screen, clock)
+    blackjack(screen, clock, Library())
