@@ -29,27 +29,25 @@ def play_again(players, player0):
     i = 0
     j = 0
     for player in players:
-        player.cards = None
+        player.cards = []
         player.wants_bet = True
         player.wants_card = False
-    player0.cards = None
+    player0.cards = []
     deck = load_random_deck()
     return deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players
 
 
 def camera_button(pressed_button, buttonlist, fingerlist):
-    for idx, buttonoptions in enumerate(buttonlist):
-        if pressed_button == buttonoptions:
+    for idx, button in enumerate(buttonlist):
+        if pressed_button == button:
+            button.set_color((255, 255, 255))
             for idx2, finger in enumerate(fingerlist):
                 if finger != fingerlist[idx]:
                     fingerlist[idx2] = False
                 else:
                     fingerlist[idx2] = True
-            for button in buttonlist:
-                if button != pressed_button:
-                    button.set_color((0, 0, 0))
-                else:
-                    button.set_color((255, 255, 255))
+        else:
+            button.set_color((0, 0, 0))
     return fingerlist
 
 
@@ -110,7 +108,7 @@ def blackjack(screen, clock, library, players=[]):
     hit_clicked = False
     doubledown_clicked = False
     stand_clicked = False
-    clickedlist = [hit_clicked, doubledown_clicked, stand_clicked]
+    clickedlist = [hit_clicked, stand_clicked, doubledown_clicked]
 
     playing_bj = True
     cap = init_camera(0)
@@ -318,7 +316,7 @@ def blackjack(screen, clock, library, players=[]):
                                             players[i].show_cards(screen)
                                             players[i].display_score_bj(screen)
                                             hit_clicked = False
-                                        [hit_clicked, doubledown_clicked, stand_clicked] = camera_button(yes_button,
+                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(yes_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
                                         yes_button.draw(screen)
@@ -328,7 +326,7 @@ def blackjack(screen, clock, library, players=[]):
                                         if stand_clicked:
                                             players[i].wants_card = False
                                             stand_clicked = False
-                                        [hit_clicked, doubledown_clicked, stand_clicked] = camera_button(no_button,
+                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(no_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
                                         no_button.draw(screen)
@@ -342,8 +340,8 @@ def blackjack(screen, clock, library, players=[]):
                                             players[i].display_score_bj(screen)
                                             players[i].wants_card = False
                                             doubledown_clicked = False
-                                        [hit_clicked, doubledown_clicked, stand_clicked] = camera_button(
-                                            doubledown_clicked, optionbuttonlist, clickedlist)
+                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(
+                                            double_button, optionbuttonlist, clickedlist)
                                         double_button.draw(screen)
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
@@ -373,7 +371,7 @@ def blackjack(screen, clock, library, players=[]):
                                             players[i].show_cards(screen)
                                             players[i].display_score_bj(screen)
                                             hit_clicked = False
-                                        [hit_clicked, doubledown_clicked, stand_clicked] = camera_button(yes_button,
+                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(yes_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
                                         yes_button.draw(screen)
@@ -383,24 +381,10 @@ def blackjack(screen, clock, library, players=[]):
                                         if stand_clicked:
                                             players[i].wants_card = False
                                             stand_clicked = False
-                                        [hit_clicked, doubledown_clicked, stand_clicked] = camera_button(no_button,
+                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(no_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
                                         no_button.draw(screen)
-                                        cameracooldown = False
-                                        gest_time = time.perf_counter()
-                                    elif len(landmarklist) > 0 and (gest_rec.fingers_two(img, landmarklist[0])):
-                                        if doubledown_clicked:
-                                            players[i].bet = players[i].bet * 2
-                                            deck = get_random_card(deck, players[i], screen)
-                                            players[i].show_cards(screen)
-                                            players[i].display_score_bj(screen)
-                                            players[i].wants_card = False
-                                            doubledown_clicked = False
-                                        [hit_clicked, doubledown_clicked, stand_clicked] = camera_button(double_button,
-                                                                                                         optionbuttonlist,
-                                                                                                         clickedlist)
-                                        yes_button.draw(screen)
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
                                 for event in pygame.event.get():
