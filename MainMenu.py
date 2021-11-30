@@ -105,7 +105,7 @@ def main_menu():
                     players = blackjack(screen, clock, library, players)
                 elif button_pressed(hl_button, event):
                     playsound("Sounds/DroppingChips.wav")
-                    status_bj = higherlower(screen, clock, players, library)
+                    players = higherlower(screen, clock, players, library)
                 elif button_pressed(newpl_button, event):
                     add_players = True
                     bool = False

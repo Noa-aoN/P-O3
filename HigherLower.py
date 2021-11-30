@@ -195,7 +195,7 @@ def higherlower(screen, clock, players, library):
                             wrong_guess(player1, huidige, screen)
 
                     elif button_pressed(exit_button, event):
-                        return 'Done'
+                        return players
             else:
                 screen.fill((31, 171, 57))
                 again_button.draw(screen)
@@ -209,7 +209,12 @@ def higherlower(screen, clock, players, library):
                         low = False
 
                     if button_pressed(exit_button, event):
-                        return 'Done'
+                        player1.cards = []
+                        deck = load_random_deck()
+                        lost = False
+                        high = False
+                        low = False
+                        return players
 
             exit_button.draw(screen)
 

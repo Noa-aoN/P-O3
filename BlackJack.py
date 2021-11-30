@@ -212,15 +212,15 @@ def blackjack(screen, clock, library, players=[]):
                                 return 'Done'
 
                             if button_pressed(onek_button, event) and bal >= 1000:
-                                players[j].bet = bet_amount
+                                players[j].bet = 1000
                             elif button_pressed(twok_button, event) and bal >= 2000:
-                                players[j].bet = bet_amount
+                                players[j].bet = 2000
                             elif button_pressed(threek_button, event) and bal >= 3000:
-                                players[j].bet = bet_amount
+                                players[j].bet = 3000
                             elif button_pressed(fourk_button, event) and bal >= 4000:
-                                players[j].bet = bet_amount
+                                players[j].bet = 4000
                             elif button_pressed(fivek_button, event) and bal >= 5000:
-                                players[j].bet = bet_amount
+                                players[j].bet = 5000
                     if players[j].bet != 0:
                         players[j].wants_bet = False
                     if not players[j].wants_bet:
