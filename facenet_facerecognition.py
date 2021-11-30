@@ -165,7 +165,7 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
     while numberofimages < imagesperlibrary:
         ret, img = cam.read()
         faces = cropped_faces_from_image(img)
-        if len(faces) == 1 and comparison_with_library(faces[0][0], embeddings, mtcnn, resnet)[0] < 0.85:
+        if len(faces) == 1 and comparison_with_library(faces[0][0], embeddings, mtcnn, resnet)[0] < 0.90:
             face_embedding = get_embedding(faces[0][0], mtcnn, resnet)
             direction = looking_direction(faces[0][0])
             if face_embedding is not None:
