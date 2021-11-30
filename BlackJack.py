@@ -61,6 +61,12 @@ def blackjack(screen, clock, library, players=[]):
     j = 0
     gest_time = 0
 
+    one_finger = False
+    two_finger = False
+    three_finger = False
+    four_finger = False
+    five_finger = False
+
     playing_bj = True
     cap = init_camera(0)
     while playing_bj:
@@ -73,7 +79,7 @@ def blackjack(screen, clock, library, players=[]):
                 game_active = False
             screen.fill((31, 171, 57))
 
-            if time.perf_counter() - gest_time >= 2:
+            if time.perf_counter() - gest_time >= 1:
                 cameracooldown = True
 
             if place_bets:
@@ -83,9 +89,26 @@ def blackjack(screen, clock, library, players=[]):
                             players.remove(player)
                     if players[j].wants_bet:
                         pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 300), 0, -1)
-                        status = players[j].place_bet(screen, exit_button)
-                        if status == 'exit':
-                            return 'Done'
+                        bal = players[j].balance
+                        players[j].bet = 0
+                        question_surf = players[j].font_big.render(f'{players[j].name}, how much do you want to bet?', False,
+                                                             (10, 10, 10))
+                        screen.blit(question_surf, question_surf.get_rect(midbottom=(600, 250)))
+                        bet_buttons = [(i * 1000, Button((0, 0, 0), (325 + i * 75, 350), (50, 30), f'{i}k')) for i in
+                                       range(1, 6)]
+                        for bet_amount, button in bet_buttons:
+                            if bal >= bet_amount:
+                                button.draw(screen)
+
+                        for event in pygame.event.get():
+                            if button_pressed(exit_button, event):
+                                exit_button.color = (255, 255, 255)
+                                return 'Done'
+
+                            for bet_amount, button in bet_buttons:
+                                button.turn_white(button, event)
+                                if button_pressed(button, event) and bal >= bet_amount:
+                                    players[j].bet = bet_amount
 
                         ret, img = cap.read()
                         gest_rec = gesture_recognition()
@@ -104,31 +127,28 @@ def blackjack(screen, clock, library, players=[]):
 
                         if cameracooldown:
                             if len(landmarklist) > 0 and (gest_rec.index_up(img, landmarklist[0])):
-                                bal = players[j].balance
-                                if bal >= 1000:
+                                if bal >= 1000 and one_finger:
                                     players[j].bet = 1000
                                     cameracooldown = False
                                     gest_time = time.perf_counter()
+                                one_finger = True
+                                bet_buttons[0][1].color = (255, 255, 255)
                             elif len(landmarklist) > 0 and (gest_rec.fingers_two(img, landmarklist[0])):
-                                bal = players[j].balance
                                 if bal >= 2000:
                                     players[j].bet = 2000
                                     cameracooldown = False
                                     gest_time = time.perf_counter()
                             elif len(landmarklist) > 0 and (gest_rec.fingers_three(img, landmarklist[0])):
-                                bal = players[j].balance
                                 if bal >= 3000:
                                     players[j].bet = 3000
                                     cameracooldown = False
                                     gest_time = time.perf_counter()
                             elif len(landmarklist) > 0 and (gest_rec.fingers_four(img, landmarklist[0])):
-                                bal = players[j].balance
                                 if bal >= 4000:
                                     players[j].bet = 4000
                                     cameracooldown = False
                                     gest_time = time.perf_counter()
                             elif len(landmarklist) > 0 and (gest_rec.fingers_five(img, landmarklist[0])):
-                                bal = players[j].balance
                                 if bal >= 5000:
                                     players[j].bet = 5000
                                     cameracooldown = False
