@@ -69,6 +69,7 @@ def blackjack(screen, clock, library, players=[]):
         names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
         players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
     else:
+        print(players)
         player0 = players.pop(0)
 
     game_active = False
@@ -209,7 +210,10 @@ def blackjack(screen, clock, library, players=[]):
 
                         for event in pygame.event.get():
                             if button_pressed(exit_button, event):
-                                return 'Done'
+                                players_incl = [player0]
+                                for player in players:
+                                    players_incl.append(player)
+                                return players_incl
 
                             if button_pressed(onek_button, event) and bal >= 1000:
                                 players[j].bet = bet_amount
@@ -357,7 +361,10 @@ def blackjack(screen, clock, library, players=[]):
                                         players[i].display_score_bj(screen)
                                         players[i].wants_card = False
                                     elif button_pressed(exit_button, event):
-                                        return 'Done'
+                                        players_incl = [player0]
+                                        for player in players:
+                                            players_incl.append(player)
+                                        return players_incl
                             else:
                                 if cameracooldown:
                                     if len(landmarklist) > 0 and (gest_rec.index_up(img, landmarklist[0])):
@@ -404,7 +411,10 @@ def blackjack(screen, clock, library, players=[]):
                                     elif button_pressed(no_button, event):
                                         players[i].wants_card = False
                                     elif button_pressed(exit_button, event):
-                                        return 'Done'
+                                        players_incl = [player0]
+                                        for player in players:
+                                            players_incl.append(player)
+                                        return players_incl
                         if i >= len(players):
                             pass
                         else:
