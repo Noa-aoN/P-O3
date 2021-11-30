@@ -190,7 +190,7 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
                 pos = 1
                 for (xaxis, yaxis) in wanteddirections:
                     cv2.putText(img=img, text=str(xaxis) + str(" ") + str(yaxis),
-                                org=(1380, pos*20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=(0, 0, 255),
+                                org=(0, 80+pos*20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=(0, 0, 255),
                                 thickness=1)
                     pos += 1
         cv2.imshow("Face", img)
