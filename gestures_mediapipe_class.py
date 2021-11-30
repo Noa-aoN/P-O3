@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import time
 from Camera import init_camera
+
 """
 kan een heleboel gebaren herkennen via het vergelijken van de coordinaten van de 'landmarks'
 er kunnen nog meer gebaren geimplementeerd worden
@@ -84,7 +85,6 @@ class gesture_recognition:
             print("higher/one")
             return True
 
-
     def fingers_two(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
                 hand_landmarks.landmark[5].y and \
@@ -101,7 +101,6 @@ class gesture_recognition:
                 thickness=1)
             print("two")
             return True
-
 
     def fingers_three(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
@@ -126,9 +125,7 @@ class gesture_recognition:
                 hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
                 hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
                 hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
-                abs(hand_landmarks.landmark[4].x - hand_landmarks.landmark[5].x) < \
-                abs(hand_landmarks.landmark[4].x - hand_landmarks.landmark[
-                    9].x):  # afstand van bovenkant duim tot onderkant van wijsvinger en middelvinger vergelijken
+                not self.fingers_four(img, hand_landmarks):
             cv2.putText(
                 img=img,
                 text=str("Five"),
@@ -145,8 +142,9 @@ class gesture_recognition:
                 hand_landmarks.landmark[5].y and \
                 hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
                 hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
-                hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and not \
-                self.fingers_five(img, hand_landmarks):
+                hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
+                (hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x or
+                 hand_landmarks.landmark[7].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x):
             cv2.putText(
                 img=img,
                 text=str("Four"),
@@ -158,7 +156,7 @@ class gesture_recognition:
             print("four")
             return True
 
-    def draw_thumb(self, img, hand_landmarks, width, height): # draw functions not used in final version
+    def draw_thumb(self, img, hand_landmarks, width, height):  # draw functions not used in final version
         cv2.line(img, (int(hand_landmarks.landmark[3].x * width), int(hand_landmarks.landmark[3].y * height)),
                  (int(hand_landmarks.landmark[4].x * width), int(hand_landmarks.landmark[4].y * height)),
                  (0, 255, 0), thickness=1)
@@ -258,7 +256,7 @@ class gesture_recognition:
         hands = mp_hands.Hands()
 
         if cap.isOpened():
-        # while cap.isOpened():  # main loop
+            # while cap.isOpened():  # main loop
             ret, frame = cap.read()
 
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -267,7 +265,7 @@ class gesture_recognition:
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # opencv gebruikt bgr!
             if result.multi_hand_landmarks is not None:
                 for hand_landmarks in result.multi_hand_landmarks:
-                    for point in range(21): # 0-20
+                    for point in range(21):  # 0-20
                         height, width, _ = frame.shape
                         pointcoords = hand_landmarks.landmark[point]
                         x = int(pointcoords.x * width)  # x en y zijn genormaliseerd dus geeft het percentage aan

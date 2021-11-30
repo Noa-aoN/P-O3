@@ -1,4 +1,3 @@
-from sys import exit
 import pygame
 from Button import Button, button_pressed, exit_pygame
 from Deck import get_random_card, load_random_deck
@@ -33,7 +32,6 @@ def get_camera_card(deck, player, screen):
         scale = pygame.transform.rotozoom(surface, -90, 0.45)
         screen.fill((31, 171, 57))
         screen.blit(scale, scale.get_rect(midbottom=(600, 550)))
-        surf = test_font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
 
         if card:
             cardname = card.get_rank_suit()
@@ -48,6 +46,8 @@ def get_camera_card(deck, player, screen):
                     surf = test_font.render("Why so serious? - The Joker", False, (0, 0, 0))
                 else:
                     surf = test_font.render(f"{rank} of {suit} was already seen.", False, (0, 0, 0))
+        else:
+            surf = test_font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
 
         screen.blit(surf, surf.get_rect(midbottom=(600, 50)))
         pygame.display.update()
@@ -88,6 +88,10 @@ def higherlower(screen, clock, players, library):
     rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
 
     game_active = False
+    high = False
+    low = False
+    index_up = False
+    index_down = False
     lost = False
     rules = False
 
@@ -122,6 +126,8 @@ def higherlower(screen, clock, players, library):
                 gest_rec = gesture_recognition()
                 landmarklist = gest_rec.get_landmarks(img)
 
+                pygame.display.update()
+
                 if time.perf_counter() - gest_time >= 2:
                     cameracooldown = True
 
@@ -137,20 +143,41 @@ def higherlower(screen, clock, players, library):
                     landmarklist = templandmarklist
 
                 if cameracooldown:
-                    if len(landmarklist) > 0 and (gest_rec.index_up(img, landmarklist[0]) or gest_rec.index_down(img, landmarklist[0])):
-                        pygame.display.update()
-                        deck = get_card_func(deck, player1, screen)
-                        player1.show_cards(screen)
-                        vorige, huidige = last_two_cards(player1)
-                        pygame.display.update()
-                        high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
-                        low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
+                    if len(landmarklist) > 0 and gest_rec.index_up(img, landmarklist[0]):
+                        if index_up and gest_rec.index_up(img, landmarklist[0]):
+                            deck = get_card_func(deck, player1, screen)
+                            player1.show_cards(screen)
+                            vorige, huidige = last_two_cards(player1)
+                            pygame.display.update()
+                            high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
+                            index_up = False
+                        else:
+                            index_up = True
+                            index_down = False
+                            high_button.set_color((255, 255, 255))
+                            low_button.set_color((0, 0, 0))
                         cameracooldown = False
                         gest_time = time.perf_counter()
                         pygame.display.update()
-                        if high or low:
-                            lost = True
-                            wrong_guess(player1, huidige, screen)
+                    elif len(landmarklist) > 0 and gest_rec.index_down(img, landmarklist[0]):
+                        if index_down:
+                            deck = get_card_func(deck, player1, screen)
+                            player1.show_cards(screen)
+                            vorige, huidige = last_two_cards(player1)
+                            pygame.display.update()
+                            low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
+                            index_down = False
+                        else:
+                            index_up = False
+                            index_down = True
+                            high_button.set_color((0, 0, 0))
+                            low_button.set_color((255, 255, 255))
+                        cameracooldown = False
+                        gest_time = time.perf_counter()
+                        pygame.display.update()
+                    if high or low:
+                        lost = True
+                        wrong_guess(player1, huidige, screen)
 
                 for event in pygame.event.get():
                     pygame.display.update()
@@ -178,6 +205,8 @@ def higherlower(screen, clock, players, library):
                         player1.cards = []
                         deck = load_random_deck()
                         lost = False
+                        high = False
+                        low = False
 
                     if button_pressed(exit_button, event):
                         return 'Done'
