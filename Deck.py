@@ -19,6 +19,9 @@ class Card:
         self.bj_value = BJ_VALUES[rank]
         self.hl_value = HL_VALUES[rank]
 
+    def __bool__(self):
+        return self.rank != -1 and self.suit != -1
+
     def get_rank_suit(self):
         suit = SUITS[self.suit]
         rank = RANKS[self.rank]
