@@ -205,6 +205,8 @@ def higherlower(screen, clock, players, library):
                         player1.cards = []
                         deck = load_random_deck()
                         lost = False
+                        high = False
+                        low = False
 
                     if button_pressed(exit_button, event):
                         return 'Done'
