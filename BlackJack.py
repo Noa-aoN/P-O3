@@ -430,6 +430,14 @@ def blackjack(screen, clock, library, players=[]):
                 again_button.draw(screen)
                 for event in pygame.event.get():
                     if button_pressed(again_button, event):
+                        one_finger = False
+                        two_finger = False
+                        three_finger = False
+                        four_finger = False
+                        five_finger = False
+                        hit_clicked = False
+                        doubledown_clicked = False
+                        stand_clicked = False
                         deal_2_cards = False
                         deal_cards = False
                         check_results = False
