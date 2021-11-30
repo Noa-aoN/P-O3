@@ -9,7 +9,10 @@ from facenet_facerecognition import create_folder
 from facenet_facerecognition import clear_folder_contents
 from facenet_facerecognition import PlayerRegistration
 import os
-
+"""
+to do:
+-scherm gesture recognition weergeven
+"""
 
 def main_menu():
     pygame.init()
