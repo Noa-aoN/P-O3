@@ -21,6 +21,22 @@ To DO:
 '''
 
 
+def play_again(players, player0):
+    deal_2_cards = False
+    deal_cards = False
+    check_results = False
+    place_bets = True
+    i = 0
+    j = 0
+    for player in players:
+        player.cards = None
+        player.wants_bet = True
+        player.wants_card = False
+    player0.cards = None
+    deck = load_random_deck()
+    return deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players
+
+
 def camera_button(pressed_button, buttonlist, fingerlist):
     for idx, buttonoptions in enumerate(buttonlist):
         if pressed_button == buttonoptions:
@@ -438,20 +454,13 @@ def blackjack(screen, clock, library, players=[]):
                         hit_clicked = False
                         doubledown_clicked = False
                         stand_clicked = False
-                        deal_2_cards = False
-                        deal_cards = False
-                        check_results = False
-                        place_bets = True
-                        i = 0
-                        j = 0
-                        for player in players:
-                            player.cards = None
-                            player.wants_bet = True
-                            player.wants_card = False
-                        player0.cards = None
-                        deck = load_random_deck()
+                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players, player0)
                     elif button_pressed(exit_button, event):
-                        return 'Done'
+                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players, player0)
+                        players_incl = [player0]
+                        for player in players:
+                            players_incl.append(player)
+                        return players_incl
 
             exit_button.draw(screen)
 
