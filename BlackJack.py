@@ -20,7 +20,25 @@ To DO:
 '''
 
 
-def blackjack(screen, clock, library, players=[]):
+def play_again(players, player0):
+    deal_2_cards = False
+    deal_cards = False
+    check_results = False
+    place_bets = True
+    i = 0
+    j = 0
+    for player in players:
+        player.cards = None
+        player.wants_bet = True
+        player.wants_card = False
+    player0.cards = None
+    deck = load_random_deck()
+    return deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players
+
+
+def blackjack(screen, clock, library, players=None):
+    if players is None:
+        players = []
     test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
     test_font_small = pygame.font.SysFont('comicsans', 12)
@@ -324,20 +342,13 @@ def blackjack(screen, clock, library, players=[]):
                 again_button.draw(screen)
                 for event in pygame.event.get():
                     if button_pressed(again_button, event):
-                        deal_2_cards = False
-                        deal_cards = False
-                        check_results = False
-                        place_bets = True
-                        i = 0
-                        j = 0
-                        for player in players:
-                            player.cards = None
-                            player.wants_bet = True
-                            player.wants_card = False
-                        player0.cards = None
-                        deck = load_random_deck()
+                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players, player0)
                     elif button_pressed(exit_button, event):
-                        return 'Done'
+                        deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players, player0)
+                        players_incl = [player0]
+                        for player in players:
+                            players_incl.append(player)
+                        return players_incl
 
             exit_button.draw(screen)
 
