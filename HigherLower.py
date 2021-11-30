@@ -194,8 +194,6 @@ def higherlower(screen, clock, players, library):
                             lost = True
                             wrong_guess(player1, huidige, screen)
 
-                    elif button_pressed(exit_button, event):
-                        return players
             else:
                 screen.fill((31, 171, 57))
                 again_button.draw(screen)
