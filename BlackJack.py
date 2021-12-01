@@ -5,11 +5,8 @@ from AudioPlay import playsound
 from time import sleep
 from Camera import init_camera
 from mediapipe_pose import linkfacewithhand
-<<<<<<< HEAD
 from Button import turn_white
 from math import sqrt
-=======
->>>>>>> 95c526367cc447080f8ab1fc8e21cc0859c430c4
 import time
 import pygame
 import cv2
