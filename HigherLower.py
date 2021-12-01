@@ -1,7 +1,7 @@
 import pygame
-from Button import Button, button_pressed, exit_pygame
+from Button import Button, exit_pygame
 from Deck import get_random_card, load_random_deck
-from Player import Player
+from Player import Player, Library
 from card_double_detection import get_card
 from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
@@ -181,14 +181,14 @@ def higherlower(screen, clock, players, library):
 
                 for event in pygame.event.get():
                     pygame.display.update()
-                    if button_pressed(high_button, event) or button_pressed(low_button, event):
+                    if high_button.button_pressed(event) or low_button.button_pressed(event):
                         pygame.display.update()
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
                         pygame.display.update()
-                        high = button_pressed(high_button, event) and vorige.hl_value > huidige.hl_value
-                        low = button_pressed(low_button, event) and vorige.hl_value < huidige.hl_value
+                        high = high_button.button_pressed(event) and vorige.hl_value > huidige.hl_value
+                        low = low_button.button_pressed(event) and vorige.hl_value < huidige.hl_value
                         pygame.display.update()
                         if high or low:
                             lost = True
@@ -199,19 +199,15 @@ def higherlower(screen, clock, players, library):
                 again_button.draw(screen)
 
                 for event in pygame.event.get():
-                    if button_pressed(again_button, event):
+                    if again_button.button_pressed(event):
                         player1.cards = []
                         deck = load_random_deck()
                         lost = False
                         high = False
                         low = False
 
-                    if button_pressed(exit_button, event):
+                    if exit_button.button_pressed(event):
                         player1.cards = []
-                        deck = load_random_deck()
-                        lost = False
-                        high = False
-                        low = False
                         return players
 
                 exit_button.draw(screen)
@@ -235,12 +231,12 @@ def higherlower(screen, clock, players, library):
 
             for event in pygame.event.get():
                 exit_pygame(event)
-                if button_pressed(start_button, event):
+                if start_button.button_pressed(event):
                     game_active = True
                 if not rules:
-                    if button_pressed(rules_button, event):
+                    if rules_button.button_pressed(event):
                         rules = True
-                elif button_pressed(exit_button, event):
+                elif exit_button.button_pressed(event):
                     rules = False
 
         clock.tick(60)
@@ -250,4 +246,4 @@ if __name__ == '__main__':
         pygame.init()
         screen = pygame.display.set_mode((1200, 600))
         clock = pygame.time.Clock()
-        higherlower(screen, clock, [0, Player('Matthias', 10000, 1)])
+        higherlower(screen, clock, [0, Player('Matthias', 10000, 1)], Library())

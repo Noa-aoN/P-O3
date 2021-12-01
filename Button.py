@@ -9,26 +9,6 @@ def exit_pygame(event):
         exit()
 
 
-def turn_white(button, event):
-    if event.type == pygame.MOUSEMOTION:
-        pos = pygame.mouse.get_pos()
-        if button.collides(pos):
-            button.color = (255, 255, 255)
-        else:
-            button.color = (0, 0, 0)
-
-
-def button_pressed(button, event):
-    turn_white(button, event)
-    exit_pygame(event)
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        pos = pygame.mouse.get_pos()
-        if button.collides(pos):
-            playsound("Sounds/ButtonClick.wav")
-            return True
-        return False
-
-
 class Button:
     def __init__(self, color, position, size, text='', font=None):
         self.color = color
@@ -61,3 +41,21 @@ class Button:
             if self.pos_y - 10 < mouse[1] < (self.pos_y + self.height) + 10:
                 return True
         return False
+
+    def turn_white(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            pos = pygame.mouse.get_pos()
+            if self.collides(pos):
+                self.set_color((255, 255, 255))
+            else:
+                self.set_color((0, 0, 0))
+
+    def button_pressed(self, event):
+        self.turn_white(event)
+        exit_pygame(event)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            if self.collides(pos):
+                playsound("Sounds/ButtonClick.wav")
+                return True
+            return False

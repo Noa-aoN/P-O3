@@ -15,7 +15,7 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 class gesture_recognition:
 
     def hand_position(self, hand_landmarks):
-        return (hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y)
+        return (hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y, hand_landmarks.landmark[12].x, hand_landmarks.landmark[12].y)
 
     def index_down(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \

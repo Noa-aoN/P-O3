@@ -11,7 +11,7 @@ link: https://google.github.io/mediapipe/solutions/pose.html
 def linkfacewithhand(image, facecoords, wristcoords):
     try:
         assert isinstance(facecoords, tuple) and len(facecoords) == 4
-        assert isinstance(wristcoords, tuple) and len(wristcoords) == 2
+        assert isinstance(wristcoords, tuple) and len(wristcoords) == 4
         height, width, _ = image.shape
         mp_drawing = mp.solutions.drawing_utils
         mp_drawing_styles = mp.solutions.drawing_styles
@@ -26,7 +26,7 @@ def linkfacewithhand(image, facecoords, wristcoords):
             pose_landmarks = result.pose_landmarks
             if result.pose_landmarks is not None:
                 (facex, facey, facew, faceh) = facecoords
-                (handx, handy) = wristcoords
+                (handx, handy, pointx, pointy) = wristcoords
                 mp_drawing.draw_landmarks(
                     image,
                     result.pose_landmarks,
