@@ -6,8 +6,10 @@ from time import sleep
 from Camera import init_camera
 from mediapipe_pose import linkfacewithhand
 from Button import turn_white
+from math import sqrt
 import time
 import pygame
+import cv2
 from gestures_mediapipe_class import gesture_recognition
 
 '''
@@ -42,13 +44,40 @@ def camera_button(pressed_button, buttonlist, fingerlist):
         if pressed_button == button:
             button.set_color((255, 255, 255))
             for idx2, finger in enumerate(fingerlist):
-                if finger != fingerlist[idx]:
+                if idx2 != idx:
                     fingerlist[idx2] = False
                 else:
                     fingerlist[idx2] = True
         else:
             button.set_color((0, 0, 0))
     return fingerlist
+
+
+def face_gest_crop(img, facecoords, handcoords, library, player):
+    h, w, c = img.shape
+    (leftdist, rightdist) = (sqrt((facecoords[0][0] - handcoords[2] * w) ** 2),
+                             sqrt((facecoords[0][0] + facecoords[0][2] - handcoords[2] * w) ** 2))
+    if leftdist > rightdist:
+        hands = handcoords[2] * w + 150
+        if hands > w:
+            hands = w
+        img = img[:, facecoords[0][0]:int(hands)]
+        facecoords = library.searchplayer(player.name, img)
+        gest_rec = gesture_recognition()
+        landmarklist = gest_rec.get_landmarks(img)
+        for landmark in landmarklist:
+            handcoords = gest_rec.hand_position(landmark)
+    else:
+        hands = handcoords[2] * w - 150
+        if hands - 150 < 0:
+            hands = 0
+        img = img[:, int(hands):facecoords[0][0] + facecoords[0][2]]
+        facecoords = library.searchplayer(player.name, img)
+        gest_rec = gesture_recognition()
+        landmarklist = gest_rec.get_landmarks(img)
+        for landmark in landmarklist:
+            handcoords = gest_rec.hand_position(landmark)
+    return img, facecoords, handcoords
 
 
 def blackjack(screen, clock, library, players=[]):
@@ -154,7 +183,11 @@ def blackjack(screen, clock, library, players=[]):
                             for landmark in landmarklist:
                                 handcoords = gest_rec.hand_position(landmark)
                                 if len(facecoords) > 0 and len(handcoords) > 0:
-                                    img, bool = linkfacewithhand(img, facecoords[0], handcoords)
+                                    print("hand and face detected")
+                                    img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library, players[j])
+                                    bool = False
+                                    if len(facecoords) > 0:
+                                        img, bool = linkfacewithhand(img, facecoords[0], handcoords)
                                     if bool:
                                         templandmarklist.append(landmark)
                             landmarklist = templandmarklist
@@ -302,7 +335,12 @@ def blackjack(screen, clock, library, players=[]):
                                 for landmark in landmarklist:
                                     handcoords = gest_rec.hand_position(landmark)
                                     if len(facecoords) > 0 and len(handcoords) > 0:
-                                        img, bool = linkfacewithhand(img, facecoords[0], handcoords)
+                                        print("hand and face detected")
+                                        img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
+                                                                                     library, players[i])
+                                        bool = False
+                                        if len(facecoords) > 0:
+                                            img, bool = linkfacewithhand(img, facecoords[0], handcoords)
                                         if bool:
                                             templandmarklist.append(landmark)
                                 landmarklist = templandmarklist
