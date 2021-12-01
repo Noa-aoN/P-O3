@@ -5,7 +5,6 @@ from AudioPlay import playsound
 from time import sleep
 from Camera import init_camera
 from mediapipe_pose import linkfacewithhand
-from Button import turn_white
 from math import sqrt
 import time
 import pygame
@@ -89,6 +88,9 @@ def blackjack(screen, clock, library, players=None):
     test_font_small = pygame.font.SysFont('comicsans', 12)
 
     Blackjack_surf = test_font_big.render('Blackjack', False, (0, 0, 0))
+    facedetected_surf = test_font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = test_font_small.render('Player Not Found', False, (255, 0, 0))
+
     f = open('blackjackrules.txt', 'r')
     content = f.read()
 
@@ -182,10 +184,13 @@ def blackjack(screen, clock, library, players=None):
                         if players[j].name in library.libraryembeddings:
                             facecoords = library.searchplayer(players[j].name, img)
                             templandmarklist = []
+                            if len(facecoords) > 0:
+                                screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                            else:
+                                screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                             for landmark in landmarklist:
                                 handcoords = gest_rec.hand_position(landmark)
                                 if len(facecoords) > 0 and len(handcoords) > 0:
-                                    print("hand and face detected")
                                     img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library, players[j])
                                     bool = False
                                     if len(facecoords) > 0:
@@ -334,10 +339,13 @@ def blackjack(screen, clock, library, players=None):
                             if players[i].name in library.libraryembeddings:
                                 facecoords = library.searchplayer(players[i].name, img)
                                 templandmarklist = []
+                                if len(facecoords) > 0:
+                                    screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                                else:
+                                    screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                                 for landmark in landmarklist:
                                     handcoords = gest_rec.hand_position(landmark)
                                     if len(facecoords) > 0 and len(handcoords) > 0:
-                                        print("hand and face detected")
                                         img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
                                                                                      library, players[i])
                                         bool = False

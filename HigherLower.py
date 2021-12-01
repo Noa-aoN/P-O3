@@ -5,6 +5,7 @@ from Player import Player, Library
 from card_double_detection import get_card
 from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
+from BlackJack import face_gest_crop
 import time
 from gestures_mediapipe_class import gesture_recognition
 import cv2
@@ -87,6 +88,9 @@ def higherlower(screen, clock, players, library):
     exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
     rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
 
+    facedetected_surf = test_font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = test_font_small.render('Player Not Found', False, (255, 0, 0))
+
     game_active = False
     high = False
     low = False
@@ -98,6 +102,7 @@ def higherlower(screen, clock, players, library):
     with_camera = False
     gest_time = 0
     cameracooldown = True
+    facedetected = False
 
     if with_camera:
         get_card_func = get_camera_card
@@ -119,6 +124,10 @@ def higherlower(screen, clock, players, library):
                 pick_higher_lower_surf = test_font.render(
                     f'{player1.name}, is the next card going to be higher or lower?', False, (0, 0, 0))
                 screen.blit(pick_higher_lower_surf, pick_higher_lower_surf.get_rect(midbottom=(600, 200)))
+                if facedetected and player1.name in library.libraryembeddings:
+                    screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                elif player1.name in library.libraryembeddings:
+                    screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                 high_button.draw(screen)
                 low_button.draw(screen)
 
@@ -128,18 +137,28 @@ def higherlower(screen, clock, players, library):
 
                 pygame.display.update()
 
-                if time.perf_counter() - gest_time >= 2:
+                if time.perf_counter() - gest_time >= 1:
                     cameracooldown = True
 
                 if player1.name in library.libraryembeddings:
                     facecoords = library.searchplayer(player1.name, img)
                     templandmarklist = []
-                    for i in landmarklist:
-                        handcoords = gest_rec.hand_position(i)
+                    if len(facecoords) > 0:
+                        facedetected = True
+                        screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                    else:
+                        facedetected = False
+                        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
+                    for landmark in landmarklist:
+                        handcoords = gest_rec.hand_position(landmark)
                         if len(facecoords) > 0 and len(handcoords) > 0:
-                            img, bool = linkfacewithhand(img, facecoords[0], handcoords)
+                            img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
+                                                                         player1)
+                            bool = False
+                            if len(facecoords) > 0 and len(handcoords) > 0:
+                                img, bool = linkfacewithhand(img, facecoords[0], handcoords)
                             if bool:
-                                templandmarklist.append(i)
+                                templandmarklist.append(landmark)
                     landmarklist = templandmarklist
 
                 if cameracooldown:
@@ -148,7 +167,6 @@ def higherlower(screen, clock, players, library):
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
-                            pygame.display.update()
                             high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
                             index_up = False
                         else:
@@ -159,12 +177,15 @@ def higherlower(screen, clock, players, library):
                         cameracooldown = False
                         gest_time = time.perf_counter()
                         pygame.display.update()
+                        if facedetected and player1.name in library.libraryembeddings:
+                            screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                        elif player1.name in library.libraryembeddings:
+                            screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     elif len(landmarklist) > 0 and gest_rec.index_down(img, landmarklist[0]):
                         if index_down:
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
-                            pygame.display.update()
                             low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
                             index_down = False
                         else:
@@ -175,6 +196,10 @@ def higherlower(screen, clock, players, library):
                         cameracooldown = False
                         gest_time = time.perf_counter()
                         pygame.display.update()
+                        if facedetected and player1.name in library.libraryembeddings:
+                            screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                        elif player1.name in library.libraryembeddings:
+                            screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     if high or low:
                         lost = True
                         wrong_guess(player1, huidige, screen)
@@ -186,10 +211,13 @@ def higherlower(screen, clock, players, library):
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
-                        pygame.display.update()
                         high = high_button.button_pressed(event) and vorige.hl_value > huidige.hl_value
                         low = low_button.button_pressed(event) and vorige.hl_value < huidige.hl_value
                         pygame.display.update()
+                        if facedetected and player1.name in library.libraryembeddings:
+                            screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+                        elif player1.name in library.libraryembeddings:
+                            screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                         if high or low:
                             lost = True
                             wrong_guess(player1, huidige, screen)
