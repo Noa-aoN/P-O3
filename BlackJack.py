@@ -53,7 +53,6 @@ def camera_button(pressed_button, buttonlist, fingerlist):
     return fingerlist
 
 
-<<<<<<< HEAD
 def face_gest_crop(img, facecoords, handcoords, library, player):
     h, w, c = img.shape
     (leftdist, rightdist) = (sqrt((facecoords[0][0] - handcoords[2] * w) ** 2),
