@@ -57,9 +57,9 @@ def get_landmark_list(img, current_player, library, landmarklist, screen):
     facecoords = library.searchplayer(current_player.name, img)
     templandmarklist = []
     if facecoords:
-        screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+        screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
     else:
-        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
+        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
     for landmark in landmarklist:
         handcoords = hand_position(landmark)
         if facecoords and handcoords:
@@ -346,6 +346,7 @@ def blackjack(screen, clock, library, players=None):
                                 if cameracooldown:
                                     if landmarklist:
                                         if index_up(landmarklist[0]):
+                                            cv2.putText(img, "index_up", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
                                             if hit_clicked:
                                                 give_card()
                                                 # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
@@ -360,6 +361,7 @@ def blackjack(screen, clock, library, players=None):
                                             cameracooldown = False
                                             gest_time = perf_counter()
                                         elif fingers_five(landmarklist[0]):
+                                            cv2.putText(img, "five", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
                                             if stand_clicked:
                                                 current_player.wants_card = False
 
@@ -369,6 +371,7 @@ def blackjack(screen, clock, library, players=None):
                                             cameracooldown = False
                                             gest_time = perf_counter()
                                         elif fingers_two(landmarklist[0]):
+                                            cv2.putText(img, "two", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
                                             if doubledown_clicked:
                                                 current_player.bet = current_player.bet * 2
                                                 deck = get_random_card(deck, current_player, screen)
@@ -381,9 +384,6 @@ def blackjack(screen, clock, library, players=None):
                                             double_button.draw(screen)
                                             cameracooldown = False
                                             gest_time = perf_counter()
-
-
-
                                 for event in pygame.event.get():
                                     if yes_button.button_pressed(event):
                                         give_card()
@@ -401,6 +401,10 @@ def blackjack(screen, clock, library, players=None):
                                         current_player.wants_card = False
                                     elif exit_button.button_pressed(event):
                                         return [player0] + players
+                                img = opencv_to_pygame(img)
+                                surface = pygame.surfarray.make_surface(img)
+                                scale = pygame.transform.rotozoom(surface, -90, 0.25)
+                                screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
                             else:
                                 if cameracooldown:
                                     if landmarklist and index_up(landmarklist[0]):
