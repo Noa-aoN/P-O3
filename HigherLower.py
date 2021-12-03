@@ -9,6 +9,19 @@ from BlackJack import face_gest_crop
 import time
 from gestures_mediapipe import *
 import cv2
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
+
+def legefunctie():
+    print("geef nieuwe kaart")
+
+with_rasp = False
+
+if with_rasp:
+    give_card = dcmotor_rotate
+else:
+    give_card = legefunctie
+
+
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -26,6 +39,7 @@ Wrong_surf = font_big.render('Wrong!', False, BLACK)
 def get_camera_card(deck, player, screen):
     cap = init_camera()
     i = 1
+    give_card_again = Button((0, 0, 0), (450, 80), (300, 65), 'Give new card')
     while True:
         if i > 9:
             i = 1
@@ -38,6 +52,11 @@ def get_camera_card(deck, player, screen):
         scale = pygame.transform.rotozoom(surface, -90, 0.45)
         screen.fill((31, 171, 57))
         screen.blit(scale, scale.get_rect(midbottom=(600, 550)))
+        give_card_again.draw(screen)
+        for event in pygame.event.get():
+            if give_card_again.button_pressed(event):
+                print("new card given")
+                give_card()
 
         if card:
             cardname = card.get_rank_suit()
@@ -109,7 +128,7 @@ def higherlower(screen, clock, players, library):
     lost = False
     rules = False
 
-    with_camera = False
+    with_camera = True
     gest_time = 0
     cameracooldown = True
     facedetected = False
@@ -129,6 +148,7 @@ def higherlower(screen, clock, players, library):
                 player1.display_score_hl(screen)
 
                 if len(player1.cards) < 1:
+                    give_card()
                     deck = get_card_func(deck, player1, screen)
 
                 player1.show_cards(screen)
@@ -232,6 +252,7 @@ def higherlower(screen, clock, players, library):
                 for event in pygame.event.get():
                     pygame.display.update()
                     if high_button.button_pressed(event) or low_button.button_pressed(event):
+                        give_card()
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
