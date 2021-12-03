@@ -17,7 +17,7 @@ def Library():
     else:
         projectdirectory = None
     librarydirectory = create_folder(os.path.join(projectdirectory, 'facenetLibraries'))
-    library = PlayerRegistration(librarydirectory, 9)
+    library = PlayerRegistration(librarydirectory, 7)
     return library
 
 

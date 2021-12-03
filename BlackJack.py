@@ -22,15 +22,16 @@ To DO:
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (31, 171, 57)
+RED = (0, 0, 255)
 
-test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
-test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
-test_font_small = pygame.font.SysFont('comicsans', 12)
+font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
+font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
+font_small = pygame.font.SysFont('comicsans', 12)
 
 
 def get_landmark_list(img, current_player, library, landmarklist, screen):
-    facedetected_surf = test_font_small.render('Player Recognized', False, (255, 0, 0))
-    notdetected_surf = test_font_small.render('Player Not Found', False, (255, 0, 0))
+    facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
     facecoords = library.searchplayer(current_player.name, img)
     templandmarklist = []
     if facecoords:
@@ -107,7 +108,7 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
 
 
 def blackjack(screen, clock, library, players=None):
-    Blackjack_surf = test_font_big.render('Blackjack', False, BLACK)
+    Blackjack_surf = font_big.render('Blackjack', False, BLACK)
 
     deck = load_random_deck()
 
@@ -184,7 +185,8 @@ def blackjack(screen, clock, library, players=None):
 
                         if cameracooldown:
                             if landmarklist:
-                                amount_fingers, img = check_all_fingers(img, landmarklist[0])
+                                amount_fingers, fingername = check_all_fingers(landmarklist[0])
+                                cv2.putText(img, fingername, (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
                                 if amount_fingers:
                                     if bal >= amount_fingers * 1000 and last_fingers == amount_fingers:
                                         current_player.bet = amount_fingers * 1000
@@ -283,7 +285,7 @@ def blackjack(screen, clock, library, players=None):
                             playsound("Sounds/Applause.wav")
                             i += 1
                         else:
-                            another_card_surf = test_font.render(f'{current_player.name}, do you want another card?',
+                            another_card_surf = font.render(f'{current_player.name}, do you want another card?',
                                                                  False, BLACK)
                             screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600, 200)))
                             yes_button.draw(screen)
@@ -293,7 +295,7 @@ def blackjack(screen, clock, library, players=None):
                             landmarklist = get_landmarks(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec)
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
 
                             if len(current_player.cards) == 2:
                                 double_button.draw(screen)
@@ -453,7 +455,7 @@ def blackjack(screen, clock, library, players=None):
                 x = 10
                 y = 10
                 for i, line in enumerate(splittedcontent):
-                    rules_surf = test_font_small.render(line, False, BLACK)
+                    rules_surf = font_small.render(line, False, BLACK)
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
                     y += 12
                 f.close()

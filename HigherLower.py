@@ -11,12 +11,17 @@ from gestures_mediapipe import *
 import cv2
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
-test_font_big = pygame.font.SysFont('comicsans', 80)
-test_font = pygame.font.SysFont('comicsans', 25)
-test_font_small = pygame.font.SysFont('comicsans', 15)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (31, 171, 57)
+RED = (0, 0, 255)
 
-HigherLower_surf = test_font_big.render('Higher Lower', False, (0, 0, 0))
-Wrong_surf = test_font_big.render('Wrong!', False, (0, 0, 0))
+font_big = pygame.font.SysFont('comicsans', 80)
+font = pygame.font.SysFont('comicsans', 25)
+font_small = pygame.font.SysFont('comicsans', 15)
+
+HigherLower_surf = font_big.render('Higher Lower', False, BLACK)
+Wrong_surf = font_big.render('Wrong!', False, BLACK)
 
 
 def get_camera_card(deck, player, screen):
@@ -51,11 +56,11 @@ def get_camera_card(deck, player, screen):
             else:
                 rank, suit = cardname
                 if rank == "Joker":
-                    surf = test_font.render("Why so serious? - The Joker", False, (0, 0, 0))
+                    surf = font.render("Why so serious? - The Joker", False, (0, 0, 0))
                 else:
-                    surf = test_font.render(f"{rank} of {suit} was already seen.", False, (0, 0, 0))
+                    surf = font.render(f"{rank} of {suit} was already seen.", False, (0, 0, 0))
         else:
-            surf = test_font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
+            surf = font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
 
         screen.blit(surf, surf.get_rect(midbottom=(600, 50)))
         pygame.display.update()
@@ -81,33 +86,33 @@ def wrong_guess(player, huidige_kaart, window):
 
 
 def higherlower(screen, clock, players, library):
-    screen.fill((31, 171, 57))
+    screen.fill(GREEN)
     deck = load_random_deck()
     player1 = players[1]
 
     f = open('RulesHigherLower', 'r')
     content = f.read()
 
-    start_button = Button((0, 0, 0), (550, 480), (100, 65), 'Play!')
-    again_button = Button((0, 0, 0), (480, 480), (240, 65), 'Play again?')
-    high_button = Button((0, 0, 0), (380, 250), (150, 60), 'Higher')
-    low_button = Button((0, 0, 0), (680, 250), (150, 60), 'Lower')
-    exit_button = Button((0, 0, 0), (1140, 20), (40, 20), 'Exit', 'small')
-    rules_button = Button((0, 0, 0), (1140, 560), (40, 20), 'Rules', 'small')
+    start_button = Button(BLACK, (550, 480), (100, 65), 'Play!')
+    again_button = Button(BLACK, (480, 480), (240, 65), 'Play again?')
+    high_button = Button(BLACK, (380, 250), (150, 60), 'Higher')
+    low_button = Button(BLACK, (680, 250), (150, 60), 'Lower')
+    exit_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
+    rules_button = Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small')
 
-    facedetected_surf = test_font_small.render('Player Recognized', False, (255, 0, 0))
-    notdetected_surf = test_font_small.render('Player Not Found', False, (255, 0, 0))
-    indexup_surf = test_font_small.render('Index Up', False, (0, 0, 0))
-    indexup_white_surf = test_font_small.render('Index Up', False, (255, 255, 255))
-    indexdown_surf = test_font_small.render('Index Down', False, (0, 0, 0))
-    indexdown_white_surf = test_font_small.render('Index Down', False, (255, 255, 255))
-    gest_inv_surf = test_font_small.render('Gesture not Recognized', False, (0, 0, 0))
+    facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
+    indexup_surf = font_small.render('Index Up', False, BLACK)
+    indexup_white_surf = font_small.render('Index Up', False, WHITE)
+    indexdown_surf = font_small.render('Index Down', False, BLACK)
+    indexdown_white_surf = font_small.render('Index Down', False, WHITE)
+    gest_inv_surf = font_small.render('Gesture not Recognized', False, BLACK)
 
     game_active = False
     high = False
     low = False
-    index_up = False
-    index_down = False
+    indexup = False
+    indexdown = False
     lost = False
     rules = False
 
@@ -131,7 +136,7 @@ def higherlower(screen, clock, players, library):
         pygame.display.update()
         if game_active:
             if not lost:
-                screen.fill((31, 171, 57))
+                screen.fill(GREEN)
                 player1.show_name(screen)
                 player1.display_score_hl(screen)
 
@@ -140,19 +145,26 @@ def higherlower(screen, clock, players, library):
                     deck = get_card_func(deck, player1, screen)
 
                 player1.show_cards(screen)
-                pick_higher_lower_surf = test_font.render(
-                    f'{player1.name}, is the next card going to be higher or lower?', False, (0, 0, 0))
+                pick_higher_lower_surf = font.render(
+                    f'{player1.name}, is the next card going to be higher or lower?', False, BLACK)
                 screen.blit(pick_higher_lower_surf, pick_higher_lower_surf.get_rect(midbottom=(600, 200)))
                 if facedetected and player1.name in library.libraryembeddings:
                     screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
                 elif player1.name in library.libraryembeddings:
                     screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
+                if indexup and not cameracooldown:
+                    screen.blit(indexup_surf, indexup_surf.get_rect(topleft=(10, 40)))
+                elif indexdown and not cameracooldown:
+                    screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 40)))
+                else:
+                    screen.blit(gest_inv_surf, gest_inv_surf.get_rect(topleft=(10, 40)))
+
                 high_button.draw(screen)
                 low_button.draw(screen)
 
                 ret, img = cap.read()
-                gest_rec = gesture_recognition()
-                landmarklist = gest_rec.get_landmarks(img)
+                # est_rec = gesture_recognition()
+                landmarklist = get_landmarks(img)
 
                 pygame.display.update()
 
@@ -169,7 +181,7 @@ def higherlower(screen, clock, players, library):
                         facedetected = False
                         screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     for landmark in landmarklist:
-                        handcoords = gest_rec.hand_position(landmark)
+                        handcoords = hand_position(landmark)
                         if len(facecoords) > 0 and len(handcoords) > 0:
                             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
                                                                          player1)
@@ -181,20 +193,20 @@ def higherlower(screen, clock, players, library):
                     landmarklist = templandmarklist
 
                 if cameracooldown:
-                    if len(landmarklist) > 0 and gest_rec.index_up(img, landmarklist[0]):
-                        if index_up and gest_rec.index_up(img, landmarklist[0]):
+                    if landmarklist and index_up(landmarklist[0]):
+                        if indexup and index_up(landmarklist[0]):
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
-                            screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 20)))
-                            high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
-                            index_up = False
+                            screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 40)))
+                            high = index_up(landmarklist[0]) and vorige.hl_value > huidige.hl_value
+                            indexup = False
                         else:
-                            index_up = True
-                            index_down = False
-                            screen.blit(indexup_surf, indexup_surf.get_rect(topleft=(10, 20)))
+                            indexup = True
+                            indexdown = False
+                            screen.blit(indexup_surf, indexup_surf.get_rect(topleft=(10, 40)))
                             high_button.set_color((255, 255, 255))
-                            low_button.set_color((0, 0, 0))
+                            low_button.set_color(BLACK)
                         cameracooldown = False
                         gest_time = time.perf_counter()
                         pygame.display.update()
@@ -202,20 +214,20 @@ def higherlower(screen, clock, players, library):
                             screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
                         elif player1.name in library.libraryembeddings:
                             screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
-                    elif len(landmarklist) > 0 and gest_rec.index_down(img, landmarklist[0]):
-                        if index_down:
+                    elif landmarklist and index_down(landmarklist[0]):
+                        if indexdown:
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
-                            screen.blit(indexdown_white_surf, indexdown_white_surf.get_rect(topleft=(10, 20)))
-                            low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
-                            index_down = False
+                            screen.blit(indexdown_white_surf, indexdown_white_surf.get_rect(topleft=(10, 40)))
+                            low = index_down(landmarklist[0]) and vorige.hl_value < huidige.hl_value
+                            indexdown = False
                         else:
-                            index_up = False
-                            index_down = True
+                            indexup = False
+                            indexdown = True
                             screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 20)))
-                            high_button.set_color((0, 0, 0))
-                            low_button.set_color((255, 255, 255))
+                            high_button.set_color(BLACK)
+                            low_button.set_color(WHITE)
                         cameracooldown = False
                         gest_time = time.perf_counter()
                         pygame.display.update()
@@ -248,7 +260,7 @@ def higherlower(screen, clock, players, library):
                             wrong_guess(player1, huidige, screen)
 
             else:
-                screen.fill((31, 171, 57))
+                screen.fill(GREEN)
                 again_button.draw(screen)
 
                 for event in pygame.event.get():
@@ -266,19 +278,19 @@ def higherlower(screen, clock, players, library):
                 exit_button.draw(screen)
 
         else:
-            screen.fill((31, 171, 57))
+            screen.fill(GREEN)
             screen.blit(HigherLower_surf, HigherLower_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
             rules_button.draw(screen)
             if rules:
-                pygame.draw.rect(screen, (31, 171, 57), (0, 0, 1200, 600))
-                pygame.draw.rect(screen, (0, 0, 0), (0, 0, 1200, 600), 2, 1)
+                pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))
+                pygame.draw.rect(screen, BLACK, (0, 0, 1200, 600), 2, 1)
                 exit_button.draw(screen)
                 splittedcontent = content.splitlines()
                 x = 10
                 y = 10
                 for i, line in enumerate(splittedcontent):
-                    rules_surf = test_font.render(line, False, (0, 0, 0))
+                    rules_surf = font.render(line, False, BLACK)
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
                     y += 30
 
