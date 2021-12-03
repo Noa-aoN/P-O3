@@ -199,7 +199,8 @@ class Player:
             window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 385)))
 
     def adjust_balance(self, dealer_score, game):
-        self.balance += self.bet * self.results(dealer_score, game)[1]
+        self.balance += int(self.bet * self.results(dealer_score, game)[1])
+        print(self.balance, self.name)
         self.surf_balance = self.font_small.render(f'Balance:{int(self.balance)}', False, (10, 10, 10))
 
     def place_bet(self, window, bet_buttons):

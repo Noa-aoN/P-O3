@@ -15,8 +15,33 @@ Bugs:
 To DO:
 - Entering starting balance.
 - If BlackJack 3:2 payment.
+- Giving the first players the 2 cards instead of giving every player 1 card
+- if every player bustst the dealer still tries to get over 16
 - ...
 '''
+
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
+
+def legefunctie():
+    print("geef nieuwe kaart")
+
+def legefunctie_2(previous_player,player):
+    print("ga van",previous_player, "naar",player )
+
+def legefunctie_3(player):
+    print("ga naar",player )
+
+with_rasp = False
+
+if with_rasp:
+    give_card = dcmotor_rotate
+    rotate_fromto_player = servo_rotate_fromto
+    rotate_to = servo_rotate
+else:
+    give_card = legefunctie
+    rotate_fromto_player = legefunctie_2
+    rotate_to = legefunctie_3
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (31, 171, 57)
@@ -27,19 +52,20 @@ font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
 
 
-def get_landmark_list(img, current_player, library, landmarklist, screen):
+def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter):
     facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
     notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
     facecoords = library.searchplayer(current_player.name, img)
     templandmarklist = []
     if facecoords:
-        screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
+        screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
     else:
-        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
+        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
     for landmark in landmarklist:
         handcoords = hand_position(landmark)
         if facecoords and handcoords:
-            img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library, current_player)
+            img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
+                                                         library, current_player, landmarkgetter)
             bool = False
             if facecoords:
                 img, bool = linkfacewithhand(img, facecoords[0], handcoords)
@@ -75,7 +101,7 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
             hands = w
         img = img[:, facecoords[0][0]:int(hands)]
         facecoords = library.searchplayer(player.name, img)
-        landmarklist = get_landmarks(img)
+        landmarklist = landmarkgetter(img)
         for landmark in landmarklist:
             handcoords = hand_position(landmark)
     else:
@@ -84,7 +110,7 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
             hands = 0
         img = img[:, int(hands):facecoords[0][0] + facecoords[0][2]]
         facecoords = library.searchplayer(player.name, img)
-        landmarklist = get_landmarks(img)
+        landmarklist = landmarkgetter(img)
         for landmark in landmarklist:
             handcoords = hand_position(landmark)
     return img, facecoords, handcoords
@@ -97,12 +123,13 @@ def blackjack(screen, clock, library, players=None):
 
     if not players:
         player0 = Player('Dealer', 0, 0)
-        names = ['Matthias', 'Karel', 'Yannic', 'Jasper']
+        names = ['Noa', 'Karel', 'Yannic', 'Jasper']
         players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
     else:
         player0 = players.pop(0)
 
     game_active = False
+    first_card = True
 
     start_button = Button(BLACK, (550, 480), (100, 65), 'Play!')
     hit_button = Button(BLACK, (330, 250), (110, 60), 'Hit')
@@ -127,23 +154,26 @@ def blackjack(screen, clock, library, players=None):
 
     last_fingers = None
     last_option = None
-    current_button = None
 
     playing_bj = True
     cap = init_camera(0)
+    landmarkgetter = LandmarkGetter()
     while playing_bj:
+        current_button = None
         pygame.display.update()
         screen.fill(GREEN)
         if game_active:
             players = list(filter(lambda player: player.balance > 0, players))
             if len(players) == 0:
                 game_active = False
+            screen.fill(GREEN)
 
             if perf_counter() - gest_time >= 2:
                 cameracooldown = True
 
             if place_bets:
                 if j < len(players):
+
                     current_player = players[j]
 
                     if current_player.wants_bet:
@@ -152,7 +182,7 @@ def blackjack(screen, clock, library, players=None):
                         bal = current_player.balance
 
                         ret, img = cap.read()
-                        landmarklist = get_landmarks(img)
+                        landmarklist = landmarkgetter(img)
 
                         if current_player.name in library.libraryembeddings:
                             landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
@@ -199,8 +229,8 @@ def blackjack(screen, clock, library, players=None):
 
                     if not current_player.wants_bet:
                         last_fingers = None
-                        current_button.set_color(BLACK)
-                        current_button = None
+                        if current_button is not None:
+                            current_button.set_color(BLACK)
                         j += 1
                 else:
                     place_bets = False
@@ -218,7 +248,22 @@ def blackjack(screen, clock, library, players=None):
 
             if deal_2_cards:
                 for player in players:
+
                     while len(player.cards) < 2:
+                        if first_card:
+                            rotate_to(player.number)
+                            previous_player = player.number
+                            give_card()
+                            # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
+                            give_card()
+                            first_card = False
+                        else:
+                            if previous_player != player.number:
+                                rotate_fromto_player(previous_player,player.number)
+                                previous_player = player.number
+                            give_card()
+                            # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
+                            give_card()
                         deck = get_random_card(deck, player, screen)
                         player.show_cards(screen)
                         player.display_score_bj(screen)
@@ -232,6 +277,12 @@ def blackjack(screen, clock, library, players=None):
                     sleep(1)
 
                 while len(player0.cards) < 2:
+                    if previous_player != 2.5:
+                        rotate_fromto_player(previous_player,2.5)
+                        previous_player = 2.5
+                    give_card()
+                    # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
+                    #de tweede kaart moet voorlopig omgekeerd liggen
                     deck = get_random_card(deck, player0, screen)
                     player0.show_cards(screen)
                     player0.display_score_bj(screen)
@@ -251,6 +302,9 @@ def blackjack(screen, clock, library, players=None):
             if deal_cards:
                 if i < len(players):
                     current_player = players[i]
+                    if int(current_player.number) != int(previous_player):
+                        rotate_fromto_player(previous_player,current_player.number)
+                        previous_player = current_player.number
                     if current_player.wants_card:
                         if current_player.value_count_bj() == 'bust':
                             current_player.wants_card = False
@@ -268,7 +322,7 @@ def blackjack(screen, clock, library, players=None):
                                 double_button.draw(screen)
 
                             ret, img = cap.read()
-                            landmarklist = get_landmarks(img)
+                            landmarklist = landmarkgetter(img)
 
                             if current_player.name in library.libraryembeddings:
                                 landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
@@ -338,6 +392,9 @@ def blackjack(screen, clock, library, players=None):
                     player0.display_score_bj(screen, True)
                     pygame.display.update()
                     sleep(1)
+                    # hier moet die ene kaart omgedraaid worden en die worden herkent
+                    give_card()
+                    # hier gaat noa zen code moeten schrijven van die kaarten te herkennen
                     deck = get_random_card(deck, player0, screen)
                 deal_cards = False
                 dealer_cards = False
@@ -373,7 +430,6 @@ def blackjack(screen, clock, library, players=None):
 
             exit_button.draw(screen)
 
-        # HOME SCREEN
         else:
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)

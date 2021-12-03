@@ -119,7 +119,6 @@ def check_all_fingers(handlandmarks):
 
     return None, "No Bet Found"
 
-
 def check_option(handlandmarks, double_down):
     option_function = [index_up, fingers_two, fingers_five]
     if not double_down:
@@ -132,16 +131,18 @@ def check_option(handlandmarks, double_down):
     return None
 
 
-def get_landmarks(frame):
-    mp_hands = mp.solutions.hands
-    hands = mp_hands.Hands()
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = hands.process(img)
-    landmarklist = []
-    if result.multi_hand_landmarks is not None:
-        for hand_landmarks in result.multi_hand_landmarks:
-            landmarklist.append(hand_landmarks)
-    return landmarklist
+class LandmarkGetter:
+    def __init__(self):
+        self.hands = mp.solutions.hands.Hands()
+
+    def __call__(self, frame):
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = self.hands.process(img)
+        landmarklist = []
+        if result.multi_hand_landmarks is not None:
+            for hand_landmarks in result.multi_hand_landmarks:
+                landmarklist.append(hand_landmarks)
+        return landmarklist
 
 
 # om programma te runnen:
