@@ -7,8 +7,9 @@ from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 from BlackJack import face_gest_crop
 import time
-from gestures_mediapipe import gesture_recognition
+from gestures_mediapipe import *
 import cv2
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 test_font_big = pygame.font.SysFont('comicsans', 80)
 test_font = pygame.font.SysFont('comicsans', 25)
@@ -21,6 +22,7 @@ Wrong_surf = test_font_big.render('Wrong!', False, (0, 0, 0))
 def get_camera_card(deck, player, screen):
     cap = init_camera()
     i = 1
+    give_card_again = Button((0, 0, 0), (550, 480), (100, 65), 'Give new card')
     while True:
         if i > 9:
             i = 1
@@ -33,6 +35,11 @@ def get_camera_card(deck, player, screen):
         scale = pygame.transform.rotozoom(surface, -90, 0.45)
         screen.fill((31, 171, 57))
         screen.blit(scale, scale.get_rect(midbottom=(600, 550)))
+        give_card_again.draw()
+        for event in pygame.event.get():
+            if give_card_again.button_pressed(event):
+                print("new card given")
+                give_card()
 
         if card:
             cardname = card.get_rank_suit()
@@ -105,9 +112,15 @@ def higherlower(screen, clock, players, library):
     rules = False
 
     with_camera = False
+    with_rasp = False
     gest_time = 0
     cameracooldown = True
     facedetected = False
+
+    if with_rasp:
+        give_card = dcmotor_rotate
+    else:
+        give_card = lambda : None
 
     if with_camera:
         get_card_func = get_camera_card
@@ -123,6 +136,7 @@ def higherlower(screen, clock, players, library):
                 player1.display_score_hl(screen)
 
                 if len(player1.cards) < 1:
+                    give_card()
                     deck = get_card_func(deck, player1, screen)
 
                 player1.show_cards(screen)
@@ -219,6 +233,7 @@ def higherlower(screen, clock, players, library):
                 for event in pygame.event.get():
                     pygame.display.update()
                     if high_button.button_pressed(event) or low_button.button_pressed(event):
+                        give_card()
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
                         vorige, huidige = last_two_cards(player1)
