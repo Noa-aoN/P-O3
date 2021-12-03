@@ -17,7 +17,7 @@ def Library():
     else:
         projectdirectory = None
     librarydirectory = create_folder(os.path.join(projectdirectory, 'facenetLibraries'))
-    library = PlayerRegistration(librarydirectory, 9)
+    library = PlayerRegistration(librarydirectory, 7)
     return library
 
 
@@ -83,8 +83,6 @@ class Player:
         self.cards.append(card)
 
     def show_cards(self, window, result=False):
-        if self.cards is None:
-            self.cards = []
 
         if not self.name == 'Dealer':
             for i, card in enumerate(self.cards):

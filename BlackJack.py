@@ -8,7 +8,8 @@ from mediapipe_pose import linkfacewithhand
 from math import sqrt
 import time
 import pygame
-from gestures_mediapipe_class import gesture_recognition
+import cv2
+from gestures_mediapipe import *
 
 '''
 Bugs: 
@@ -21,15 +22,16 @@ To DO:
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (31, 171, 57)
+RED = (0, 0, 255)
 
-test_font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
-test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
-test_font_small = pygame.font.SysFont('comicsans', 12)
+font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
+font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
+font_small = pygame.font.SysFont('comicsans', 12)
 
 
-def get_landmark_list(img, current_player, library, landmarklist, gest_rec, screen):
-    facedetected_surf = test_font_small.render('Player Recognized', False, (255, 0, 0))
-    notdetected_surf = test_font_small.render('Player Not Found', False, (255, 0, 0))
+def get_landmark_list(img, current_player, library, landmarklist, screen):
+    facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
     facecoords = library.searchplayer(current_player.name, img)
     templandmarklist = []
     if facecoords:
@@ -37,7 +39,7 @@ def get_landmark_list(img, current_player, library, landmarklist, gest_rec, scre
     else:
         screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
     for landmark in landmarklist:
-        handcoords = gest_rec.hand_position(landmark)
+        handcoords = hand_position(landmark)
         if facecoords and handcoords:
             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
                                                          library, current_player)
@@ -90,25 +92,23 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
             hands = w
         img = img[:, facecoords[0][0]:int(hands)]
         facecoords = library.searchplayer(player.name, img)
-        gest_rec = gesture_recognition()
-        landmarklist = gest_rec.get_landmarks(img)
+        landmarklist = get_landmarks(img)
         for landmark in landmarklist:
-            handcoords = gest_rec.hand_position(landmark)
+            handcoords = hand_position(landmark)
     else:
         hands = handcoords[2] * w - 150
         if hands - 150 < 0:
             hands = 0
         img = img[:, int(hands):facecoords[0][0] + facecoords[0][2]]
         facecoords = library.searchplayer(player.name, img)
-        gest_rec = gesture_recognition()
-        landmarklist = gest_rec.get_landmarks(img)
+        landmarklist = get_landmarks(img)
         for landmark in landmarklist:
-            handcoords = gest_rec.hand_position(landmark)
+            handcoords = hand_position(landmark)
     return img, facecoords, handcoords
 
 
 def blackjack(screen, clock, library, players=None):
-    Blackjack_surf = test_font_big.render('Blackjack', False, BLACK)
+    Blackjack_surf = font_big.render('Blackjack', False, BLACK)
 
     deck = load_random_deck()
 
@@ -152,8 +152,6 @@ def blackjack(screen, clock, library, players=None):
     stand_clicked = False
     clickedlist = [hit_clicked, stand_clicked, doubledown_clicked]
 
-    gest_rec = gesture_recognition()
-
     playing_bj = True
     cap = init_camera(0)
     while playing_bj:
@@ -180,14 +178,15 @@ def blackjack(screen, clock, library, players=None):
                         bal = current_player.balance
 
                         ret, img = cap.read()
-                        landmarklist = gest_rec.get_landmarks(img)
+                        landmarklist = get_landmarks(img)
 
                         if current_player.name in library.libraryembeddings:
-                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec, screen)
+                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
 
                         if cameracooldown:
                             if landmarklist:
-                                amount_fingers, img = gest_rec.check_all_fingers(img, landmarklist[0])
+                                amount_fingers, fingername = check_all_fingers(landmarklist[0])
+                                cv2.putText(img, fingername, (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
                                 if amount_fingers:
                                     if bal >= amount_fingers * 1000 and last_fingers == amount_fingers:
                                         current_player.bet = amount_fingers * 1000
@@ -285,50 +284,50 @@ def blackjack(screen, clock, library, players=None):
                             playsound("Sounds/Applause.wav")
                             i += 1
                         else:
-                            another_card_surf = test_font.render(f'{current_player.name}, do you want another card?',
+                            another_card_surf = font.render(f'{current_player.name}, do you want another card?',
                                                                  False, BLACK)
                             screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600, 200)))
                             yes_button.draw(screen)
                             no_button.draw(screen)
 
                             ret, img = cap.read()
-                            landmarklist = gest_rec.get_landmarks(img)
+                            landmarklist = get_landmarks(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec, screen)
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
 
                             if len(current_player.cards) == 2:
                                 double_button.draw(screen)
                                 if cameracooldown:
-                                    if landmarklist and (gest_rec.index_up(img, landmarklist[0])):
+                                    if landmarklist and index_up(img, landmarklist[0]):
                                         if hit_clicked:
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
-                                            # hit_clicked = False
+
                                         [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(yes_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
                                         yes_button.draw(screen)
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
-                                    elif landmarklist and (gest_rec.fingers_five(img, landmarklist[0])):
+                                    elif landmarklist and fingers_five(img, landmarklist[0]):
                                         if stand_clicked:
                                             current_player.wants_card = False
-                                            # stand_clicked = False
+
                                         [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(
                                             no_button, optionbuttonlist, clickedlist)
                                         no_button.draw(screen)
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
-                                    elif landmarklist and (gest_rec.fingers_two(img, landmarklist[0])):
+                                    elif landmarklist and fingers_two(img, landmarklist[0]):
                                         if doubledown_clicked:
                                             current_player.bet = current_player.bet * 2
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
                                             current_player.wants_card = False
-                                            # doubledown_clicked = False
+
                                         [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(
                                             double_button, optionbuttonlist, clickedlist)
                                         double_button.draw(screen)
@@ -351,22 +350,22 @@ def blackjack(screen, clock, library, players=None):
                                         return [player0] + players
                             else:
                                 if cameracooldown:
-                                    if landmarklist and gest_rec.index_up(img, landmarklist[0]):
+                                    if landmarklist and index_up(img, landmarklist[0]):
                                         if hit_clicked:
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
-                                            # hit_clicked = False
+
                                         [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(yes_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
                                         yes_button.draw(screen)
                                         cameracooldown = False
                                         gest_time = time.perf_counter()
-                                    elif landmarklist and gest_rec.fingers_five(img, landmarklist[0]):
+                                    elif landmarklist and fingers_five(img, landmarklist[0]):
                                         if stand_clicked:
                                             current_player.wants_card = False
-                                            # stand_clicked = False
+
                                         [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(no_button,
                                                                                                          optionbuttonlist,
                                                                                                          clickedlist)
@@ -455,7 +454,7 @@ def blackjack(screen, clock, library, players=None):
                 x = 10
                 y = 10
                 for i, line in enumerate(splittedcontent):
-                    rules_surf = test_font_small.render(line, False, BLACK)
+                    rules_surf = font_small.render(line, False, BLACK)
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
                     y += 12
                 f.close()
