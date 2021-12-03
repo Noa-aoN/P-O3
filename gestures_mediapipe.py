@@ -10,6 +10,7 @@ zelfde programma als 'gestures_mediapipe.py' maar dan in een klasse
 link: 
 https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapipe/#:~:text=MediaPipe%20Hand%20is%20a%20machine%20learning%20employed%20high-fidelity,help%20of%20multiple%20models%20which%20are%20working%20simultaneously.
 """
+FINGERS = ("Higher / One", "Two", "Three", "Four", "Five")
 
 
 def hand_position(hand_landmarks):
@@ -17,121 +18,71 @@ def hand_position(hand_landmarks):
             hand_landmarks.landmark[12].y)
 
 
-def index_down(img, hand_landmarks):
+def index_down(hand_landmarks):
     if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
             hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
             hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y:
-        cv2.putText(
-            img=img,
-            text=str("Lower"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("lower")
         return True
     return False
 
 
-def thumbs_up(img, hand_landmarks):
-    if hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y < \
-            hand_landmarks.landmark[5].y and \
+def thumbs_up(hand_landmarks):
+    if hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y < hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[9].y > hand_landmarks.landmark[2].y and \
             hand_landmarks.landmark[13].y > hand_landmarks.landmark[2].y and \
             hand_landmarks.landmark[17].y > hand_landmarks.landmark[2].y:
-        cv2.putText(
-            img=img,
-            text=str("Thumbs Up"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("thumbs up")
         return True
     return False
 
 
-def thumbs_down(img, hand_landmarks):
-    if hand_landmarks.landmark[4].y > hand_landmarks.landmark[3].y > \
-            hand_landmarks.landmark[5].y and \
+def thumbs_down(hand_landmarks):
+    if hand_landmarks.landmark[4].y > hand_landmarks.landmark[3].y > hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[9].y < hand_landmarks.landmark[2].y and \
             hand_landmarks.landmark[13].y < hand_landmarks.landmark[2].y and \
             hand_landmarks.landmark[17].y < hand_landmarks.landmark[2].y:
-        cv2.putText(
-            img=img,
-            text=str("Thumbs down"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("thumbs down")
         return True
     return False
 
 
-def index_up(img, hand_landmarks):
+def index_up(hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y > hand_landmarks.landmark[11].y > hand_landmarks.landmark[10].y and \
             hand_landmarks.landmark[16].y > hand_landmarks.landmark[15].y > hand_landmarks.landmark[14].y and \
             hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
-        cv2.putText(
-            img=img,
-            text=str("Higher / one"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("higher/one")
         return True
     return False
 
 
-def fingers_two(img, hand_landmarks):
+def fingers_two(hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
             hand_landmarks.landmark[16].y > hand_landmarks.landmark[15].y > hand_landmarks.landmark[14].y and \
             hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
-        cv2.putText(
-            img=img,
-            text=str("Two"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("two")
         return True
     return False
 
 
-def fingers_three(img, hand_landmarks):
+def fingers_three(hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
             hand_landmarks.landmark[16].y < hand_landmarks.landmark[15].y < hand_landmarks.landmark[14].y and \
             hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
-        cv2.putText(
-            img=img,
-            text=str("Three"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("three")
         return True
     return False
 
 
-def fingers_five(img, hand_landmarks):
+def fingers_five(hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
@@ -139,20 +90,12 @@ def fingers_five(img, hand_landmarks):
             hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y and \
             not ((hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x) or
                  (hand_landmarks.landmark[17].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x)):
-        cv2.putText(
-            img=img,
-            text=str("Five"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("five")
         return True
     return False
 
 
-def fingers_four(img, hand_landmarks):
+def fingers_four(hand_landmarks):
     if hand_landmarks.landmark[8].y < hand_landmarks.landmark[7].y < hand_landmarks.landmark[6].y < \
             hand_landmarks.landmark[5].y and \
             hand_landmarks.landmark[12].y < hand_landmarks.landmark[11].y < hand_landmarks.landmark[10].y and \
@@ -161,26 +104,19 @@ def fingers_four(img, hand_landmarks):
             ((hand_landmarks.landmark[5].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[17].x) or
              (hand_landmarks.landmark[17].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x)):
         # kijken of duim tussen wijsvinger en pink zit (x-coordinaat)
-        cv2.putText(
-            img=img,
-            text=str("Four"),
-            org=(0, 20),
-            fontFace=cv2.FONT_HERSHEY_DUPLEX,
-            fontScale=0.5,
-            color=(0, 0, 255),
-            thickness=1)
         print("four")
         return True
     return False
 
 
-def check_all_fingers(img, handlandmarks):
+def check_all_fingers(handlandmarks):
     finger_functions = [index_up, fingers_two, fingers_three, fingers_four, fingers_five]
-    for i, finger_func in enumerate(finger_functions):
-        if finger_func(img, handlandmarks):
-            return i + 1, img
 
-    return None, img
+    for i, finger_func in enumerate(finger_functions):
+        if finger_func(handlandmarks):
+            return i + 1, FINGERS[i]
+
+    return None, "No Bet Found"
 
 
 # def draw_thumb(img, hand_landmarks, width, height):  # draw functions not used in final version
