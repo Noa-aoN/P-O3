@@ -133,6 +133,13 @@ def higherlower(screen, clock, players, library):
                     screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
                 elif player1.name in library.libraryembeddings:
                     screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
+                if indexup and not cameracooldown:
+                    screen.blit(indexup_surf, indexup_surf.get_rect(topleft=(10, 40)))
+                elif indexdown and not cameracooldown:
+                    screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 40)))
+                else:
+                    screen.blit(gest_inv_surf, gest_inv_surf.get_rect(topleft=(10, 40)))
+
                 high_button.draw(screen)
                 low_button.draw(screen)
 
@@ -174,7 +181,6 @@ def higherlower(screen, clock, players, library):
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 40)))
                             high = index_up(landmarklist[0]) and vorige.hl_value > huidige.hl_value
-                            indexup = False
                             indexup = False
                         else:
                             indexup = True
