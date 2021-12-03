@@ -99,7 +99,7 @@ def higherlower(screen, clock, players, library):
     lost = False
     rules = False
 
-    with_camera = True
+    with_camera = False
     gest_time = 0
     cameracooldown = True
     facedetected = False
