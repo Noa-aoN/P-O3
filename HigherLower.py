@@ -168,14 +168,14 @@ def higherlower(screen, clock, players, library):
 
                 if cameracooldown:
                     if len(landmarklist) > 0 and index_up(img, landmarklist[0]):
-                        if index_up and index_up(img, landmarklist[0]):
+                        if indexup and index_up(img, landmarklist[0]):
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 20)))
                             high = index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
                             indexup = False
-                            index_up = False
+                            indexup = False
                         else:
                             indexup = True
                             indexdown = False
