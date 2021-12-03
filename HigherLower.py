@@ -7,7 +7,7 @@ from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 from BlackJack import face_gest_crop
 import time
-from gestures_mediapipe_class import gesture_recognition
+from gestures_mediapipe import gesture_recognition
 import cv2
 
 test_font_big = pygame.font.SysFont('comicsans', 80)
