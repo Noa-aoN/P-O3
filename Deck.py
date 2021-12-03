@@ -34,7 +34,7 @@ class Card:
             file = f"Images/Cards/Ace_Hearts.png"
         else:
             file = f"Images/Cards/{rank}_{suit}.png"
-        return pygame.transform.rotozoom(pygame.image.load(file), 0, 0.15)
+        return pygame.transform.rotozoom(pygame.image.load(file).convert_alpha(), 0, 0.15)
 
 
 class SpecialCard:
@@ -44,7 +44,7 @@ class SpecialCard:
         self.hl_value = hl_value
 
     def load_image(self):
-        return pygame.transform.rotozoom(pygame.image.load(self.file), 0, 0.15)
+        return pygame.transform.rotozoom(pygame.image.load(self.file).convert_alpha(), 0, 0.15)
 
 
 def load_deck():
