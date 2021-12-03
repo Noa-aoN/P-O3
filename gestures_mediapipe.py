@@ -26,6 +26,7 @@ def index_down(hand_landmarks):
             hand_landmarks.landmark[20].y < hand_landmarks.landmark[19].y < hand_landmarks.landmark[18].y:
         print("lower")
         return True
+    return False
 
 
 def thumbs_up(hand_landmarks):
@@ -35,6 +36,7 @@ def thumbs_up(hand_landmarks):
             hand_landmarks.landmark[17].y > hand_landmarks.landmark[2].y:
         print("thumbs up")
         return True
+    return False
 
 
 def thumbs_down(hand_landmarks):
@@ -44,6 +46,7 @@ def thumbs_down(hand_landmarks):
             hand_landmarks.landmark[17].y < hand_landmarks.landmark[2].y:
         print("thumbs down")
         return True
+    return False
 
 
 def index_up(hand_landmarks):
@@ -54,6 +57,7 @@ def index_up(hand_landmarks):
             hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
         print("higher/one")
         return True
+    return False
 
 
 def fingers_two(hand_landmarks):
@@ -64,6 +68,7 @@ def fingers_two(hand_landmarks):
             hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
         print("two")
         return True
+    return False
 
 
 def fingers_three(hand_landmarks):
@@ -74,6 +79,7 @@ def fingers_three(hand_landmarks):
             hand_landmarks.landmark[20].y > hand_landmarks.landmark[19].y > hand_landmarks.landmark[18].y:
         print("three")
         return True
+    return False
 
 
 def fingers_five(hand_landmarks):
@@ -86,6 +92,7 @@ def fingers_five(hand_landmarks):
                  (hand_landmarks.landmark[17].x < hand_landmarks.landmark[4].x < hand_landmarks.landmark[5].x)):
         print("five")
         return True
+    return False
 
 
 def fingers_four(hand_landmarks):
@@ -99,6 +106,7 @@ def fingers_four(hand_landmarks):
         # kijken of duim tussen wijsvinger en pink zit (x-coordinaat)
         print("four")
         return True
+    return False
 
 
 def check_all_fingers(handlandmarks):
