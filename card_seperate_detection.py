@@ -2,6 +2,7 @@ import cv2
 
 import numpy as np
 import time
+from Camera import init_camera
 
 from Deck import Card, SUITS, RANKS
 
@@ -293,9 +294,7 @@ def get_cards(img):
     return m_cards, tm_cards
 
 
-cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1440)  # 1920
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 810)  # 1080
+cap = init_camera()
 
 while True:
     ret, img = cap.read()

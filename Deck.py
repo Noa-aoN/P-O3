@@ -9,7 +9,7 @@ HL_VALUES = (14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0)
 
 
 class Card:
-    def __init__(self, contour, pts, w, h, center, rank, suit):
+    def __init__(self, contour, pts, w, h, center, rank, suit, match=0):
         self.contour = contour  # Contour of card
         self.corner_pts = pts  # Corner points of card
         self.dim = (w, h)  # Width and height of card
@@ -18,6 +18,7 @@ class Card:
         self.suit = suit  # Index of the suit
         self.bj_value = BJ_VALUES[rank]
         self.hl_value = HL_VALUES[rank]
+        self.match = match
 
     def __bool__(self):
         return self.rank != -1 and self.suit != -1
