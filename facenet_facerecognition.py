@@ -299,7 +299,7 @@ def search_player(player, image, mtcnn, resnet, library):
 
 
 class PlayerRegistration:
-    def __init__(self, librarydirectory, imagesperlibrary=9, playernr=1, imagesize=160, margin=0.2):
+    def __init__(self, librarydirectory, imagesperlibrary=7, playernr=1, imagesize=160, margin=0.2):
         assert isinstance(librarydirectory, str)
         self.directory = librarydirectory
         assert isinstance(playernr, int)

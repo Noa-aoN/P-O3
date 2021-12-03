@@ -33,6 +33,7 @@ def index_down(img, hand_landmarks):
             thickness=1)
         print("lower")
         return True
+    return False
 
 
 def thumbs_up(img, hand_landmarks):
@@ -51,6 +52,7 @@ def thumbs_up(img, hand_landmarks):
             thickness=1)
         print("thumbs up")
         return True
+    return False
 
 
 def thumbs_down(img, hand_landmarks):
@@ -69,6 +71,7 @@ def thumbs_down(img, hand_landmarks):
             thickness=1)
         print("thumbs down")
         return True
+    return False
 
 
 def index_up(img, hand_landmarks):
@@ -87,6 +90,7 @@ def index_up(img, hand_landmarks):
             thickness=1)
         print("higher/one")
         return True
+    return False
 
 
 def fingers_two(img, hand_landmarks):
@@ -105,6 +109,7 @@ def fingers_two(img, hand_landmarks):
             thickness=1)
         print("two")
         return True
+    return False
 
 
 def fingers_three(img, hand_landmarks):
@@ -123,6 +128,7 @@ def fingers_three(img, hand_landmarks):
             thickness=1)
         print("three")
         return True
+    return False
 
 
 def fingers_five(img, hand_landmarks):
@@ -143,6 +149,7 @@ def fingers_five(img, hand_landmarks):
             thickness=1)
         print("five")
         return True
+    return False
 
 
 def fingers_four(img, hand_landmarks):
@@ -164,6 +171,7 @@ def fingers_four(img, hand_landmarks):
             thickness=1)
         print("four")
         return True
+    return False
 
 
 def check_all_fingers(img, handlandmarks):

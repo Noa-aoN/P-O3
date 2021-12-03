@@ -7,7 +7,7 @@ from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 from BlackJack import face_gest_crop
 import time
-from gestures_mediapipe import gesture_recognition
+from gestures_mediapipe import *
 import cv2
 
 test_font_big = pygame.font.SysFont('comicsans', 80)
@@ -99,8 +99,8 @@ def higherlower(screen, clock, players, library):
     game_active = False
     high = False
     low = False
-    index_up = False
-    index_down = False
+    indexup = False
+    indexdown = False
     lost = False
     rules = False
 
@@ -137,8 +137,7 @@ def higherlower(screen, clock, players, library):
                 low_button.draw(screen)
 
                 ret, img = cap.read()
-                gest_rec = gesture_recognition()
-                landmarklist = gest_rec.get_landmarks(img)
+                landmarklist = get_landmarks(img)
 
                 pygame.display.update()
 
@@ -155,7 +154,7 @@ def higherlower(screen, clock, players, library):
                         facedetected = False
                         screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     for landmark in landmarklist:
-                        handcoords = gest_rec.hand_position(landmark)
+                        handcoords = hand_position(landmark)
                         if len(facecoords) > 0 and len(handcoords) > 0:
                             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
                                                                          player1)
@@ -167,17 +166,17 @@ def higherlower(screen, clock, players, library):
                     landmarklist = templandmarklist
 
                 if cameracooldown:
-                    if len(landmarklist) > 0 and gest_rec.index_up(img, landmarklist[0]):
-                        if index_up and gest_rec.index_up(img, landmarklist[0]):
+                    if len(landmarklist) > 0 and index_up(img, landmarklist[0]):
+                        if indexup and index_up(img, landmarklist[0]):
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 20)))
-                            high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
-                            index_up = False
+                            high = index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
+                            indexup = False
                         else:
-                            index_up = True
-                            index_down = False
+                            indexup = True
+                            indexdown = False
                             screen.blit(indexup_surf, indexup_surf.get_rect(topleft=(10, 20)))
                             high_button.set_color((255, 255, 255))
                             low_button.set_color((0, 0, 0))
@@ -188,17 +187,17 @@ def higherlower(screen, clock, players, library):
                             screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
                         elif player1.name in library.libraryembeddings:
                             screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
-                    elif len(landmarklist) > 0 and gest_rec.index_down(img, landmarklist[0]):
-                        if index_down:
+                    elif len(landmarklist) > 0 and index_down(img, landmarklist[0]):
+                        if indexdown:
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexdown_white_surf, indexdown_white_surf.get_rect(topleft=(10, 20)))
-                            low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
-                            index_down = False
+                            low = index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
+                            indexdown = False
                         else:
-                            index_up = False
-                            index_down = True
+                            indexup = False
+                            indexdown = True
                             screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 20)))
                             high_button.set_color((0, 0, 0))
                             low_button.set_color((255, 255, 255))
@@ -217,7 +216,6 @@ def higherlower(screen, clock, players, library):
                         wrong_guess(player1, huidige, screen)
 
                 for event in pygame.event.get():
-                    pygame.display.update()
                     if high_button.button_pressed(event) or low_button.button_pressed(event):
                         deck = get_card_func(deck, player1, screen)
                         player1.show_cards(screen)
