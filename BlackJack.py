@@ -51,7 +51,7 @@ font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
 
 
-def get_landmark_list(img, current_player, library, landmarklist, screen):
+def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter):
     facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
     notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
     facecoords = library.searchplayer(current_player.name, img)
@@ -64,7 +64,7 @@ def get_landmark_list(img, current_player, library, landmarklist, screen):
         handcoords = hand_position(landmark)
         if facecoords and handcoords:
             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
-                                                         library, current_player)
+                                                         library, current_player, landmarkgetter)
             bool = False
             if facecoords:
                 img, bool = linkfacewithhand(img, facecoords[0], handcoords)
@@ -103,7 +103,7 @@ def camera_button(pressed_button, buttonlist, fingerlist):
     return fingerlist
 
 
-def face_gest_crop(img, facecoords, handcoords, library, player):
+def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter):
     h, w, c = img.shape
     (leftdist, rightdist) = (abs(facecoords[0][0] - handcoords[2] * w),
                              abs(facecoords[0][0] + facecoords[0][2] - handcoords[2] * w))
