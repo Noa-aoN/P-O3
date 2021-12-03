@@ -113,7 +113,7 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
             hands = w
         img = img[:, facecoords[0][0]:int(hands)]
         facecoords = library.searchplayer(player.name, img)
-        landmarklist = get_landmarks(img)
+        landmarklist = landmarkgetter(img)
         for landmark in landmarklist:
             handcoords = hand_position(landmark)
     else:
@@ -122,7 +122,7 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
             hands = 0
         img = img[:, int(hands):facecoords[0][0] + facecoords[0][2]]
         facecoords = library.searchplayer(player.name, img)
-        landmarklist = get_landmarks(img)
+        landmarklist = landmarkgetter(img)
         for landmark in landmarklist:
             handcoords = hand_position(landmark)
     return img, facecoords, handcoords
