@@ -294,4 +294,4 @@ def get_landmarks(frame):
 # om programma te runnen:
 # from gestures_mediapipe.py import gesture_recognition
 if __name__ == "__main__":
-    recognition()
+    print("gesture recognition")
