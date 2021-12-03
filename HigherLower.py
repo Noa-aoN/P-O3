@@ -24,14 +24,14 @@ Wrong_surf = font_big.render('Wrong!', False, BLACK)
 
 
 def get_camera_card(deck, player, screen):
-    cap = init_camera()
+    cap_card = init_camera()
     i = 1
     while True:
         if i > 9:
             i = 1
         time.sleep(0.05)
         print("Trying again")
-        ret, img = cap.read()
+        ret, img = cap_card.read()
         card = get_card(img)
         img = opencv_to_pygame(img)
         surface = pygame.surfarray.make_surface(img)
@@ -44,7 +44,7 @@ def get_camera_card(deck, player, screen):
             if cardname in deck:
                 deck.remove(cardname)
                 player.add_card(card)
-                cap.release()
+                cap_card.release()
                 return deck
             else:
                 rank, suit = cardname
