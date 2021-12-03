@@ -6,7 +6,7 @@ from time import sleep, perf_counter
 from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 import pygame
-from gestures_mediapipe import check_all_fingers, check_option, hand_position, get_landmarks
+from gestures_mediapipe import check_all_fingers, check_option, hand_position, LandmarkGetter
 import cv2
 
 '''
@@ -20,16 +20,20 @@ To DO:
 - ...
 '''
 
+
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 def legefunctie():
     print("geef nieuwe kaart")
 
-def legefunctie_2(previous_player,player):
-    print("ga van",previous_player, "naar",player )
+
+def legefunctie_2(previous_player, player):
+    print("ga van", previous_player, "naar", player)
+
 
 def legefunctie_3(player):
-    print("ga naar",player )
+    print("ga naar", player)
+
 
 with_rasp = False
 
@@ -90,7 +94,7 @@ def play_again(players, player0):
     return deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players
 
 
-def face_gest_crop(img, facecoords, handcoords, library, player):
+def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter):
     h, w, c = img.shape
     leftdist = abs(facecoords[0][0] - handcoords[2] * w)
     rightdist = abs(facecoords[0][0] + facecoords[0][2] - handcoords[2] * w)
@@ -185,7 +189,7 @@ def blackjack(screen, clock, library, players=None):
                         landmarklist = landmarkgetter(img)
 
                         if current_player.name in library.libraryembeddings:
-                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
+                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
 
                         if cameracooldown:
                             if landmarklist:
@@ -259,7 +263,7 @@ def blackjack(screen, clock, library, players=None):
                             first_card = False
                         else:
                             if previous_player != player.number:
-                                rotate_fromto_player(previous_player,player.number)
+                                rotate_fromto_player(previous_player, player.number)
                                 previous_player = player.number
                             give_card()
                             # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
@@ -278,11 +282,11 @@ def blackjack(screen, clock, library, players=None):
 
                 while len(player0.cards) < 2:
                     if previous_player != 2.5:
-                        rotate_fromto_player(previous_player,2.5)
+                        rotate_fromto_player(previous_player, 2.5)
                         previous_player = 2.5
                     give_card()
                     # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
-                    #de tweede kaart moet voorlopig omgekeerd liggen
+                    # de tweede kaart moet voorlopig omgekeerd liggen
                     deck = get_random_card(deck, player0, screen)
                     player0.show_cards(screen)
                     player0.display_score_bj(screen)
@@ -303,7 +307,7 @@ def blackjack(screen, clock, library, players=None):
                 if i < len(players):
                     current_player = players[i]
                     if int(current_player.number) != int(previous_player):
-                        rotate_fromto_player(previous_player,current_player.number)
+                        rotate_fromto_player(previous_player, current_player.number)
                         previous_player = current_player.number
                     if current_player.wants_card:
                         if current_player.value_count_bj() == 'bust':
@@ -325,7 +329,7 @@ def blackjack(screen, clock, library, players=None):
                             landmarklist = landmarkgetter(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
 
                             if cameracooldown:
                                 if landmarklist:
@@ -363,18 +367,14 @@ def blackjack(screen, clock, library, players=None):
                                     deck = get_random_card(deck, current_player, screen)
                                     current_player.show_cards(screen)
                                     current_player.display_score_bj(screen)
-                                    current_button = hit_button
                                 elif double_button.button_pressed(event):
                                     current_player.bet = current_player.bet * 2
                                     deck = get_random_card(deck, current_player, screen)
                                     current_player.show_cards(screen)
                                     current_player.display_score_bj(screen)
                                     current_player.wants_card = False
-                                    current_button = double_button
                                 elif stand_button.button_pressed(event):
                                     current_player.wants_card = False
-                                    current_button = start_button
-
                                 elif exit_button.button_pressed(event):
                                     return [player0] + players
 
