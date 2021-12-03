@@ -42,13 +42,13 @@ def main_menu():
     yes_button = Button((0, 0, 0), (460, 300), (55, 30), 'Yes', 'small')
     no_button = Button((0, 0, 0), (700, 300), (55, 30), 'No', 'small')
 
-    add_players = True
+    addplayers = True
     bool = False
     name_text = ''
     while True:
         pygame.display.update()
         screen.fill((31, 171, 57))
-        if add_players:
+        if addplayers:
             if playeralreadyregistered is None:
                 if len(players) > 1:
                     skip_button.draw(screen)
@@ -88,7 +88,7 @@ def main_menu():
                             name_text = ''
 
             if len(players) == 5 or bool == 'skip':
-                add_players = False
+                addplayers = False
         else:
             screen.blit(choose_game, choose_game.get_rect(midbottom=(600, 150)))
             bj_button.draw(screen)
@@ -104,7 +104,7 @@ def main_menu():
                     playsound("Sounds/DroppingChips.wav")
                     players = higherlower(screen, clock, players, library)
                 elif newpl_button.button_pressed(event):
-                    add_players = True
+                    addplayers = True
                     bool = False
                     name_text = ''
                     players = [player0]
