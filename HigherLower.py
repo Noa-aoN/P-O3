@@ -119,6 +119,7 @@ def higherlower(screen, clock, players, library):
     else:
         get_card_func = get_random_card
     cap = init_camera(0)
+    landmarkgetter = LandmarkGetter()
     while True:
         pygame.display.update()
         if game_active:
@@ -150,7 +151,7 @@ def higherlower(screen, clock, players, library):
 
                 ret, img = cap.read()
                 # est_rec = gesture_recognition()
-                landmarklist = get_landmarks(img)
+                landmarklist = landmarkgetter(img)
 
                 pygame.display.update()
 

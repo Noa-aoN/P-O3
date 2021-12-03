@@ -207,18 +207,20 @@ def check_all_fingers(handlandmarks):
 #     draw_ring(img, hand_landmarks, width, height)
 #     draw_pinky(img, hand_landmarks, width, height)
 #     draw_palm(img, hand_landmarks, width, height)
+class LandmarkGetter:
+    def __init__(self):
+        self.hands = mp.solutions.hands.Hands()
+
+    def __call__(self, frame):
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = self.hands.process(img)
+        landmarklist = []
+        if result.multi_hand_landmarks is not None:
+            for hand_landmarks in result.multi_hand_landmarks:
+                landmarklist.append(hand_landmarks)
+        return landmarklist
 
 
-def get_landmarks(frame):
-    mp_hands = mp.solutions.hands
-    hands = mp_hands.Hands()
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = hands.process(img)
-    landmarklist = []
-    if result.multi_hand_landmarks is not None:
-        for hand_landmarks in result.multi_hand_landmarks:
-            landmarklist.append(hand_landmarks)
-    return landmarklist
 
 
 # def recognition():

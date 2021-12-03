@@ -150,8 +150,10 @@ def blackjack(screen, clock, library, players=None):
 
     playing_bj = True
     cap = init_camera(0)
+    landmarkgetter = LandmarkGetter()
     while playing_bj:
 
+        current_button = None
         pygame.display.update()
 
         if game_active:
@@ -174,7 +176,7 @@ def blackjack(screen, clock, library, players=None):
                         bal = current_player.balance
 
                         ret, img = cap.read()
-                        landmarklist = get_landmarks(img)
+                        landmarklist = landmarkgetter(img)
 
                         if current_player.name in library.libraryembeddings:
                             landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
@@ -221,7 +223,8 @@ def blackjack(screen, clock, library, players=None):
 
                     if not current_player.wants_bet:
                         last_fingers = None
-                        current_button.set_color(BLACK)
+                        if current_button is not None:
+                            current_button.set_color(BLACK)
                         j += 1
                 else:
                     place_bets = False
@@ -287,7 +290,7 @@ def blackjack(screen, clock, library, players=None):
                             no_button.draw(screen)
 
                             ret, img = cap.read()
-                            landmarklist = get_landmarks(img)
+                            landmarklist = landmarkgetter(img)
 
                             if current_player.name in library.libraryembeddings:
                                 landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
@@ -438,7 +441,6 @@ def blackjack(screen, clock, library, players=None):
                         return [player0] + players
 
             exit_button.draw(screen)
-
         else:
             screen.fill(GREEN)
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
@@ -474,7 +476,6 @@ def blackjack(screen, clock, library, players=None):
                     rules = False
 
         clock.tick(60)
-
 
 if __name__ == '__main__':
     pygame.init()
