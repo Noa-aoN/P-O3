@@ -137,8 +137,8 @@ def higherlower(screen, clock, players, library):
                 low_button.draw(screen)
 
                 ret, img = cap.read()
-                gest_rec = gesture_recognition()
-                landmarklist = gest_rec.get_landmarks(img)
+                # est_rec = gesture_recognition()
+                landmarklist = get_landmarks(img)
 
                 pygame.display.update()
 
@@ -155,7 +155,7 @@ def higherlower(screen, clock, players, library):
                         facedetected = False
                         screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     for landmark in landmarklist:
-                        handcoords = gest_rec.hand_position(landmark)
+                        handcoords = hand_position(landmark)
                         if len(facecoords) > 0 and len(handcoords) > 0:
                             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
                                                                          player1)
@@ -167,13 +167,13 @@ def higherlower(screen, clock, players, library):
                     landmarklist = templandmarklist
 
                 if cameracooldown:
-                    if len(landmarklist) > 0 and gest_rec.index_up(img, landmarklist[0]):
-                        if index_up and gest_rec.index_up(img, landmarklist[0]):
+                    if len(landmarklist) > 0 and index_up(img, landmarklist[0]):
+                        if index_up and index_up(img, landmarklist[0]):
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 20)))
-                            high = gest_rec.index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
+                            high = index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
                             index_up = False
                         else:
                             index_up = True
@@ -188,13 +188,13 @@ def higherlower(screen, clock, players, library):
                             screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
                         elif player1.name in library.libraryembeddings:
                             screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
-                    elif len(landmarklist) > 0 and gest_rec.index_down(img, landmarklist[0]):
+                    elif len(landmarklist) > 0 and index_down(img, landmarklist[0]):
                         if index_down:
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexdown_white_surf, indexdown_white_surf.get_rect(topleft=(10, 20)))
-                            low = gest_rec.index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
+                            low = index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
                             index_down = False
                         else:
                             index_up = False
