@@ -232,7 +232,7 @@ def higherlower(screen, clock, players, library):
                         else:
                             indexup = False
                             indexdown = True
-                            screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 20)))
+                            screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 40)))
                             high_button.set_color(BLACK)
                             low_button.set_color(WHITE)
                         cameracooldown = False
@@ -243,7 +243,7 @@ def higherlower(screen, clock, players, library):
                         elif player1.name in library.libraryembeddings:
                             screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     else:
-                        screen.blit(gest_inv_surf, gest_inv_surf.get_rect(topleft=(10, 20)))
+                        screen.blit(gest_inv_surf, gest_inv_surf.get_rect(topleft=(10, 40)))
 
                     if high or low:
                         lost = True
