@@ -28,7 +28,7 @@ test_font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 test_font_small = pygame.font.SysFont('comicsans', 12)
 
 
-def get_landmark_list(img, current_player, library, landmarklist, gest_rec):
+def get_landmark_list(img, current_player, library, landmarklist, gest_rec, screen):
     facedetected_surf = test_font_small.render('Player Recognized', False, (255, 0, 0))
     notdetected_surf = test_font_small.render('Player Not Found', False, (255, 0, 0))
     facecoords = library.searchplayer(current_player.name, img)
@@ -184,7 +184,7 @@ def blackjack(screen, clock, library, players=None):
                         landmarklist = gest_rec.get_landmarks(img)
 
                         if current_player.name in library.libraryembeddings:
-                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec)
+                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec, screen)
 
                         if cameracooldown:
                             if landmarklist:
@@ -297,7 +297,7 @@ def blackjack(screen, clock, library, players=None):
                             landmarklist = gest_rec.get_landmarks(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec)
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, gest_rec, screen)
 
                             if len(current_player.cards) == 2:
                                 double_button.draw(screen)
