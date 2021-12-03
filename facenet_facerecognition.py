@@ -159,7 +159,7 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
         numberofimages += len(os.listdir(directory))
     embeddings = []
     directions = set()
-    wanteddirections = {("Up", "Left"), ("Up", "Straight"), ("Up", "Right"),
+    wanteddirections = {("Up", "Straight"),
                         ("Centered", "Left"), ("Centered", "Straight"), ("Centered", "Right"),
                         ("Down", "Left"), ("Down", "Straight"), ("Down", "Right")}
     while numberofimages < imagesperlibrary:
@@ -169,7 +169,7 @@ def library_imprint(directory, imagesperlibrary, mtcnn, resnet):
             face_embedding = get_embedding(faces[0][0], mtcnn, resnet)
             direction = looking_direction(faces[0][0])
             if face_embedding is not None:
-                if len(directions) < 9 and direction[0] is not None and direction[1] is not None and \
+                if len(directions) < 7 and direction[0] is not None and direction[1] is not None and \
                         direction not in directions:
                     wanteddirections.remove(direction)
                     embeddings.append(face_embedding)
