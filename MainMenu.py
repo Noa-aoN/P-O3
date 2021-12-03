@@ -14,6 +14,7 @@ to do:
 -scherm gesture recognition weergeven
 """
 
+
 def main_menu():
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
