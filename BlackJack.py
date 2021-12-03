@@ -350,7 +350,7 @@ def blackjack(screen, clock, library, players=None):
                                         return [player0] + players
                             else:
                                 if cameracooldown:
-                                    if landmarklist and index_up(img, landmarklist[0]):
+                                    if landmarklist and index_up(landmarklist[0]):
                                         if hit_clicked:
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
@@ -362,7 +362,7 @@ def blackjack(screen, clock, library, players=None):
                                         yes_button.draw(screen)
                                         cameracooldown = False
                                         gest_time = perf_counter()
-                                    elif landmarklist and fingers_five(img, landmarklist[0]):
+                                    elif landmarklist and fingers_five(landmarklist[0]):
                                         if stand_clicked:
                                             current_player.wants_card = False
 
