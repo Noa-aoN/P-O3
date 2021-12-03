@@ -104,7 +104,7 @@ def main_menu():
                     playsound("Sounds/DroppingChips.wav")
                     players = higherlower(screen, clock, players, library)
                 elif newpl_button.button_pressed(event):
-                    add_players = True
+                    addplayers = True
                     bool = False
                     name_text = ''
                     players = [player0]
