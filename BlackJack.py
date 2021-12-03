@@ -19,6 +19,29 @@ To DO:
 - If BlackJack 3:2 payment.
 - ...
 '''
+
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
+
+def legefunctie():
+    print("geef nieuwe kaart")
+
+def legefunctie_2(previous_player,player):
+    print("ga van",previous_player, "naar",player )
+
+def legefunctie_3(player):
+    print("ga naar",player )
+
+with_rasp = False
+
+if with_rasp:
+    give_card = dcmotor_rotate
+    rotate_fromto_player = servo_rotate_fromto
+    rotate_to = servo_rotate
+else:
+    give_card = legefunctie
+    rotate_fromto_player = legefunctie_2
+    rotate_to = legefunctie_3
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (31, 171, 57)
