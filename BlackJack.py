@@ -184,7 +184,7 @@ def blackjack(screen, clock, library, players=None):
 
                         if cameracooldown:
                             if landmarklist:
-                                amount_fingers, img = check_all_fingers(img, landmarklist[0])
+                                amount_fingers, img = check_all_fingers(landmarklist[0])
                                 if amount_fingers:
                                     if bal >= amount_fingers * 1000 and last_fingers == amount_fingers:
                                         current_player.bet = amount_fingers * 1000
