@@ -83,8 +83,6 @@ class Player:
         self.cards.append(card)
 
     def show_cards(self, window, result=False):
-        if self.cards is None:
-            self.cards = []
 
         if not self.name == 'Dealer':
             for i, card in enumerate(self.cards):
