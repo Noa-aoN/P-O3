@@ -98,7 +98,6 @@ def main_menu():
                 exit_pygame(event)
                 if bj_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
-                    print(players)
                     players = blackjack(screen, clock, library, players)
                 elif hl_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
