@@ -58,15 +58,13 @@ def add_player(window, players, skip_button, active, player_name, library):
 
 
 class Player:
-    def __init__(self, name, balance, player_number, cards=None, wants_card=False, bet=1000, wants_bet=True):
+    def __init__(self, name, balance, player_number, wants_card=False, bet=1000, wants_bet=True):
         self.font = pygame.font.SysFont('comicsans', 20)
         self.font_small = pygame.font.SysFont('comicsans', 13)
         self.font_big = pygame.font.SysFont('comicsans', 30)
-        if cards is None:
-            cards = []
         self.name = name
         self.balance = balance
-        self.cards = cards
+        self.cards = []
         self.number = player_number
         self.surf = self.font.render(self.name, False, (10, 10, 10))
         self.surf_balance = self.font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
@@ -204,26 +202,15 @@ class Player:
         self.balance += self.bet * self.results(dealer_score, game)[1]
         self.surf_balance = self.font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
 
-    def place_bet(self, window, exit_button):
+    def place_bet(self, window, bet_buttons):
         self.bet = 0
         question_surf = self.font_big.render(f'{self.name}, how much do you want to bet?', False, (10, 10, 10))
         window.blit(question_surf, question_surf.get_rect(midbottom=(600, 250)))
-
-        bet_buttons = [(i * 1000, Button((0, 0, 0), (325 + i * 75, 350), (50, 30), f'{i}k')) for i in range(1, 6)]
 
         bal = self.balance
 
         for bet_amount, button in bet_buttons:
             if bal >= bet_amount:
                 button.draw(window)
-
-        for event in pygame.event.get():
-            if exit_button.button_pressed(event):
-                return 'exit'
-
-            for bet_amount, button in bet_buttons:
-                if button.button_pressed(event) and bal >= bet_amount:
-                    self.bet = bet_amount
-
 
 

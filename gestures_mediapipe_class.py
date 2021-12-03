@@ -15,7 +15,8 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 class gesture_recognition:
 
     def hand_position(self, hand_landmarks):
-        return (hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y, hand_landmarks.landmark[12].x, hand_landmarks.landmark[12].y)
+        return (hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y, hand_landmarks.landmark[12].x,
+                hand_landmarks.landmark[12].y)
 
     def index_down(self, img, hand_landmarks):
         if hand_landmarks.landmark[8].y > hand_landmarks.landmark[7].y > hand_landmarks.landmark[6].y > \
@@ -157,6 +158,14 @@ class gesture_recognition:
                 thickness=1)
             print("four")
             return True
+
+    def check_all_fingers(self, img, handlandmarks):
+        finger_functions = [self.index_up, self.fingers_two, self.fingers_three, self.fingers_four, self.fingers_five]
+        for i, finger_func in enumerate(finger_functions):
+            if finger_func(img, handlandmarks):
+                return i + 1, img
+
+        return None, img
 
     def draw_thumb(self, img, hand_landmarks, width, height):  # draw functions not used in final version
         cv2.line(img, (int(hand_landmarks.landmark[3].x * width), int(hand_landmarks.landmark[3].y * height)),
