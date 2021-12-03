@@ -205,7 +205,7 @@ def blackjack(screen, clock, library, players=None):
                         landmarklist = landmarkgetter(img)
 
                         if current_player.name in library.libraryembeddings:
-                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
+                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
 
                         if cameracooldown:
                             if landmarklist:
@@ -342,7 +342,7 @@ def blackjack(screen, clock, library, players=None):
                             landmarklist = landmarkgetter(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen)
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
 
                             if len(current_player.cards) == 2:
                                 double_button.draw(screen)
