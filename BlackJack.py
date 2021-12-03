@@ -255,7 +255,6 @@ def blackjack(screen, clock, library, players=None):
                     pygame.display.update()
                     sleep(1)
 
-
                 while len(player0.cards) < 2:
                     deck = get_random_card(deck, player0, screen)
                     player0.show_cards(screen)

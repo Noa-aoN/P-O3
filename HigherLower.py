@@ -133,9 +133,9 @@ def higherlower(screen, clock, players, library):
                     screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
                 elif player1.name in library.libraryembeddings:
                     screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
-                if indexup and not cameracooldown:
+                if indexup:
                     screen.blit(indexup_surf, indexup_surf.get_rect(topleft=(10, 40)))
-                elif indexdown and not cameracooldown:
+                elif indexdown:
                     screen.blit(indexdown_surf, indexdown_surf.get_rect(topleft=(10, 40)))
                 else:
                     screen.blit(gest_inv_surf, gest_inv_surf.get_rect(topleft=(10, 40)))
