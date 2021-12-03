@@ -5,7 +5,6 @@ from AudioPlay import playsound
 from time import sleep
 from Camera import init_camera
 from mediapipe_pose import linkfacewithhand
-from Button import turn_white
 from math import sqrt
 import time
 import pygame
@@ -78,7 +77,6 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
         for landmark in landmarklist:
             handcoords = gest_rec.hand_position(landmark)
     return img, facecoords, handcoords
-
 
 
 def blackjack(screen, clock, library, players=None):
