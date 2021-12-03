@@ -137,6 +137,10 @@ def higherlower(screen, clock, players, library):
                 low_button.draw(screen)
 
                 ret, img = cap.read()
+<<<<<<< HEAD
+=======
+                # est_rec = gesture_recognition()
+>>>>>>> 200bf4fc3708d8a1f440c978d0617257d80feb00
                 landmarklist = get_landmarks(img)
 
                 pygame.display.update()
@@ -167,13 +171,21 @@ def higherlower(screen, clock, players, library):
 
                 if cameracooldown:
                     if len(landmarklist) > 0 and index_up(img, landmarklist[0]):
+<<<<<<< HEAD
                         if indexup and index_up(img, landmarklist[0]):
+=======
+                        if index_up and index_up(img, landmarklist[0]):
+>>>>>>> 200bf4fc3708d8a1f440c978d0617257d80feb00
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexup_white_surf, indexup_white_surf.get_rect(topleft=(10, 20)))
                             high = index_up(img, landmarklist[0]) and vorige.hl_value > huidige.hl_value
+<<<<<<< HEAD
                             indexup = False
+=======
+                            index_up = False
+>>>>>>> 200bf4fc3708d8a1f440c978d0617257d80feb00
                         else:
                             indexup = True
                             indexdown = False
@@ -188,13 +200,21 @@ def higherlower(screen, clock, players, library):
                         elif player1.name in library.libraryembeddings:
                             screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
                     elif len(landmarklist) > 0 and index_down(img, landmarklist[0]):
+<<<<<<< HEAD
                         if indexdown:
+=======
+                        if index_down:
+>>>>>>> 200bf4fc3708d8a1f440c978d0617257d80feb00
                             deck = get_card_func(deck, player1, screen)
                             player1.show_cards(screen)
                             vorige, huidige = last_two_cards(player1)
                             screen.blit(indexdown_white_surf, indexdown_white_surf.get_rect(topleft=(10, 20)))
                             low = index_down(img, landmarklist[0]) and vorige.hl_value < huidige.hl_value
+<<<<<<< HEAD
                             indexdown = False
+=======
+                            index_down = False
+>>>>>>> 200bf4fc3708d8a1f440c978d0617257d80feb00
                         else:
                             indexup = False
                             indexdown = True
