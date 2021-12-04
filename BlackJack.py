@@ -16,9 +16,6 @@ Bugs:
 
 To DO:
 - Entering starting balance.
-- If BlackJack 3:2 payment.
-- Giving the first players the 2 cards instead of giving every player 1 card
-- if every player bustst the dealer still tries to get over 16
 - ...
 '''
 
@@ -94,6 +91,14 @@ def play_again(players, player0):
     player0.cards = []
     deck = load_random_deck()
     return deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players
+
+
+def everyone_bust(players):
+    everyone_busts = True
+    for player in players:
+        if player.value_count_bj() != 0:
+            everyone_busts = False
+    return everyone_busts
 
 
 def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter):
@@ -272,6 +277,11 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                 for player in players:
 
                     while len(player.cards) < 2:
+                        deck = get_random_card(deck, player, screen)
+                        player.show_cards(screen)
+                        player.display_score_bj(screen)
+                        pygame.display.update()
+                        sleep(1)
                         if first_card:
                             rotate_to(player.number)
                             previous_player = player.number
@@ -286,17 +296,6 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                             give_card()
                             # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
                             give_card()
-                        deck = get_random_card(deck, player, screen)
-                        player.show_cards(screen)
-                        player.display_score_bj(screen)
-                        pygame.display.update()
-                        sleep(1)
-                        deck = get_random_card(deck, player, screen)
-                for player in players:
-                    player.show_cards(screen)
-                    player.display_score_bj(screen)
-                    pygame.display.update()
-                    sleep(1)
 
                 while len(player0.cards) < 2:
                     if previous_player != 2.5:
@@ -426,7 +425,13 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                 else:
                     pygame.display.update()
                     sleep(1)
-                    dealer_cards = True
+                    if not everyone_bust(players):
+                        dealer_cards = True
+                    else:
+                        deal_cards = False
+                        dealer_cards = False
+                        change_bal = True
+                        check_results = True
 
             if dealer_cards:
                 while 0 < player0.value_count_bj() < 17:
@@ -457,8 +462,9 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                     dealer_blackjack = True
                 for player in players:
                     player.display_results(screen, dealer_score, 'bj', dealer_blackjack)
-                player0.show_cards(screen, True)
-                player0.display_score_bj(screen, True)
+                not_everyone_busts = not everyone_bust(players)
+                player0.show_cards(screen, not_everyone_busts)
+                player0.display_score_bj(screen, not_everyone_busts)
                 again_button.draw(screen)
                 for event in pygame.event.get():
                     if again_button.button_pressed(event):

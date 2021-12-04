@@ -1,46 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="" />
-=======
-    <list default="true" id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="">
-<<<<<<< HEAD
+    <list default="true" id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
-=======
-      <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deck.py" afterDir="false" />
->>>>>>> 810354b62c38a607b4d1094752b6bad32eaff34f
+      <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
     </list>
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitSEFilterConfiguration">
-    <file-type-list>
-      <filtered-out-file-type name="LOCAL_BRANCH" />
-      <filtered-out-file-type name="REMOTE_BRANCH" />
-      <filtered-out-file-type name="TAG" />
-      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
-    </file-type-list>
-  </component>
-  <component name="ProjectId" id="1zPlTIfhHy6xhw71eyvsuREDsOB" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectId" id="21edMiOz7az0FwVn5eILzmud9VW" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -48,116 +23,22 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\noapa\P-O3" />
-      <recent name="C:\Users\bram\P-O3" />
-    </key>
-  </component>
-<<<<<<< HEAD
-  <component name="RunManager" selected="Python.carddispencer_functies">
-=======
-<<<<<<< HEAD
-  <component name="RunManager" selected="Python.facenet_facerecognition (1)">
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-    <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-=======
-  <component name="RunManager" selected="Python.BlackJack">
+  <component name="RunManager" selected="Python.MainMenu">
     <configuration name="BlackJack" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-<<<<<<< HEAD
-=======
       <module name="P-O3" />
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-<<<<<<< HEAD
-      <option name="SDK_HOME" value="C:\Users\matth\Documents\python\miniconda\python.exe" />
-=======
-      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-<<<<<<< HEAD
-      <module name="" />
-=======
-<<<<<<< HEAD
-      <module name="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
-=======
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/BlackJack.py" />
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-<<<<<<< HEAD
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-=======
-<<<<<<< HEAD
-    <configuration name="facenet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-=======
-    <configuration name="Deck" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="P-O3" />
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-<<<<<<< HEAD
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="carddispencer_functies" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\jaspe\miniconda3\envs\test\python.exe" />
-=======
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-<<<<<<< HEAD
-      <module name="" />
-<<<<<<< HEAD
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/carddispencer_functies.py" />
-=======
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet.py" />
-=======
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Deck.py" />
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/BlackJack.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -166,56 +47,19 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-<<<<<<< HEAD
-    <configuration name="facenet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-=======
-<<<<<<< HEAD
-    <configuration name="facenet_facerecognition (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-=======
-    <configuration name="FaceRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
+    <configuration name="MainMenu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="P-O3" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-<<<<<<< HEAD
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet.py" />
-=======
-<<<<<<< HEAD
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet_facerecognition.py" />
-=======
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FaceRecognition.py" />
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="facenet_facerecognition (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet_facerecognition.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MainMenu.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -225,18 +69,18 @@
       <method v="2" />
     </configuration>
     <configuration name="facenet_facerecognition" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="P-O3" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\bram\miniconda3\envs\test\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="C:\Users\bram\P-O3\facenet_facerecognition.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/facenet_facerecognition.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -245,115 +89,66 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
+    <configuration name="gestures_mediapipe_class" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="P-O3" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gestures_mediapipe_class.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="docs" factoryName="Docutils task">
+    <configuration name="mediapipe_pose" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="P-O3" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mediapipe_pose.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="docs" factoryName="Sphinx task">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <method v="2" />
-    </configuration>
-    <list>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-      <item itemvalue="Python.main_facerecognition" />
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-      <item itemvalue="Python.facenet" />
-      <item itemvalue="Python.FaceRecognition" />
-      <item itemvalue="Python.facenet_facerecognition" />
-      <item itemvalue="Python.facenet_facerecognition (1)" />
-      <item itemvalue="Python.carddispencer_functies" />
-    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.carddispencer_functies" />
-        <item itemvalue="Python.facenet_facerecognition (1)" />
-        <item itemvalue="Python.facenet_facerecognition" />
-        <item itemvalue="Python.FaceRecognition" />
-        <item itemvalue="Python.facenet" />
-<<<<<<< HEAD
-=======
-        <item itemvalue="Python.main_facerecognition" />
-=======
-      <item itemvalue="Python.FaceRecognition" />
-      <item itemvalue="Python.facenet_facerecognition" />
-      <item itemvalue="Python.facenet_facerecognition (1)" />
-      <item itemvalue="Python.Deck" />
-      <item itemvalue="Python.BlackJack" />
-    </list>
-    <recent_temporary>
-      <list>
+        <item itemvalue="Python.MainMenu" />
         <item itemvalue="Python.BlackJack" />
-        <item itemvalue="Python.Deck" />
-        <item itemvalue="Python.facenet_facerecognition (1)" />
+        <item itemvalue="Python.gestures_mediapipe_class" />
+        <item itemvalue="Python.mediapipe_pose" />
         <item itemvalue="Python.facenet_facerecognition" />
-        <item itemvalue="Python.FaceRecognition" />
->>>>>>> 86c2ef7d803841fe051a978a4ac111f83e1688ee
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="c1d375dd-3dd8-4f5d-b1b8-dcd34dcbec82" name="Default Changelist" comment="" />
-      <created>1634057612792</created>
+      <changelist id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="" />
+      <created>1638284935531</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1634057612792</updated>
+      <updated>1638284935531</updated>
     </task>
     <servers />
   </component>
@@ -368,29 +163,5 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
-          <line>216</line>
-          <option name="timeStamp" value="135" />
-        </line-breakpoint>
-<<<<<<< HEAD
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/facenet_facerecognition.py</url>
-          <line>153</line>
-          <option name="timeStamp" value="145" />
-        </line-breakpoint>
-=======
->>>>>>> 26c8cf178cd2a8d1f93b1740ba24a9524f9dba0a
-      </breakpoints>
-    </breakpoint-manager>
-    <watches-manager>
-      <configuration name="PythonConfigurationType">
-        <watch expression="eigenvectorsperplayer" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>
