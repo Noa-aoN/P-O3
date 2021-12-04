@@ -12,6 +12,8 @@ https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapip
 """
 FINGERS = ("Higher / One", "Two", "Three", "Four", "Five")
 OPTIONS = ("Hit", "Double Down", "Stand")
+THUMB = ("Thumbs Up", "Thumbs Down")
+INDEX = ("Index Up", "Index Down")
 
 
 def hand_position(hand_landmarks):
@@ -119,6 +121,7 @@ def check_all_fingers(handlandmarks):
 
     return None, "No Bet Found"
 
+
 def check_option(handlandmarks, double_down):
     option_function = [index_up, fingers_two, fingers_five]
     if not double_down:
@@ -129,6 +132,22 @@ def check_option(handlandmarks, double_down):
             return OPTIONS[i]
 
     return None
+
+
+def check_thumb(handlandmarks):
+    thumb_function = [thumbs_up, thumbs_down]
+    for idx, thumb_func in enumerate(thumb_function):
+        if thumb_func(handlandmarks):
+            return THUMB[idx]
+    return "Not Recognized"
+
+
+def check_index(handlandmarks):
+    index_function = [index_up, index_down]
+    for idx, index_func in enumerate(index_function):
+        if index_func(handlandmarks):
+            return INDEX[idx]
+    return "Not Recognized"
 
 
 class LandmarkGetter:

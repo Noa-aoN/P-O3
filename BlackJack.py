@@ -212,8 +212,8 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                                 last_fingers = amount_fingers
                                 pygame.display.update()
 
-                            cameracooldown = False
-                            gest_time = perf_counter()
+                                cameracooldown = False
+                                gest_time = perf_counter()
 
                         for event in pygame.event.get():
                             if exit_button.button_pressed(event):
@@ -358,8 +358,8 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
 
                                     last_option = option
 
-                                cameracooldown = False
-                                gest_time = perf_counter()
+                                    cameracooldown = False
+                                    gest_time = perf_counter()
 
                             for event in pygame.event.get():
                                 if hit_button.button_pressed(event):
