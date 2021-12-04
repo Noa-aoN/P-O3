@@ -111,28 +111,22 @@ def higherlower(screen, clock, players, library, landmarkgetter):
     high_button = Button(BLACK, (380, 250), (150, 60), 'Higher')
     low_button = Button(BLACK, (680, 250), (150, 60), 'Lower')
     exit_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
+    rules_exit_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
     rules_button = Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small')
 
     facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
     notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
-    indexup_surf = font_small.render('Index Up', False, BLACK)
-    indexup_white_surf = font_small.render('Index Up', False, WHITE)
-    indexdown_surf = font_small.render('Index Down', False, BLACK)
-    indexdown_white_surf = font_small.render('Index Down', False, WHITE)
-    gest_inv_surf = font_small.render('Gesture not Recognized', False, BLACK)
 
     game_active = False
     high = False
     low = False
-    indexup = False
-    indexdown = False
     lost = False
     rules = False
 
     with_camera = False
+    with_linking = False
     gest_time = 0
     cameracooldown = True
-    facedetected = False
 
     lastindex = None
     active_button = None
@@ -143,7 +137,6 @@ def higherlower(screen, clock, players, library, landmarkgetter):
     else:
         get_card_func = get_random_card
     cap = init_camera(0)
-    landmarkgetter = LandmarkGetter()
     while True:
         pygame.display.update()
         if game_active:
@@ -165,14 +158,19 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                 low_button.draw(screen)
 
                 ret, img = cap.read()
-                # est_rec = gesture_recognition()
                 landmarklist = landmarkgetter(img)
 
                 if time.perf_counter() - gest_time >= 2:
                     cameracooldown = True
 
                 if player1.name in library.libraryembeddings:
-                    landmarklist = get_landmark_list(img, player1, library, landmarklist, screen, landmarkgetter)
+                    if with_linking:
+                        landmarklist = get_landmark_list(img, player1, library, landmarklist, screen, landmarkgetter)
+                    elif library.searchplayer(player1.name, img):
+                        screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
+                    else:
+                        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
+                        landmarklist = []
 
                 if cameracooldown:
                     if landmarklist:
@@ -201,24 +199,16 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                         cameracooldown = False
                         gest_time = time.perf_counter()
 
-                    else:
-                        cv2.putText(img, "Not Recognized", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
-
-                if active_button:
+                if active_button:  # If a button is "pressed"
                     active_button.set_color((255, 0, 0))
                     active_button.draw(screen)
                     pygame.display.update()
                     time.sleep(0.5)
-                    active_button.set_color(BLACK)
-                    active_button.draw(screen)
-                    pygame.display.update()
                     active_button = None
-                elif selected_button:
+                    selected_button = None
+                elif selected_button:  # This shows what button this gesture WOULD press
                     selected_button.set_color(WHITE)
                     selected_button.draw(screen)
-
-                high_button.set_color(BLACK)
-                low_button.set_color(BLACK)
 
                 for event in pygame.event.get():
                     pygame.display.update()
@@ -229,23 +219,24 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                         vorige, huidige = last_two_cards(player1)
                         high = high_button.button_pressed(event) and vorige.hl_value > huidige.hl_value
                         low = low_button.button_pressed(event) and vorige.hl_value < huidige.hl_value
-                        if facedetected and player1.name in library.libraryembeddings:
-                            screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(10, 10)))
-                        elif player1.name in library.libraryembeddings:
-                            screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
 
-                if high or low:
-                    lost = True
-                    wrong_guess(player1, huidige, screen)
+                high_button.set_color(BLACK)
+                low_button.set_color(BLACK)
 
                 img = opencv_to_pygame(img)
                 surface = pygame.surfarray.make_surface(img)
                 scale = pygame.transform.rotozoom(surface, -90, 0.25)
                 screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
 
+                if high or low:
+                    lost = True
+                    pygame.display.update()
+                    wrong_guess(player1, huidige, screen)
+
             else:
                 screen.fill(GREEN)
                 again_button.draw(screen)
+                exit_button.draw(screen)
 
                 for event in pygame.event.get():
                     if again_button.button_pressed(event):
@@ -254,22 +245,21 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                         lost = False
                         high = False
                         low = False
-
                     if exit_button.button_pressed(event):
                         player1.cards = []
                         return players
-
-                exit_button.draw(screen)
 
         else:
             screen.fill(GREEN)
             screen.blit(HigherLower_surf, HigherLower_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
             rules_button.draw(screen)
+            exit_button.draw(screen)
+
             if rules:
                 pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))
                 pygame.draw.rect(screen, BLACK, (0, 0, 1200, 600), 2, 1)
-                exit_button.draw(screen)
+                rules_exit_button.draw(screen)
                 splittedcontent = content.splitlines()
                 x = 10
                 y = 10
@@ -280,19 +270,21 @@ def higherlower(screen, clock, players, library, landmarkgetter):
 
             for event in pygame.event.get():
                 exit_pygame(event)
-                if start_button.button_pressed(event):
-                    game_active = True
                 if not rules:
                     if rules_button.button_pressed(event):
                         rules = True
-                elif exit_button.button_pressed(event):
+                    if start_button.button_pressed(event):
+                        game_active = True
+                    elif exit_button.button_pressed(event):
+                        return players
+                elif rules_exit_button.button_pressed(event):
                     rules = False
 
         clock.tick(60)
 
 
 if __name__ == '__main__':
-        pygame.init()
-        screen = pygame.display.set_mode((1200, 600))
-        clock = pygame.time.Clock()
-        higherlower(screen, clock, [0, Player('Matthias', 10000, 1)], Library(), LandmarkGetter())
+    pygame.init()
+    screen = pygame.display.set_mode((1200, 600))
+    clock = pygame.time.Clock()
+    higherlower(screen, clock, [0, Player('Matthias', 10000, 1)], Library(), LandmarkGetter())

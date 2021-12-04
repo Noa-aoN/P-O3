@@ -122,6 +122,8 @@ def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter)
 
 def blackjack(screen, clock, library, landmarkgetter, players=None):
     Blackjack_surf = font_big.render('Blackjack', False, BLACK)
+    facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
 
     deck = load_random_deck()
 
@@ -131,6 +133,10 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
         players = [player0] + [Player(name, 10000, i + 1) for i, name in enumerate(names)]
     else:
         player0 = players.pop(0)
+
+    f = open('blackjackrules.txt', 'r')
+    content = f.read()
+    f.close()
 
     game_active = False
     first_card = True
@@ -142,6 +148,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
     again_button = Button(BLACK, (530, 260), (200, 65), 'Play again!')
     exit_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
     rules_button = Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small')
+    return_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
 
     bet_buttons = [(i * 1000, Button(BLACK, (325 + i * 75, 350), (50, 30), f'{i}k')) for i in range(1, 6)]
 
@@ -158,11 +165,14 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
 
     last_fingers = None
     last_option = None
+    active_button = None
+    selected_button = None
+
+    with_linking = False
 
     playing_bj = True
     cap = init_camera(0)
     while playing_bj:
-        current_button = None
         pygame.display.update()
         screen.fill(GREEN)
         if game_active:
@@ -188,7 +198,14 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                         landmarklist = landmarkgetter(img)
 
                         if current_player.name in library.libraryembeddings:
-                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
+                            if with_linking:
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                                                 landmarkgetter)
+                            elif library.searchplayer(current_player.name, img):
+                                screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
+                            else:
+                                screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
+                                landmarklist = []
 
                         if cameracooldown:
                             if landmarklist:
@@ -205,9 +222,9 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                                             last_button.set_color(BLACK)
                                             last_button.draw(screen)
 
-                                    current_button = bet_buttons[amount_fingers - 1][1]
-                                    current_button.set_color(WHITE)
-                                    current_button.draw(screen)
+                                    active_button = bet_buttons[amount_fingers - 1][1]
+                                    active_button.set_color(WHITE)
+                                    active_button.draw(screen)
 
                                 last_fingers = amount_fingers
                                 pygame.display.update()
@@ -223,17 +240,17 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                                 if button.button_pressed(event) and bal >= bet_amount:
                                     current_player.bet = bet_amount
                                     current_player.wants_bet = False
-                                    current_button = button
+                                    active_button = button
 
                         img = opencv_to_pygame(img)
                         surface = pygame.surfarray.make_surface(img)
                         scale = pygame.transform.rotozoom(surface, -90, 0.25)
                         screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
 
-                    if not current_player.wants_bet:
+                    else:
                         last_fingers = None
-                        if current_button is not None:
-                            current_button.set_color(BLACK)
+                        if active_button is not None:
+                            active_button.set_color(BLACK)
                         j += 1
                 else:
                     place_bets = False
@@ -328,38 +345,58 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                             landmarklist = landmarkgetter(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
+                                if with_linking:
+                                    landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                                                     landmarkgetter)
+                                elif library.searchplayer(current_player.name, img):
+                                    screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
+                                else:
+                                    screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
+                                    landmarklist = []
 
                             if cameracooldown:
                                 if landmarklist:
                                     option = check_option(landmarklist[0], double_down)
-                                    if last_option == option:
-                                        if option == "Hit":
+                                    cv2.putText(img, option, (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
+                                    if option == "Hit":
+                                        if last_option == option:
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
-                                            current_button = hit_button
+                                            active_button = hit_button
+                                        else:
+                                            selected_button = hit_button
 
-                                        elif option == "Double Down":
+                                    elif option == "Double Down" and len(current_player.cards) == 2:
+                                        if last_option == option:
                                             current_player.bet = current_player.bet * 2
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
                                             current_player.wants_card = False
-                                            current_button = double_button
+                                            active_button = double_button
+                                        else:
+                                            selected_button = double_button
 
-                                        elif option == "Stand":
+                                    elif option == "Stand":
+                                        if last_option == option:
                                             current_player.wants_card = False
-                                            current_button = stand_button
-
-                                        if current_button:
-                                            current_button.set_color(WHITE)
-                                            current_button.draw(screen)
+                                            active_button = stand_button
+                                        else:
+                                            selected_button = stand_button
 
                                     last_option = option
-
                                     cameracooldown = False
                                     gest_time = perf_counter()
+
+                            if active_button:
+                                active_button.set_color(BLACK)
+                                active_button.draw(screen)
+                                active_button = None
+                                selected_button = None
+                            elif selected_button:
+                                selected_button.set_color(WHITE)
+                                selected_button.draw(screen)
 
                             for event in pygame.event.get():
                                 if hit_button.button_pressed(event):
@@ -377,9 +414,13 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                                 elif exit_button.button_pressed(event):
                                     return [player0] + players
 
-                        if not current_player.wants_card:
-                            last_option = None
-                            i += 1
+                            img = opencv_to_pygame(img)
+                            surface = pygame.surfarray.make_surface(img)
+                            scale = pygame.transform.rotozoom(surface, -90, 0.25)
+                            screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
+                    else:
+                        last_option = None
+                        i += 1
                 else:
                     pygame.display.update()
                     sleep(1)
@@ -433,6 +474,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
             rules_button.draw(screen)
+            exit_button.draw(screen)
             H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
             S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
             screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
@@ -440,9 +482,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
             if rules:
                 pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))
                 pygame.draw.rect(screen, BLACK, (0, 0, 1200, 600), 2, 1)
-                exit_button.draw(screen)
-                f = open('blackjackrules.txt', 'r')
-                content = f.read()
+                return_button.draw(screen)
                 split_content = content.splitlines()
                 x = 10
                 y = 10
@@ -450,16 +490,17 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                     rules_surf = font_small.render(line, False, BLACK)
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
                     y += 12
-                f.close()
 
             for event in pygame.event.get():
                 exit_pygame(event)
                 if not rules:
-                    if rules_button.button_pressed(event):
+                    if start_button.button_pressed(event):
+                        game_active = True
+                    elif exit_button.button_pressed(event):
+                        return [player0] + players
+                    elif rules_button.button_pressed(event):
                         rules = True
-                if start_button.button_pressed(event):
-                    game_active = True
-                elif exit_button.button_pressed(event):
+                elif return_button.button_pressed(event):
                     rules = False
 
         clock.tick(60)

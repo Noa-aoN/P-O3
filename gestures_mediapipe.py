@@ -11,7 +11,7 @@ link:
 https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapipe/#:~:text=MediaPipe%20Hand%20is%20a%20machine%20learning%20employed%20high-fidelity,help%20of%20multiple%20models%20which%20are%20working%20simultaneously.
 """
 FINGERS = ("Higher / One", "Two", "Three", "Four", "Five")
-OPTIONS = ("Hit", "Double Down", "Stand")
+OPTIONS = ("Hit", "Stand", "Double Down")
 THUMB = ("Thumbs Up", "Thumbs Down")
 INDEX = ("Index Up", "Index Down")
 
@@ -123,15 +123,15 @@ def check_all_fingers(handlandmarks):
 
 
 def check_option(handlandmarks, double_down):
-    option_function = [index_up, fingers_two, fingers_five]
+    option_function = [index_up, fingers_five, fingers_two]
     if not double_down:
-        option_function.pop(1)
+        option_function.pop(2)
 
     for i, option_func in enumerate(option_function):
         if option_func(handlandmarks):
             return OPTIONS[i]
 
-    return None
+    return "Not Recognized"
 
 
 def check_thumb(handlandmarks):
