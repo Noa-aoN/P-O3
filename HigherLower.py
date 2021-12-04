@@ -97,7 +97,7 @@ def wrong_guess(player, huidige_kaart, window):
     time.sleep(3)
 
 
-def higherlower(screen, clock, players, library):
+def higherlower(screen, clock, players, library, landmarkgetter):
     screen.fill(GREEN)
     deck = load_random_deck()
     player1 = players[1]
@@ -128,7 +128,7 @@ def higherlower(screen, clock, players, library):
     lost = False
     rules = False
 
-    with_camera = True
+    with_camera = False
     gest_time = 0
     cameracooldown = True
     facedetected = False
@@ -318,4 +318,4 @@ if __name__ == '__main__':
         pygame.init()
         screen = pygame.display.set_mode((1200, 600))
         clock = pygame.time.Clock()
-        higherlower(screen, clock, [0, Player('Matthias', 10000, 1)], Library())
+        higherlower(screen, clock, [0, Player('Matthias', 10000, 1)], Library(), LandmarkGetter())

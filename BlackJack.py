@@ -128,7 +128,7 @@ def face_gest_crop(img, facecoords, handcoords, library, player):
     return img, facecoords, handcoords
 
 
-def blackjack(screen, clock, library, players=None):
+def blackjack(screen, clock, library, landmarkgetter, players=None):
     Blackjack_surf = font_big.render('Blackjack', False, BLACK)
 
     deck = load_random_deck()
@@ -176,7 +176,6 @@ def blackjack(screen, clock, library, players=None):
 
     playing_bj = True
     cap = init_camera(0)
-    landmarkgetter = LandmarkGetter()
     while playing_bj:
 
         current_button = None
@@ -537,8 +536,9 @@ def blackjack(screen, clock, library, players=None):
 
         clock.tick(60)
 
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
     clock = pygame.time.Clock()
-    blackjack(screen, clock, Library())
+    blackjack(screen, clock, Library(), LandmarkGetter())
