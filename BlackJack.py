@@ -11,6 +11,8 @@ import cv2
 
 '''
 Bugs: 
+- When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
+
 
 To DO:
 - Entering starting balance.
