@@ -7,13 +7,16 @@ from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 from BlackJack import face_gest_crop
 from BlackJack import get_landmark_list
-import time
+from time import sleep, perf_counter
 from gestures_mediapipe import *
 import cv2
+
+
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 def legefunctie():
     print("geef nieuwe kaart")
+
 
 with_rasp = False
 
@@ -21,8 +24,6 @@ if with_rasp:
     give_card = dcmotor_rotate
 else:
     give_card = legefunctie
-
-
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -44,7 +45,7 @@ def get_camera_card(deck, player, screen):
     while True:
         if i > 9:
             i = 1
-        time.sleep(0.05)
+        sleep(0.05)
         print("Trying again")
         ret, img = cap_card.read()
         card = get_card(img)
@@ -95,7 +96,7 @@ def wrong_guess(player, huidige_kaart, window):
     player.show_cards(window)
     window.blit(pygame.transform.rotozoom(huidige_kaart.load_image(), 0, 2), (520, 200))
     pygame.display.update()
-    time.sleep(3)
+    sleep(3)
 
 
 def higherlower(screen, clock, players, library, landmarkgetter):
@@ -160,7 +161,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                 ret, img = cap.read()
                 landmarklist = landmarkgetter(img)
 
-                if time.perf_counter() - gest_time >= 2:
+                if perf_counter() - gest_time >= 2:
                     cameracooldown = True
 
                 if player1.name in library.libraryembeddings:
@@ -197,13 +198,13 @@ def higherlower(screen, clock, players, library, landmarkgetter):
 
                         lastindex = index
                         cameracooldown = False
-                        gest_time = time.perf_counter()
+                        gest_time = perf_counter()
 
                 if active_button:  # If a button is "pressed"
                     active_button.set_color((255, 0, 0))
                     active_button.draw(screen)
                     pygame.display.update()
-                    time.sleep(0.5)
+                    sleep(0.5)
                     active_button = None
                     selected_button = None
                 elif selected_button:  # This shows what button this gesture WOULD press
