@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+
 """
 kan een heleboel gebaren herkennen via het vergelijken van de coordinaten van de 'landmarks'
 er kunnen nog meer gebaren geimplementeerd worden
@@ -7,10 +8,10 @@ zelfde programma als 'gestures_mediapipe.py' maar dan in een klasse
 link: 
 https://optisol.com.au/insight/alphabet-hand-gestures-recognition-using-mediapipe/#:~:text=MediaPipe%20Hand%20is%20a%20machine%20learning%20employed%20high-fidelity,help%20of%20multiple%20models%20which%20are%20working%20simultaneously.
 """
-FINGERS = ("Higher/One", "Two", "Three", "Four", "Five")
-OPTIONS = ("Hit", "Stand", "Double Down")
-THUMB = ("Thumbs Up", "Thumbs Down")
-INDEX = ("Index Up", "Index Down")
+FINGERS = ("higher/one", "two", "three", "four", "five")
+OPTIONS = ("hit", "stand", "double")
+THUMB = ("thumbs up", "thumbs down")
+INDEX = ("index up", "index down")
 
 
 def hand_position(hand_landmarks):
@@ -120,7 +121,7 @@ def check_option(handlandmarks, double_down):
         if option_func(handlandmarks):
             return OPTIONS[i]
 
-    return "Not Recognized"
+    return None
 
 
 def check_thumb(handlandmarks):

@@ -83,12 +83,9 @@ def rules_screen(game, screen, buttons):
     f = open('blackjackrules.txt', 'r')
     content = f.read()
     split_content = content.splitlines()
-    x = 10
-    y = 10
     for i, line in enumerate(split_content):
         rules_surf = font_small.render(line, False, BLACK)
-        screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
-        y += 12
+        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 10 + i * 12)))
     f.close()
 
 
@@ -100,14 +97,13 @@ def bets_screen(game, screen, buttons):
     current_player = game.get_current_player()
     library = game.library
     if not game.cap_gest:
-        game.cap_gest = init_camera(0)
+        game.cap_gest = init_camera(1)
 
     if perf_counter() - game.gest_time >= 2:
         game.cameracooldown = True
 
     ret, img = game.cap_gest.read()
 
-    # beter met "for player in players"
     if current_player.wants_bet:
         current_player.place_bet(screen, buttons["bet"])
         bal = current_player.balance
@@ -150,8 +146,13 @@ def bets_screen(game, screen, buttons):
 
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
-    scale = pygame.transform.rotozoom(surface, -90, 0.25)
-    screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
+    scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
+    i = current_player.number
+    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * (i - 1), 415)))
+
+    if all([not player.wants_bet for player in players]):
+        print("Loading Screen")
+        game.draw_screen = deal_cards_screen
 
 
 def deal_cards_screen(game, screen, buttons):
@@ -172,7 +173,6 @@ def deal_cards_screen(game, screen, buttons):
                     game.previous_player = player.number
 
             game.give_card()
-            # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
             game.deck = game.get_card_func(game, player)
             screen.fill(GREEN)
             game.show_each_player()
@@ -184,18 +184,27 @@ def deal_cards_screen(game, screen, buttons):
         if game.previous_player != 2.5:
             game.rotate_fromto_player(game.previous_player, 2.5)
             game.previous_player = 2.5
-        game.give_card()
-        # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
-        # de tweede kaart moet voorlopig omgekeerd liggen
         game.deck = game.get_card_func(game, game.dealer)
         game.dealer.show_cards(screen)
         game.dealer.display_score_bj(screen)
         pygame.display.update()
         sleep(0.5)
 
+    assert all([len(player.cards) == 2 for player in game.players])
+    assert len(game.dealer.cards) == 2
+
+    if game.dealer.value_count_bj() == 21:
+        print("Dealer Blackjack!")
+        game.draw_screen = check_results_screen
+    else:
+        for player in game.players:
+            player.wants_card = True  # TODO in de class Player aanpassen naar True
+            # maar vereukt nu de gewonen Blackjack
+        print("Playing Screen")
+        game.draw_screen = playing_screen
+
     # Zet de servo terug naar de eerste speler
     print("RESET SERVO")
-    game.next_player()
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
     game.previous_player = game.get_current_player().number
 
@@ -210,14 +219,18 @@ def playing_screen(game, screen, buttons):
     current_player = game.get_current_player()
     library = game.library
 
-    ret, img = game.cap_gest.read()
-
     if int(current_player.number) != int(game.previous_player):
         game.rotate_fromto_player(game.previous_player, current_player.number)
         game.previous_player = current_player.number
 
+    ret, img = game.cap_gest.read()
+
+    if perf_counter() - game.gest_time >= 2:
+        game.cameracooldown = True
+
     if current_player.wants_card:
         if current_player.value_count_bj() == 'bust':
+            # TODO add playsound
             current_player.wants_card = False
 
         elif current_player.value_count_bj() == 21:
@@ -242,29 +255,35 @@ def playing_screen(game, screen, buttons):
             if game.cameracooldown:
                 if landmarklist:
                     option = check_option(landmarklist[0], double_down)
-                    if game.last_option == option:
-                        current_button = None
-                        if option == "Hit":
-                            game.deck = game.get_card_func(game, current_player)
-                            current_player.show_cards(screen)
-                            current_player.display_score_bj(screen)
-                            current_button = buttons["hit"]
+                    if option:
+                        if game.last_option == option:
+                            print("Confirmed")
+                            if option == "hit":
+                                game.deck = game.get_card_func(game, current_player)
+                                current_player.show_cards(screen)
+                                current_player.display_score_bj(screen)
 
-                        elif option == "Double Down":
-                            current_player.bet = current_player.bet * 2
-                            game.deck = game.get_card_func(game, current_player)
-                            current_player.show_cards(screen)
-                            current_player.display_score_bj(screen)
-                            current_button = buttons["double"]
-                            current_player.wants_card = False
+                            elif option == "double":
+                                current_player.bet = current_player.bet * 2
+                                game.deck = game.get_card_func(game, current_player)
+                                current_player.show_cards(screen)
+                                current_player.display_score_bj(screen)
+                                current_player.wants_card = False
 
-                        elif option == "Stand":
-                            current_button = buttons["stand"]
-                            current_player.wants_card = False
+                            elif option == "stand":
+                                current_player.wants_card = False
 
-                        if current_button:
-                            current_button.set_color(WHITE)
-                            current_button.draw(screen)
+                        # Last two options weren't the same
+                        else:
+                            print(f"{option}", end="->")
+                            if game.last_option:
+                                last_button = buttons.get(game.last_option)
+                                last_button.set_color(BLACK)
+                                last_button.draw(screen)
+
+                        current_button = buttons.get(option)
+                        current_button.set_color(WHITE)
+                        current_button.draw(screen)
 
                     game.last_option = option
 
@@ -272,12 +291,18 @@ def playing_screen(game, screen, buttons):
                 game.gest_time = perf_counter()
     else:
         game.next_player()
+        for option in ("hit", "stand", "double"):
+            buttons[option].set_color(BLACK)
         game.last_option = None
 
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
-    scale = pygame.transform.rotozoom(surface, -90, 0.25)
-    screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
+    scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
+    i = current_player.number
+    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * (i - 1), 415)))
+
+    if all([not player.wants_card for player in game.players]):
+        game.draw_screen = dealer_card_screen
 
 
 def check_results_screen(game, screen, buttons):
@@ -291,33 +316,36 @@ def check_results_screen(game, screen, buttons):
     dealer_score = game.dealer.value_count_bj()
     dealer_blackjack = dealer_score == 21 and len(game.dealer.cards) == 2
 
-    pygame.draw.rect(screen, GREEN, (0, 360, 1200, 25), 0)
+    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
     for player in game.players:
         player.display_results(screen, dealer_score, 'bj', dealer_blackjack)
 
-    game.dealer.show_cards(screen, True)
-    game.dealer.display_score_bj(screen, True)
+    not_everyone_busts = not game.everyone_bust()
+
+    game.dealer.show_cards(screen, not_everyone_busts)
+    game.dealer.display_score_bj(screen, not_everyone_busts)
 
 
 def dealer_card_screen(game, screen, buttons):
     game.show_each_player()
-
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
 
-    while 0 < game.dealer.value_count_bj() < 17:
+    dealer_score = game.dealer.value_count_bj()
+
+    while 0 < dealer_score < 17:
         game.dealer.show_cards(screen, True)
         game.dealer.display_score_bj(screen, True)
         pygame.display.update()
         sleep(1)
-        # hier moet die ene kaart omgedraaid worden en die worden herkent
         game.give_card()
-        # hier gaat noa zen code moeten schrijven van die kaarten te herkennen
         game.deck = game.get_card_func(game, game.dealer)
 
-    dealer_score = game.dealer.value_count_bj()
     for player in game.players:
         player.adjust_balance(dealer_score, 'bj')
+
+    print("Checking Results")
+    game.draw_screen = check_results_screen
 
 
 def blackjack(game):
@@ -336,10 +364,7 @@ def blackjack(game):
                 elif buttons["start"].button_pressed(event):
                     game.draw_screen = bets_screen
                 elif buttons["exit"].button_pressed(event):
-                    # return [player0] + players
-                    print("Game ended")
-                    pygame.quit()
-                    exit()
+                    return game.players
 
             # Rules Screen
             elif current_screen == rules_screen:
@@ -357,28 +382,11 @@ def blackjack(game):
                         current_player.bet = bet_amount
                         current_player.wants_bet = False
 
-                if all([not player.wants_bet for player in players]):
-                    print("Loading Screen")
-                    game.draw_screen = deal_cards_screen
-
-            # Loading Cards Screen
-            elif current_screen == deal_cards_screen:
-                if game.dealer.value_count_bj() == 21:
-                    game.draw_screen = check_results_screen
-                    print("Dealer 21")
-
-                elif all([len(player.cards) == 2 for player in game.players]):
-                    for player in game.players:
-                        player.wants_card = True  # TODO in de class Player aanpassen naar True
-                        # maar vereukt nu de gewonen Blackjack
-                    print("Playing Screen")
-                    game.draw_screen = playing_screen
-
             # Playing Screen
             elif current_screen == playing_screen:
                 if buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen
-                    # return [player0] + players
+                    return game.players
                 elif buttons["hit"].button_pressed(event):
                     game.deck = game.get_card_func(game, current_player)
                     current_player.show_cards(screen)
@@ -394,23 +402,13 @@ def blackjack(game):
                 elif buttons["stand"].button_pressed(event):
                     current_player.wants_card = False
 
-                elif all([not player.wants_card for player in game.players]):
-                    game.draw_screen = dealer_card_screen
-
-            # Dealer Card Screen
-            elif current_screen == dealer_card_screen:
-                print("Checking Results")
-                game.draw_screen = check_results_screen
-
             # Check Results Screen
             elif current_screen == check_results_screen:
                 if buttons["again"].button_pressed(event):
                     game.play_again()
                     game.draw_screen = bets_screen
-                    # deck, players = play_again(players, dealer)
 
                 elif buttons["exit"].button_pressed(event):
-                    # deck, players = play_again(players, dealer)
                     game.play_again()
                     return game.players
 
@@ -419,7 +417,7 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
 
-    names = ['K', 'Karel', 'Yannic', 'Jasper']
+    names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
     players = [Player(name, 10000, i + 1) for i, name in enumerate(names)]
 
     buttons = {
@@ -430,9 +428,11 @@ if __name__ == '__main__':
         "again": Button(BLACK, (530, 260), (200, 65), 'Play again!'),
         "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
         "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
-        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 350), (50, 30), f'{i}k')) for i in range(1, 6)]
+        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
     }
-
-    game = Blackjack(screen, home_screen, players, buttons, Library(), False, False)
+    camera = False
+    with_rasp = False
+    game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
     remaining_players = blackjack(game)
+
     print("Game Ended", remaining_players)

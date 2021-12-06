@@ -77,10 +77,11 @@ class Blackjack(Game):
         self.last_option = None
         self.cameracooldown = True
         self.first_card = True
+        self.dealer.cards = []
 
         for player in self.players:
             player.cards = []
-            self.dealer.cards = []
+            player.bet = 0
             player.wants_bet = True
             player.wants_card = False
 
@@ -98,6 +99,16 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
+
+    def everyone_bust(self):
+        everyone_busts = True
+        for player in self.players:
+            if player.value_count_bj() != 0:
+                everyone_busts = False
+        return everyone_busts
+        # TODO lijn hieronder zou hetzelfde moeten doen
+        # TODO not hier weghalen + bij de functie oproep
+        return not any([player.value_count_bj() != 0 for player in self.players])
 
 
 class Higherlower(Game):
