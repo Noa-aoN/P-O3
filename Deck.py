@@ -24,6 +24,7 @@ class Card:
         return self.rank != -1 and self.suit != -1
 
     def get_rank_suit(self):
+        assert self.rank != -1 and self.suit != -1
         suit = SUITS[self.suit]
         rank = RANKS[self.rank]
         return rank, suit
@@ -47,8 +48,8 @@ class SpecialCard:
         return pygame.transform.rotozoom(pygame.image.load(self.file).convert_alpha(), 0, 0.15)
 
 
-def load_deck():
-    return [[(rank, suit) for rank in range(len(RANKS[:-1]))] for suit in range(len(SUITS))]
+"""def load_deck():
+    return [[(rank, suit) for rank in range(len(RANKS[:-1]))] for suit in range(len(SUITS))]"""
 
 
 def load_random_deck():
@@ -57,7 +58,8 @@ def load_random_deck():
     return deck
 
 
-def get_random_card(deck, player, screen):
+def get_random_card(game, player):
+    deck = game.deck
     if not deck:
         deck = load_random_deck()
         print("A new deck was created")
