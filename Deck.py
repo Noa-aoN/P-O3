@@ -74,4 +74,19 @@ def get_random_card(game, player):
     return deck
 
 
+def get_random_card_2(deck, player):
+    if not deck:
+        deck = load_random_deck()
+        print("A new deck was created")
+
+    cardname = deck.pop()
+    rank, suit = cardname
+    i = RANKS.index(rank)
+    j = SUITS.index(suit)
+
+    player.add_card(Card(0, 0, 0, 0, 0, i, j))
+
+    return deck
+
+
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)
