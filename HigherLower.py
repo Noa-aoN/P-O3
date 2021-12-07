@@ -128,7 +128,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
     lost = False
     rules = False
 
-    with_camera = True
+    with_camera = False
     with_linking = False
     gest_time = 0
     cameracooldown = True

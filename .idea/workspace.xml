@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/HigherLowerClass.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlackJackClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJackClass.py" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
@@ -15,6 +17,8 @@
       <change beforePath="$PROJECT_DIR$/HigherLower.py" beforeDir="false" afterPath="$PROJECT_DIR$/HigherLower.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/card_double_detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/card_double_detection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlackJack.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJack.py" afterDir="false" />
+=======
+>>>>>>> 3dcaccb3e5b4c3f920c0498e6feed6244dd8c63f
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,6 +179,73 @@
       <option name="presentableId" value="Default" />
       <updated>1638284935531</updated>
     </task>
+<<<<<<< HEAD
+=======
+    <task id="LOCAL-00001" summary="Cleaning up">
+      <created>1638738251531</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1638738251531</updated>
+    </task>
+    <task id="LOCAL-00002" summary="better import time">
+      <created>1638738265416</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1638738265416</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Colors, display update, small changes">
+      <created>1638754154125</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1638754154125</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Contains get_camera_card function">
+      <created>1638754245706</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1638754245706</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Removed unnecessary print statements">
+      <created>1638754313673</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1638754313673</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Added cleaner version of Blackjack and specific Game Class objects">
+      <created>1638754438009</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1638754438009</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added assert, works with new BlackjackClass">
+      <created>1638754468275</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1638754468275</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Seperate non-class random card function">
+      <created>1638754827126</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1638754827126</updated>
+    </task>
+    <task id="LOCAL-00009" summary="changes">
+      <created>1638890266040</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1638890266040</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+>>>>>>> 3dcaccb3e5b4c3f920c0498e6feed6244dd8c63f
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -189,4 +260,21 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+<<<<<<< HEAD
+=======
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Cleaning up" />
+    <MESSAGE value="better import time" />
+    <MESSAGE value="Colors, display update, small changes" />
+    <MESSAGE value="Contains get_camera_card function" />
+    <MESSAGE value="Removed unnecessary print statements" />
+    <MESSAGE value="Added cleaner version of Blackjack and specific Game Class objects" />
+    <MESSAGE value="Added assert, works with new BlackjackClass" />
+    <MESSAGE value="Seperate non-class random card function" />
+    <MESSAGE value="changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="changes" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+>>>>>>> 3dcaccb3e5b4c3f920c0498e6feed6244dd8c63f
 </project>
