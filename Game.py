@@ -93,7 +93,7 @@ class Blackjack(Game):
             player.display_score_bj(self.screen)
 
     def filter_players(self):
-        self.players = list(filter(lambda player: player.balance > 0, self.players))
+        self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
 
     def next_player(self):
         if self.player_index + 1 < len(self.players):
