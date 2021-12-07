@@ -8,21 +8,18 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 
-<<<<<<< HEAD
 '''
 Bugs: 
 - When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
-
+- When someone wins with 21, the text above the other players says that the dealer won
 
 To DO:
 - Entering starting balance.
 - ...
 '''
 
-=======
 
 
->>>>>>> 9ac72d6d448f729317fa537273235e3aaaf686f4
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
