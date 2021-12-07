@@ -331,15 +331,15 @@ def dealer_card_screen(game, screen, buttons):
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
 
-    dealer_score = game.dealer.value_count_bj()
-
-    while 0 < dealer_score < 17:
+    while 0 < game.dealer.value_count_bj() < 17:
         game.dealer.show_cards(screen, True)
         game.dealer.display_score_bj(screen, True)
         pygame.display.update()
         sleep(1)
         game.give_card()
         game.deck = game.get_card_func(game, game.dealer)
+
+    dealer_score = game.dealer.value_count_bj()
 
     for player in game.players:
         player.adjust_balance(dealer_score, 'bj')
