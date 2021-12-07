@@ -19,6 +19,14 @@ def legefunctie_3(player):
     print("ga naar", player)
 
 
+def restart_game_screen(game, screen, buttons):
+    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
+    game_over_surf = font_big.render('Game Over', False, (255, 0, 0))
+    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
+    buttons["exit"].draw(screen)
+    buttons["restart"].draw(screen)
+
+
 class Game:
     def __init__(self, screen, draw_screen, players, buttons, library, camera):
         self.screen = screen

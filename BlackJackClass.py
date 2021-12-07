@@ -1,6 +1,6 @@
 from Button import Button, exit_pygame
 from Player import Player, Library
-from Game import Blackjack
+from Game import Blackjack, restart_game_screen
 from AudioPlay import playsound
 from time import sleep, perf_counter
 from Camera import init_camera, opencv_to_pygame
@@ -18,10 +18,7 @@ To DO:
 - ...
 '''
 
-<<<<<<< HEAD
 
-=======
->>>>>>> da9dfae6115797bd208ae97e54446d060bd99a04
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
@@ -366,14 +363,6 @@ def dealer_card_screen(game, screen, buttons):
 
     print("Checking Results")
     game.draw_screen = check_results_screen
-
-
-def restart_game_screen(game, screen, buttons):
-    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
-    game_over_surf = font_big.render('Game Over', False, (255, 0, 0))
-    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
-    buttons["exit"].draw(screen)
-    buttons["restart"].draw(screen)
 
 
 def blackjack(game):
