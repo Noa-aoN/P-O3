@@ -16,6 +16,7 @@ Bugs:
 
 To DO:
 - Entering starting balance.
+- line 348-355(BJ) == line 201-208(BJ) == line 167-173(HL) --> functie van maken.
 - ...
 '''
 
