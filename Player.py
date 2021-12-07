@@ -21,9 +21,9 @@ def Library():
 
 def add_player(window, players, skip_button, active, player_name, library):
     font = pygame.font.SysFont('comicsans', 20)
-    name_surf_active = font.render(f'Enter name of player {len(players)}!', False, (255, 255, 255))
+    name_surf_active = font.render(f'Enter name of player {len(players) + 1}!', False, (255, 255, 255))
     name_surf = font.render(player_name, False, (0, 0, 0))
-    name_surf_inactive = font.render(f'Enter name of player {len(players)}!', False, (0, 0, 0))
+    name_surf_inactive = font.render(f'Enter name of player {len(players) + 1}!', False, (0, 0, 0))
     name_box = pygame.Rect(490, 250, 220, 40)
 
     for event in pygame.event.get():
@@ -70,13 +70,16 @@ class Player:
         self.wants_card = wants_card
         self.wants_bet = wants_bet
 
-    def show_name(self, window):
-        pygame.draw.rect(window, (114, 200, 114), (40 + 290 * (self.number - 1), 370, 250, 220), 0, 3)
+    def __repr__(self):
+        return self.name
 
-        window.blit(self.surf, self.surf.get_rect(topleft=(45 + 290 * (self.number - 1), 520)))
-        window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(45 + 290 * (self.number - 1), 550)))
+    def show_name(self, window):
+        pygame.draw.rect(window, (114, 200, 114), (40 + 290 * self.number, 370, 250, 220), 0, 3)
+
+        window.blit(self.surf, self.surf.get_rect(topleft=(45 + 290 * self.number, 520)))
+        window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(45 + 290 * self.number, 550)))
         bet_surf = self.font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
-        window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * (self.number - 1), 565)))
+        window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
 
     def set_balance(self, new_balance):
         self.balance = new_balance
@@ -88,7 +91,7 @@ class Player:
         if not self.name == 'Dealer':
             for i, card in enumerate(self.cards):
                 window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1),
-                            (45 + 290 * (self.number - 1) + 25 * i, 380))
+                            (45 + 290 * self.number + 25 * i, 380))
 
         else:
             if len(self.cards) == 2 and not result:
@@ -136,7 +139,7 @@ class Player:
                 score_surf = self.font.render('Bust', False, (10, 10, 10))
             else:
                 score_surf = self.font.render(str(self.value_count_bj()), False, (10, 10, 10))
-            pygame.draw.rect(window, (31, 171, 57), (45 + 290 * (self.number - 1), 330, 50, 30))
+            pygame.draw.rect(window, (31, 171, 57), (45 + 290 * self.number, 330, 50, 30))
             window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * (self.number - 1), 365)))
 
         else:
@@ -170,7 +173,7 @@ class Player:
         score_surf = self.font.render(score_text, False, (10, 10, 10))
 
         if not self.name == 'Dealer':
-            window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * (self.number - 1), 365)))
+            window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * self.number, 365)))
         else:
             window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
 
@@ -196,7 +199,7 @@ class Player:
         else:
             score_surf = self.font.render(self.results(dealer_score, game)[0], False, (10, 10, 10))
 
-        window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * (self.number - 1), 365)))
+        window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
 
     def adjust_balance(self, dealer_score, game):
         self.balance += int(self.bet * self.results(dealer_score, game)[1])
