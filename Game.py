@@ -100,6 +100,7 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
+        print("current player "+ str(self.player_index))
 
     def everyone_bust(self):
         everyone_busts = True

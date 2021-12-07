@@ -19,10 +19,6 @@ To DO:
 '''
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bcebeb0c86d0d106ae4b1d87c0da35bb166b8a3b
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
