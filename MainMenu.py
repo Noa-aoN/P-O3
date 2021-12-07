@@ -8,6 +8,7 @@ from localdirectory import local_directory
 from facenet_facerecognition import create_folder
 from facenet_facerecognition import clear_folder_contents
 from facenet_facerecognition import PlayerRegistration
+from gestures_mediapipe import LandmarkGetter
 import os
 """
 to do:
@@ -45,6 +46,7 @@ def main_menu():
     addplayers = True
     bool = False
     name_text = ''
+    landmarkgetter = LandmarkGetter()
     while True:
         pygame.display.update()
         screen.fill((31, 171, 57))
@@ -99,10 +101,10 @@ def main_menu():
                 exit_pygame(event)
                 if bj_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
-                    players = blackjack(screen, clock, library, players)
+                    players = blackjack(screen, clock, library, landmarkgetter, players)
                 elif hl_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
-                    players = higherlower(screen, clock, players, library)
+                    players = higherlower(screen, clock, players, library, landmarkgetter)
                 elif newpl_button.button_pressed(event):
                     addplayers = True
                     bool = False
