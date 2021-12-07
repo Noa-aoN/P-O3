@@ -95,7 +95,9 @@ class Blackjack(Game):
             player.wants_card = False
 
     def show_each_player(self):
+        print(self.players, "1")
         for player in self.players:
+            print(player, "4")
             player.show_name(self.screen)
             player.show_cards(self.screen)
             player.display_score_bj(self.screen)
@@ -110,16 +112,10 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
+        print("current player "+ str(self.player_index))
 
     def everyone_bust(self):
-        everyone_busts = True
-        for player in self.players:
-            if player.value_count_bj() != 0:
-                everyone_busts = False
-        return everyone_busts
-        # TODO lijn hieronder zou hetzelfde moeten doen
-        # TODO not hier weghalen + bij de functie oproep
-        return not any([player.value_count_bj() != 0 for player in self.players])
+        return all([player.value_count_bj() == 0 for player in self.players])
 
 
 class Higherlower(Game):

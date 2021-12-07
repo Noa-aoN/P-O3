@@ -8,6 +8,7 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
+
 '''
 Bugs: 
 - When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
@@ -165,7 +166,7 @@ def bets_screen(game, screen, buttons):
     i = current_player.number
     screen.blit(scale, scale.get_rect(topleft=(45 + 290 * (i - 1), 415)))
 
-    if all([not player.wants_bet for player in players]):
+    if all([not player.wants_bet for player in game.players]):
         print("Loading Screen")
         game.draw_screen = deal_cards_screen
 
@@ -376,56 +377,56 @@ def blackjack(game):
 
             # Home Screen
             if current_screen == home_screen:
-                if buttons["rules"].button_pressed(event):
+                if game.buttons["rules"].button_pressed(event):
                     game.draw_screen = rules_screen
-                elif buttons["start"].button_pressed(event):
+                elif game.buttons["start"].button_pressed(event):
                     game.draw_screen = bets_screen
-                elif buttons["exit"].button_pressed(event):
+                elif game.buttons["exit"].button_pressed(event):
                     return game.players
 
             # Rules Screen
             elif current_screen == rules_screen:
-                if buttons["exit"].button_pressed(event):
+                if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen
 
             # Betting Screen
             elif current_screen == bets_screen:
                 bal = current_player.balance
-                if buttons["exit"].button_pressed(event):
+                if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen
 
-                for bet_amount, button in buttons["bet"]:
+                for bet_amount, button in game.buttons["bet"]:
                     if button.button_pressed(event) and bal >= bet_amount:
                         current_player.bet = bet_amount
                         current_player.wants_bet = False
 
             # Playing Screen
             elif current_screen == playing_screen:
-                if buttons["exit"].button_pressed(event):
+                if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen
                     return game.players
-                elif buttons["hit"].button_pressed(event):
+                elif game.buttons["hit"].button_pressed(event):
                     game.deck = game.get_card_func(game, current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
 
-                elif buttons["double"].button_pressed(event):
+                elif game.buttons["double"].button_pressed(event):
                     current_player.bet = current_player.bet * 2
                     game.deck = game.get_card_func(game, current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
                     current_player.wants_card = False
 
-                elif buttons["stand"].button_pressed(event):
+                elif game.buttons["stand"].button_pressed(event):
                     current_player.wants_card = False
 
             # Check Results Screen
             elif current_screen == check_results_screen:
-                if buttons["again"].button_pressed(event):
+                if game.buttons["again"].button_pressed(event):
                     game.play_again()
                     game.draw_screen = bets_screen
 
-                elif buttons["exit"].button_pressed(event):
+                elif game.buttons["exit"].button_pressed(event):
                     game.play_again()
                     return game.players
 
@@ -442,7 +443,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1200, 600))
 
     names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
-    players = [Player(name, 10000, i + 1) for i, name in enumerate(names)]
+    players = [Player(name, 10000, i) for i, name in enumerate(names)]
 
     buttons = {
         "start": Button(BLACK, (550, 480), (100, 65), 'Play!'),
