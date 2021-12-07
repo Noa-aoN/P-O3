@@ -19,6 +19,14 @@ def legefunctie_3(player):
     print("ga naar", player)
 
 
+def restart_game_screen(game, screen, buttons):
+    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
+    game_over_surf = font_big.render('Game Over', False, (255, 0, 0))
+    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
+    buttons["exit"].draw(screen)
+    buttons["restart"].draw(screen)
+
+
 class Game:
     def __init__(self, screen, draw_screen, players, buttons, library, camera):
         self.screen = screen
@@ -87,29 +95,27 @@ class Blackjack(Game):
             player.wants_card = False
 
     def show_each_player(self):
+        print(self.players, "1")
         for player in self.players:
+            print(player, "4")
             player.show_name(self.screen)
             player.show_cards(self.screen)
             player.display_score_bj(self.screen)
 
     def filter_players(self):
         self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
+        if len(players) == 0:
+            game.draw_screen = restart_game_screen
 
     def next_player(self):
         if self.player_index + 1 < len(self.players):
             self.player_index += 1
         else:
             self.player_index = 0
+        print("current player "+ str(self.player_index))
 
     def everyone_bust(self):
-        everyone_busts = True
-        for player in self.players:
-            if player.value_count_bj() != 0:
-                everyone_busts = False
-        return everyone_busts
-        # TODO lijn hieronder zou hetzelfde moeten doen
-        # TODO not hier weghalen + bij de functie oproep
-        return not any([player.value_count_bj() != 0 for player in self.players])
+        return all([player.value_count_bj() == 0 for player in self.players])
 
 
 class Higherlower(Game):

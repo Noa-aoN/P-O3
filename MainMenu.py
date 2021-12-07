@@ -1,6 +1,6 @@
 import pygame
 from Button import Button,exit_pygame
-from BlackJack import blackjack
+from BlackJackClass import Blackjack, home_screen, blackjack
 from HigherLower import higherlower
 from AudioPlay import playsound
 from Player import Player, add_player, Library
@@ -24,14 +24,27 @@ def main_menu():
     font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
     font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
     small_font = pygame.font.SysFont('comicsans', 20)
+    BLACK = (0, 0, 0)
 
     bj_button = Button((0, 0, 0), (300, 480), (180, 65), 'Blackjack')
     hl_button = Button((0, 0, 0), (550, 480), (260, 65), 'Higher Lower')
     newpl_button = Button((0, 0, 0), (1080, 20), (100, 25), 'New Players', 'small')
     skip_button = Button((0, 0, 0), (650, 340), (70, 25), 'Skip', 'small')
 
-    player0 = Player('Dealer', 0, 0)
-    players = [player0]
+    buttons = {
+        "start": Button(BLACK, (550, 480), (100, 65), 'Play!'),
+        "hit": Button(BLACK, (330, 250), (110, 60), 'Hit'),
+        "double": Button(BLACK, (475, 250), (250, 60), 'Double Down'),
+        "stand": Button(BLACK, (770, 250), (110, 60), 'Stand'),
+        "again": Button(BLACK, (530, 260), (200, 65), 'Play again!'),
+        "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
+        "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
+        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
+    }
+    camera = False
+    with_rasp = False
+
+    players = []
 
     choose_game = font_big.render('Choose Game', False, (0, 0, 0))
 
@@ -52,7 +65,7 @@ def main_menu():
         screen.fill((31, 171, 57))
         if addplayers:
             if playeralreadyregistered is None:
-                if len(players) > 1:
+                if len(players) > 0:
                     skip_button.draw(screen)
                 bool, name_text = add_player(screen, players, skip_button, bool, name_text, library)
 
@@ -101,7 +114,9 @@ def main_menu():
                 exit_pygame(event)
                 if bj_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
-                    players = blackjack(screen, clock, library, landmarkgetter, players)
+                    print(players, "2")
+                    game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
+                    remaining_players = blackjack(game)
                 elif hl_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
                     players = higherlower(screen, clock, players, library, landmarkgetter)
@@ -109,7 +124,7 @@ def main_menu():
                     addplayers = True
                     bool = False
                     name_text = ''
-                    players = [player0]
+                    players = []
 
         clock.tick(60)
 
