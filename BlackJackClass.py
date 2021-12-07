@@ -7,7 +7,7 @@ from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
-
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 '''
 Bugs: 
 - When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
@@ -18,11 +18,6 @@ To DO:
 - ...
 '''
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> bcebeb0c86d0d106ae4b1d87c0da35bb166b8a3b
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
