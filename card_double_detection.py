@@ -1,7 +1,7 @@
 import cv2
 
 import numpy as np
-from Camera import init_camera
+# from Camera import init_camera
 
 from Deck import Card, SUITS, RANKS
 
@@ -222,9 +222,9 @@ def get_cards(img, amount):
     threshs = binary_threshold(img)
     for i, thresh in enumerate(threshs):
         contours_pts = detect_cards(thresh)
-        print(len(contours_pts))
+        #print(len(contours_pts))
         if len(contours_pts) == amount:
-            print("thresh", i)
+            #print("thresh", i)
             cards = [create_card(cnt, pts, img) for cnt, pts in contours_pts]
             if all(cards):
                 all_cards.append(cards)
@@ -244,7 +244,9 @@ def get_card(img):
 
 
 def card_double_detection(card_amt):
-    cap = init_camera()
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     while True:
         ret, img = cap.read()
         cards = get_cards(img, card_amt)

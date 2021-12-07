@@ -34,14 +34,11 @@ font_big = pygame.font.SysFont('comicsans', 80)
 font = pygame.font.SysFont('comicsans', 25)
 font_small = pygame.font.SysFont('comicsans', 15)
 
-HigherLower_surf = font_big.render('Higher Lower', False, BLACK)
-Wrong_surf = font_big.render('Wrong!', False, BLACK)
-
 
 def get_camera_card(deck, player, screen):
     cap_card = init_camera()
     i = 1
-    give_card_again = Button((0, 0, 0), (450, 80), (300, 65), 'Give new card')
+    give_card_again = Button(BLACK, (450, 80), (300, 65), 'Give new card')
     while True:
         if i > 9:
             i = 1
@@ -52,7 +49,7 @@ def get_camera_card(deck, player, screen):
         img = opencv_to_pygame(img)
         surface = pygame.surfarray.make_surface(img)
         scale = pygame.transform.rotozoom(surface, -90, 0.45)
-        screen.fill((31, 171, 57))
+        screen.fill(GREEN)
         screen.blit(scale, scale.get_rect(midbottom=(600, 550)))
         give_card_again.draw(screen)
         for event in pygame.event.get():
@@ -70,11 +67,13 @@ def get_camera_card(deck, player, screen):
             else:
                 rank, suit = cardname
                 if rank == "Joker":
-                    surf = font.render("Why so serious? - The Joker", False, (0, 0, 0))
+                    surf_text = "Why so serious? - The Joker"
                 else:
-                    surf = font.render(f"{rank} of {suit} was already seen.", False, (0, 0, 0))
+                    surf_text = f"{rank} of {suit} was already seen."
         else:
-            surf = font.render("Looking for a card" + "." * (i // 3), False, (0, 0, 0))
+            surf_text = "Looking for a card" + "." * (i // 3)
+
+        surf = font.render(surf_text, False, BLACK)
 
         screen.blit(surf, surf.get_rect(midbottom=(600, 50)))
         pygame.display.update()
@@ -91,8 +90,9 @@ def last_two_cards(player):
 
 
 def wrong_guess(player, huidige_kaart, window):
-    window.fill((31, 171, 57))
-    window.blit(Wrong_surf, Wrong_surf.get_rect(midbottom=(600, 150)))
+    wrong_surf = font_big.render('Wrong!', False, BLACK)
+    window.fill(GREEN)
+    window.blit(wrong_surf, wrong_surf.get_rect(midbottom=(600, 150)))
     player.show_cards(window)
     window.blit(pygame.transform.rotozoom(huidige_kaart.load_image(), 0, 2), (520, 200))
     pygame.display.update()
@@ -100,12 +100,10 @@ def wrong_guess(player, huidige_kaart, window):
 
 
 def higherlower(screen, clock, players, library, landmarkgetter):
-    screen.fill(GREEN)
+    HigherLower_surf = font_big.render('Higher Lower', False, BLACK)
+
     deck = load_random_deck()
     player1 = players[1]
-
-    f = open('RulesHigherLower', 'r')
-    content = f.read()
 
     start_button = Button(BLACK, (550, 480), (100, 65), 'Play!')
     again_button = Button(BLACK, (480, 480), (240, 65), 'Play again?')
@@ -124,11 +122,8 @@ def higherlower(screen, clock, players, library, landmarkgetter):
     lost = False
     rules = False
 
-    with_camera = False
-
-
+    with_camera = True
     with_linking = False
-
     gest_time = 0
     cameracooldown = True
 
@@ -140,12 +135,13 @@ def higherlower(screen, clock, players, library, landmarkgetter):
         get_card_func = get_camera_card
     else:
         get_card_func = get_random_card
+
     cap = init_camera(0)
     while True:
         pygame.display.update()
+        screen.fill(GREEN)
         if game_active:
             if not lost:
-                screen.fill(GREEN)
                 player1.show_name(screen)
                 player1.display_score_hl(screen)
 
@@ -173,24 +169,8 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                     elif library.searchplayer(player1.name, img):
                         screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
                     else:
-
-                        facedetected = False
-                        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
-                    for landmark in landmarklist:
-                        handcoords = hand_position(landmark)
-                        if len(facecoords) > 0 and len(handcoords) > 0:
-                            img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
-                                                                         player1, landmarkgetter)
-                            bool = False
-                            if len(facecoords) > 0 and len(handcoords) > 0:
-                                img, bool = linkfacewithhand(img, facecoords[0], handcoords)
-                            if bool:
-                                templandmarklist.append(landmark)
-                    landmarklist = templandmarklist
-
                         screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
                         landmarklist = []
-
 
                 if cameracooldown:
                     if landmarklist:
@@ -247,6 +227,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                 surface = pygame.surfarray.make_surface(img)
                 scale = pygame.transform.rotozoom(surface, -90, 0.25)
                 screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
+                pygame.display.update()
 
                 if high or low:
                     lost = True
@@ -254,7 +235,6 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                     wrong_guess(player1, huidige, screen)
 
             else:
-                screen.fill(GREEN)
                 again_button.draw(screen)
                 exit_button.draw(screen)
 
@@ -270,13 +250,14 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                         return players
 
         else:
-            screen.fill(GREEN)
             screen.blit(HigherLower_surf, HigherLower_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
             rules_button.draw(screen)
             exit_button.draw(screen)
 
             if rules:
+                f = open('RulesHigherLower', 'r')
+                content = f.read()
                 pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))
                 pygame.draw.rect(screen, BLACK, (0, 0, 1200, 600), 2, 1)
                 rules_exit_button.draw(screen)
@@ -287,6 +268,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                     rules_surf = font.render(line, False, BLACK)
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
                     y += 30
+                f.close()
 
             for event in pygame.event.get():
                 exit_pygame(event)
