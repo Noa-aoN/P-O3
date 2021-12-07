@@ -12,15 +12,16 @@ def exit_pygame(event):
 class Button:
     def __init__(self, color, position, size, text='', font=None):
         self.color = color
-        self.pos_x = position[0]
-        self.pos_y = position[1]
-        self.width = size[0]
-        self.height = size[1]
+        self.bg_color = (114, 200, 114)
+        self.font_color = (0, 0, 0)
+        self.pos_x, self.pos_y = position
+        self.width, self.height = size
         self.text = text
         self.font = font
 
     def set_color(self, color):
         self.color = color
+        self.font_color = color
 
     def draw(self, window):
         if self.font is None:
@@ -28,10 +29,14 @@ class Button:
             edge = 5
         else:
             font = pygame.font.SysFont('comicsans', 15)
-            edge = 2
+            edge = 3
         pygame.draw.rect(window, self.color, (self.pos_x - 2, self.pos_y - 2, self.width + 4, self.height + 4), edge)
+        if self.bg_color:
+            pygame.draw.rect(window, self.bg_color, (self.pos_x - 2, self.pos_y - 2, self.width + 2, self.height + 2),
+                             0)
+
         if self.text != '':
-            text = font.render(self.text, False, (0, 0, 0))
+            text = font.render(self.text, False, self.font_color)
             window.blit(text, (
                 self.pos_x + (self.width / 2 - text.get_width() / 2),
                 self.pos_y + (self.height / 2 - text.get_height() / 2)))

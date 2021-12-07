@@ -1,5 +1,5 @@
 from Button import Button, exit_pygame
-from Deck import get_random_card, load_random_deck
+from Deck import get_random_card_2, load_random_deck
 from Player import Player, Library
 from AudioPlay import playsound
 from time import sleep, perf_counter
@@ -278,7 +278,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                 for player in players:
 
                     while len(player.cards) < 2:
-                        deck = get_random_card(deck, player, screen)
+                        deck = get_random_card_2(deck, player)
                         player.show_cards(screen)
                         player.display_score_bj(screen)
                         pygame.display.update()
@@ -305,7 +305,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                     give_card()
                     # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
                     # de tweede kaart moet voorlopig omgekeerd liggen
-                    deck = get_random_card(deck, player0, screen)
+                    deck = get_random_card_2(deck, player0)
                     player0.show_cards(screen)
                     player0.display_score_bj(screen)
                     pygame.display.update()
@@ -362,7 +362,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                                     cv2.putText(img, option, (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
                                     if option == "Hit":
                                         if last_option == option:
-                                            deck = get_random_card(deck, current_player, screen)
+                                            deck = get_random_card_2(deck, current_player)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
                                             active_button = hit_button
@@ -372,7 +372,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                                     elif option == "Double Down" and len(current_player.cards) == 2:
                                         if last_option == option:
                                             current_player.bet = current_player.bet * 2
-                                            deck = get_random_card(deck, current_player, screen)
+                                            deck = get_random_card_2(deck, current_player)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
                                             current_player.wants_card = False
@@ -402,12 +402,12 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
 
                             for event in pygame.event.get():
                                 if hit_button.button_pressed(event):
-                                    deck = get_random_card(deck, current_player, screen)
+                                    deck = get_random_card_2(deck, current_player)
                                     current_player.show_cards(screen)
                                     current_player.display_score_bj(screen)
                                 elif double_button.button_pressed(event):
                                     current_player.bet = current_player.bet * 2
-                                    deck = get_random_card(deck, current_player, screen)
+                                    deck = get_random_card_2(deck, current_player)
                                     current_player.show_cards(screen)
                                     current_player.display_score_bj(screen)
                                     current_player.wants_card = False
@@ -443,7 +443,7 @@ def blackjack(screen, clock, library, landmarkgetter, players=None):
                     # hier moet die ene kaart omgedraaid worden en die worden herkent
                     give_card()
                     # hier gaat noa zen code moeten schrijven van die kaarten te herkennen
-                    deck = get_random_card(deck, player0, screen)
+                    deck = get_random_card_2(deck, player0)
                 deal_cards = False
                 dealer_cards = False
                 change_bal = True
