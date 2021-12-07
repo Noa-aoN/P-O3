@@ -8,6 +8,7 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 
+<<<<<<< HEAD
 '''
 Bugs: 
 - When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
@@ -18,6 +19,10 @@ To DO:
 - ...
 '''
 
+=======
+
+
+>>>>>>> 9ac72d6d448f729317fa537273235e3aaaf686f4
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
@@ -342,15 +347,15 @@ def dealer_card_screen(game, screen, buttons):
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
 
-    dealer_score = game.dealer.value_count_bj()
-
-    while 0 < dealer_score < 17:
+    while 0 < game.dealer.value_count_bj() < 17:
         game.dealer.show_cards(screen, True)
         game.dealer.display_score_bj(screen, True)
         pygame.display.update()
         sleep(1)
         game.give_card()
         game.deck = game.get_card_func(game, game.dealer)
+
+    dealer_score = game.dealer.value_count_bj()
 
     for player in game.players:
         player.adjust_balance(dealer_score, 'bj')

@@ -11,6 +11,12 @@ from time import sleep, perf_counter
 from gestures_mediapipe import *
 import cv2
 
+"""
+bugs: als ge play again duwt geeft gaat die ervan uit dat ge de knop van uw vorige gesture nog in hebt gedrukt
+en de tijd voor de gestures is mss te kort 
+
+"""
+
 
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
@@ -122,7 +128,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
     lost = False
     rules = False
 
-    with_camera = True
+    with_camera = False
     with_linking = False
     gest_time = 0
     cameracooldown = True

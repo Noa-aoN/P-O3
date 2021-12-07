@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/HigherLowerClass.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlackJackClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJackClass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gestures_mediapipe.py" beforeDir="false" afterPath="$PROJECT_DIR$/gestures_mediapipe.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +222,14 @@
       <option name="project" value="LOCAL" />
       <updated>1638754827126</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="changes">
+      <created>1638890266040</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1638890266040</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -250,7 +254,8 @@
     <MESSAGE value="Added cleaner version of Blackjack and specific Game Class objects" />
     <MESSAGE value="Added assert, works with new BlackjackClass" />
     <MESSAGE value="Seperate non-class random card function" />
-    <option name="LAST_COMMIT_MESSAGE" value="Seperate non-class random card function" />
+    <MESSAGE value="changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="changes" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>
