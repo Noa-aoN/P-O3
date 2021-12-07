@@ -186,7 +186,7 @@ class Player:
         if dealer_score > self_value:
             return f'{self_value}: dealer wins', -1
         if self_value == 21 and len(self.cards) == 2:
-            return f'Blackjack: you win', 0.5
+            return f'Blackjack: you win', 1.5
         if dealer_score < self_value:
             return f'{self_value}: you win', 1
 
