@@ -8,7 +8,6 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 
-<<<<<<< HEAD
 '''
 Bugs: 
 - When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
@@ -19,10 +18,7 @@ To DO:
 - ...
 '''
 
-=======
 
-
->>>>>>> 9ac72d6d448f729317fa537273235e3aaaf686f4
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
@@ -135,6 +131,11 @@ def bets_screen(game, screen, buttons):
                 if amt_fingers:
                     if bal >= amt_fingers * 1000 and game.last_fingers == amt_fingers:
                         print("Confirmed")
+                        current_button = buttons["bet"][amt_fingers - 1][1]
+                        current_button.set_color((255, 0, 0))
+                        current_button.draw(screen)
+                        pygame.display.update()
+                        sleep(0.2)
                         current_player.bet = amt_fingers * 1000
                         current_player.wants_bet = False
 

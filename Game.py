@@ -69,6 +69,7 @@ class Blackjack(Game):
             self.rotate_to = legefunctie_3
 
     def play_again(self):
+        self.filter_players()
         self.deck = load_random_deck()
         self.player_index = 0
         self.previous_player = 0

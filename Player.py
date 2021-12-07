@@ -56,7 +56,7 @@ def add_player(window, players, skip_button, active, player_name, library):
 
 
 class Player:
-    def __init__(self, name, balance, player_number, wants_card=False, wants_bet=True):
+    def __init__(self, name, balance, player_number, wants_card=True, wants_bet=True):
         self.font = pygame.font.SysFont('comicsans', 20)
         self.font_small = pygame.font.SysFont('comicsans', 13)
         self.font_big = pygame.font.SysFont('comicsans', 30)
