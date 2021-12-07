@@ -8,6 +8,21 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 
+<<<<<<< HEAD
+'''
+Bugs: 
+- When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
+
+
+To DO:
+- Entering starting balance.
+- ...
+'''
+
+=======
+
+
+>>>>>>> 9ac72d6d448f729317fa537273235e3aaaf686f4
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
@@ -44,14 +59,14 @@ def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter)
     return img, facecoords, handcoords
 
 
-def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter):
+def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter, playernumber = 1):
     if facecoords := library.searchplayer(current_player.name, img):
         detect_text = 'Player Recognized'
     else:
         detect_text = 'Player Not Found'
 
     detect_surf = font_small.render(detect_text, False, (255, 0, 0))
-    screen.blit(detect_surf, detect_surf.get_rect(topleft=(20, 200)))
+    screen.blit(detect_surf, detect_surf.get_rect(topleft=(45 + 290 * (playernumber - 1), 400)))
 
     templandmarklist = []
     for landmark in landmarklist:
@@ -97,7 +112,7 @@ def bets_screen(game, screen, buttons):
     current_player = game.get_current_player()
     library = game.library
     if not game.cap_gest:
-        game.cap_gest = init_camera(1)
+        game.cap_gest = init_camera(0)
 
     if perf_counter() - game.gest_time >= 2:
         game.cameracooldown = True
@@ -111,7 +126,8 @@ def bets_screen(game, screen, buttons):
         landmarklist = game.landmarkgetter(img)
 
         if current_player.name in library.libraryembeddings:
-            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, game.landmarkgetter)
+            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                             game.landmarkgetter, current_player.number)
 
         if game.cameracooldown:
             if landmarklist:
