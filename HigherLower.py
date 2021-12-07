@@ -126,6 +126,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
 
     with_camera = False
 
+
     with_linking = False
 
     gest_time = 0
@@ -172,8 +173,24 @@ def higherlower(screen, clock, players, library, landmarkgetter):
                     elif library.searchplayer(player1.name, img):
                         screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
                     else:
+
+                        facedetected = False
+                        screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(10, 10)))
+                    for landmark in landmarklist:
+                        handcoords = hand_position(landmark)
+                        if len(facecoords) > 0 and len(handcoords) > 0:
+                            img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
+                                                                         player1, landmarkgetter)
+                            bool = False
+                            if len(facecoords) > 0 and len(handcoords) > 0:
+                                img, bool = linkfacewithhand(img, facecoords[0], handcoords)
+                            if bool:
+                                templandmarklist.append(landmark)
+                    landmarklist = templandmarklist
+
                         screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
                         landmarklist = []
+
 
                 if cameracooldown:
                     if landmarklist:
