@@ -6,29 +6,33 @@ from time import sleep, perf_counter
 from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 import pygame
-from gestures_mediapipe import *
+from gestures_mediapipe import check_all_fingers, check_option, hand_position, LandmarkGetter
+import cv2
 
 '''
 Bugs: 
+- When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
+
 
 To DO:
 - Entering starting balance.
-- If BlackJack 3:2 payment.
-- Giving the first players the 2 cards instead of giving every player 1 card
-- if every player bustst the dealer still tries to get over 16
 - ...
 '''
+
 
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 def legefunctie():
     print("geef nieuwe kaart")
 
-def legefunctie_2(previous_player,player):
-    print("ga van",previous_player, "naar",player )
+
+def legefunctie_2(previous_player, player):
+    print("ga van", previous_player, "naar", player)
+
 
 def legefunctie_3(player):
-    print("ga naar",player )
+    print("ga naar", player)
+
 
 with_rasp = False
 
@@ -89,24 +93,19 @@ def play_again(players, player0):
     return deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players
 
 
-def camera_button(pressed_button, buttonlist, fingerlist):
-    for idx, button in enumerate(buttonlist):
-        if pressed_button == button:
-            button.set_color(WHITE)
-            for idx2, finger in enumerate(fingerlist):
-                if idx2 != idx:
-                    fingerlist[idx2] = False
-                else:
-                    fingerlist[idx2] = True
-        else:
-            button.set_color(BLACK)
-    return fingerlist
+def everyone_bust(players):
+    everyone_busts = True
+    for player in players:
+        if player.value_count_bj() != 0:
+            everyone_busts = False
+    return everyone_busts
 
 
 def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter):
     h, w, c = img.shape
-    (leftdist, rightdist) = (abs(facecoords[0][0] - handcoords[2] * w),
-                             abs(facecoords[0][0] + facecoords[0][2] - handcoords[2] * w))
+    leftdist = abs(facecoords[0][0] - handcoords[2] * w)
+    rightdist = abs(facecoords[0][0] + facecoords[0][2] - handcoords[2] * w)
+
     if leftdist > rightdist:
         hands = handcoords[2] * w + 150
         if hands > w:
@@ -128,8 +127,10 @@ def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter)
     return img, facecoords, handcoords
 
 
-def blackjack(screen, clock, library, players=None):
+def blackjack(screen, clock, library, landmarkgetter, players=None):
     Blackjack_surf = font_big.render('Blackjack', False, BLACK)
+    facedetected_surf = font_small.render('Player Recognized', False, (255, 0, 0))
+    notdetected_surf = font_small.render('Player Not Found', False, (255, 0, 0))
 
     deck = load_random_deck()
 
@@ -140,20 +141,23 @@ def blackjack(screen, clock, library, players=None):
     else:
         player0 = players.pop(0)
 
+    f = open('blackjackrules.txt', 'r')
+    content = f.read()
+    f.close()
+
     game_active = False
     first_card = True
 
     start_button = Button(BLACK, (550, 480), (100, 65), 'Play!')
-    yes_button = Button(BLACK, (330, 250), (110, 60), 'Hit')
-    no_button = Button(BLACK, (770, 250), (110, 60), 'Stand')
+    hit_button = Button(BLACK, (330, 250), (110, 60), 'Hit')
+    stand_button = Button(BLACK, (770, 250), (110, 60), 'Stand')
     double_button = Button(BLACK, (475, 250), (250, 60), 'Double Down')
     again_button = Button(BLACK, (530, 260), (200, 65), 'Play again!')
     exit_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
     rules_button = Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small')
+    return_button = Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small')
 
     bet_buttons = [(i * 1000, Button(BLACK, (325 + i * 75, 350), (50, 30), f'{i}k')) for i in range(1, 6)]
-
-    optionbuttonlist = [yes_button, no_button, double_button]
 
     place_bets = True
     cameracooldown = True
@@ -163,25 +167,21 @@ def blackjack(screen, clock, library, players=None):
     deal_cards = False
     check_results = False
     rules = False
-    i = 0
-    j = 0
+    i, j = 0, 0
     gest_time = 0
 
     last_fingers = None
+    last_option = None
+    active_button = None
+    selected_button = None
 
-    hit_clicked = False
-    doubledown_clicked = False
-    stand_clicked = False
-    clickedlist = [hit_clicked, stand_clicked, doubledown_clicked]
+    with_linking = False
 
     playing_bj = True
     cap = init_camera(0)
-    landmarkgetter = LandmarkGetter()
     while playing_bj:
-
-        current_button = None
         pygame.display.update()
-
+        screen.fill(GREEN)
         if game_active:
             players = list(filter(lambda player: player.balance > 0, players))
             if len(players) == 0:
@@ -205,7 +205,14 @@ def blackjack(screen, clock, library, players=None):
                         landmarklist = landmarkgetter(img)
 
                         if current_player.name in library.libraryembeddings:
-                            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
+                            if with_linking:
+                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                                                 landmarkgetter)
+                            elif library.searchplayer(current_player.name, img):
+                                screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
+                            else:
+                                screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
+                                landmarklist = []
 
                         if cameracooldown:
                             if landmarklist:
@@ -222,15 +229,15 @@ def blackjack(screen, clock, library, players=None):
                                             last_button.set_color(BLACK)
                                             last_button.draw(screen)
 
-                                    current_button = bet_buttons[amount_fingers - 1][1]
-                                    current_button.set_color(WHITE)
-                                    current_button.draw(screen)
+                                    active_button = bet_buttons[amount_fingers - 1][1]
+                                    active_button.set_color(WHITE)
+                                    active_button.draw(screen)
 
                                 last_fingers = amount_fingers
                                 pygame.display.update()
 
-                            cameracooldown = False
-                            gest_time = perf_counter()
+                                cameracooldown = False
+                                gest_time = perf_counter()
 
                         for event in pygame.event.get():
                             if exit_button.button_pressed(event):
@@ -240,17 +247,17 @@ def blackjack(screen, clock, library, players=None):
                                 if button.button_pressed(event) and bal >= bet_amount:
                                     current_player.bet = bet_amount
                                     current_player.wants_bet = False
-                                    current_button = button
+                                    active_button = button
 
                         img = opencv_to_pygame(img)
                         surface = pygame.surfarray.make_surface(img)
                         scale = pygame.transform.rotozoom(surface, -90, 0.25)
                         screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
 
-                    if not current_player.wants_bet:
+                    else:
                         last_fingers = None
-                        if current_button is not None:
-                            current_button.set_color(BLACK)
+                        if active_button is not None:
+                            active_button.set_color(BLACK)
                         j += 1
                 else:
                     place_bets = False
@@ -270,6 +277,11 @@ def blackjack(screen, clock, library, players=None):
                 for player in players:
 
                     while len(player.cards) < 2:
+                        deck = get_random_card(deck, player, screen)
+                        player.show_cards(screen)
+                        player.display_score_bj(screen)
+                        pygame.display.update()
+                        sleep(1)
                         if first_card:
                             rotate_to(player.number)
                             previous_player = player.number
@@ -279,30 +291,19 @@ def blackjack(screen, clock, library, players=None):
                             first_card = False
                         else:
                             if previous_player != player.number:
-                                rotate_fromto_player(previous_player,player.number)
+                                rotate_fromto_player(previous_player, player.number)
                                 previous_player = player.number
                             give_card()
                             # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
                             give_card()
-                        deck = get_random_card(deck, player, screen)
-                        player.show_cards(screen)
-                        player.display_score_bj(screen)
-                        pygame.display.update()
-                        sleep(1)
-                        deck = get_random_card(deck, player, screen)
-                for player in players:
-                    player.show_cards(screen)
-                    player.display_score_bj(screen)
-                    pygame.display.update()
-                    sleep(1)
 
                 while len(player0.cards) < 2:
                     if previous_player != 2.5:
-                        rotate_fromto_player(previous_player,2.5)
+                        rotate_fromto_player(previous_player, 2.5)
                         previous_player = 2.5
                     give_card()
                     # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
-                    #de tweede kaart moet voorlopig omgekeerd liggen
+                    # de tweede kaart moet voorlopig omgekeerd liggen
                     deck = get_random_card(deck, player0, screen)
                     player0.show_cards(screen)
                     player0.display_score_bj(screen)
@@ -323,137 +324,114 @@ def blackjack(screen, clock, library, players=None):
                 if i < len(players):
                     current_player = players[i]
                     if int(current_player.number) != int(previous_player):
-                        rotate_fromto_player(previous_player,current_player.number)
+                        rotate_fromto_player(previous_player, current_player.number)
                         previous_player = current_player.number
                     if current_player.wants_card:
                         if current_player.value_count_bj() == 'bust':
                             current_player.wants_card = False
-                        if current_player.value_count_bj() == 21:
+                        elif current_player.value_count_bj() == 21:
                             playsound("Sounds/Applause.wav")
                             i += 1
                         else:
                             another_card_surf = font.render(f'{current_player.name}, do you want another card?',
-                                                                 False, BLACK)
+                                                            False, BLACK)
                             screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600, 200)))
-                            yes_button.draw(screen)
-                            no_button.draw(screen)
+
+                            hit_button.draw(screen)
+                            stand_button.draw(screen)
+                            if double_down := len(current_player.cards) == 2:
+                                double_button.draw(screen)
 
                             ret, img = cap.read()
                             landmarklist = landmarkgetter(img)
 
                             if current_player.name in library.libraryembeddings:
-                                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter)
+                                if with_linking:
+                                    landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                                                     landmarkgetter)
+                                elif library.searchplayer(current_player.name, img):
+                                    screen.blit(facedetected_surf, facedetected_surf.get_rect(topleft=(20, 200)))
+                                else:
+                                    screen.blit(notdetected_surf, notdetected_surf.get_rect(topleft=(20, 200)))
+                                    landmarklist = []
 
-                            if len(current_player.cards) == 2:
-                                double_button.draw(screen)
-                                if cameracooldown:
-                                    if landmarklist:
-                                        if index_up(landmarklist[0]):
-                                            cv2.putText(img, "index_up", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
-                                            if hit_clicked:
-                                                give_card()
-                                                # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede kaart gegeven
-                                                deck = get_random_card(deck, current_player, screen)
-                                                current_player.show_cards(screen)
-                                                current_player.display_score_bj(screen)
-
-                                            [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(yes_button,
-                                                                                                             optionbuttonlist,
-                                                                                                             clickedlist)
-                                            yes_button.draw(screen)
-                                            cameracooldown = False
-                                            gest_time = perf_counter()
-                                        elif fingers_five(landmarklist[0]):
-                                            cv2.putText(img, "five", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
-                                            if stand_clicked:
-                                                current_player.wants_card = False
-
-                                            [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(
-                                                no_button, optionbuttonlist, clickedlist)
-                                            no_button.draw(screen)
-                                            cameracooldown = False
-                                            gest_time = perf_counter()
-                                        elif fingers_two(landmarklist[0]):
-                                            cv2.putText(img, "two", (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
-                                            if doubledown_clicked:
-                                                current_player.bet = current_player.bet * 2
-                                                deck = get_random_card(deck, current_player, screen)
-                                                current_player.show_cards(screen)
-                                                current_player.display_score_bj(screen)
-                                                current_player.wants_card = False
-
-                                            [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(
-                                                double_button, optionbuttonlist, clickedlist)
-                                            double_button.draw(screen)
-                                            cameracooldown = False
-                                            gest_time = perf_counter()
-                                for event in pygame.event.get():
-                                    if yes_button.button_pressed(event):
-                                        give_card()
-                                        # hier gaat noa zen code moeten schrijven van die kaarten te herkennen en dan pas wordt de tweede
-                                        deck = get_random_card(deck, current_player, screen)
-                                        current_player.show_cards(screen)
-                                        current_player.display_score_bj(screen)
-                                    elif no_button.button_pressed(event):
-                                        current_player.wants_card = False
-                                    elif double_button.button_pressed(event):
-                                        current_player.bet = current_player.bet * 2
-                                        deck = get_random_card(deck, current_player, screen)
-                                        current_player.show_cards(screen)
-                                        current_player.display_score_bj(screen)
-                                        current_player.wants_card = False
-                                    elif exit_button.button_pressed(event):
-                                        return [player0] + players
-                                img = opencv_to_pygame(img)
-                                surface = pygame.surfarray.make_surface(img)
-                                scale = pygame.transform.rotozoom(surface, -90, 0.25)
-                                screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
-                            else:
-                                if cameracooldown:
-                                    if landmarklist and index_up(landmarklist[0]):
-                                        if hit_clicked:
-                                            give_card()
-                                            # hier gaat noa zen code moeten schrijven van die kaarten te herkennen
+                            if cameracooldown:
+                                if landmarklist:
+                                    option = check_option(landmarklist[0], double_down)
+                                    cv2.putText(img, option, (40, 60), cv2.FONT_HERSHEY_DUPLEX, 2, RED, 4)
+                                    if option == "Hit":
+                                        if last_option == option:
                                             deck = get_random_card(deck, current_player, screen)
                                             current_player.show_cards(screen)
                                             current_player.display_score_bj(screen)
+                                            active_button = hit_button
+                                        else:
+                                            selected_button = hit_button
 
-                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(yes_button,
-                                                                                                         optionbuttonlist,
-                                                                                                         clickedlist)
-                                        yes_button.draw(screen)
-                                        cameracooldown = False
-                                        gest_time = perf_counter()
-                                    elif landmarklist and fingers_five(landmarklist[0]):
-                                        if stand_clicked:
+                                    elif option == "Double Down" and len(current_player.cards) == 2:
+                                        if last_option == option:
+                                            current_player.bet = current_player.bet * 2
+                                            deck = get_random_card(deck, current_player, screen)
+                                            current_player.show_cards(screen)
+                                            current_player.display_score_bj(screen)
                                             current_player.wants_card = False
+                                            active_button = double_button
+                                        else:
+                                            selected_button = double_button
 
-                                        [hit_clicked, stand_clicked, doubledown_clicked] = camera_button(no_button,
-                                                                                                         optionbuttonlist,
-                                                                                                         clickedlist)
-                                        no_button.draw(screen)
-                                        cameracooldown = False
-                                        gest_time = perf_counter()
-                                for event in pygame.event.get():
-                                    if yes_button.button_pressed(event):
-                                        give_card()
-                                        # hier gaat noa zen code moeten schrijven van die kaarten te herkennen
-                                        deck = get_random_card(deck, current_player, screen)
-                                        current_player.show_cards(screen)
-                                        current_player.display_score_bj(screen)
-                                    elif no_button.button_pressed(event):
-                                        current_player.wants_card = False
-                                    elif exit_button.button_pressed(event):
-                                        return [player0] + players
-                        if i >= len(players):
-                            pass
-                        else:
-                            if not current_player.wants_card:
-                                i += 1
+                                    elif option == "Stand":
+                                        if last_option == option:
+                                            current_player.wants_card = False
+                                            active_button = stand_button
+                                        else:
+                                            selected_button = stand_button
+
+                                    last_option = option
+                                    cameracooldown = False
+                                    gest_time = perf_counter()
+
+                            if active_button:
+                                active_button.set_color(BLACK)
+                                active_button.draw(screen)
+                                active_button = None
+                                selected_button = None
+                            elif selected_button:
+                                selected_button.set_color(WHITE)
+                                selected_button.draw(screen)
+
+                            for event in pygame.event.get():
+                                if hit_button.button_pressed(event):
+                                    deck = get_random_card(deck, current_player, screen)
+                                    current_player.show_cards(screen)
+                                    current_player.display_score_bj(screen)
+                                elif double_button.button_pressed(event):
+                                    current_player.bet = current_player.bet * 2
+                                    deck = get_random_card(deck, current_player, screen)
+                                    current_player.show_cards(screen)
+                                    current_player.display_score_bj(screen)
+                                    current_player.wants_card = False
+                                elif stand_button.button_pressed(event):
+                                    current_player.wants_card = False
+                                elif exit_button.button_pressed(event):
+                                    return [player0] + players
+
+                            img = opencv_to_pygame(img)
+                            surface = pygame.surfarray.make_surface(img)
+                            scale = pygame.transform.rotozoom(surface, -90, 0.25)
+                            screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
+                    else:
+                        last_option = None
+                        i += 1
                 else:
                     pygame.display.update()
                     sleep(1)
-                    dealer_cards = True
+                    if not everyone_bust(players):
+                        dealer_cards = True
+                    else:
+                        deal_cards = False
+                        dealer_cards = False
+                        change_bal = True
+                        check_results = True
 
             if dealer_cards:
                 while 0 < player0.value_count_bj() < 17:
@@ -484,15 +462,13 @@ def blackjack(screen, clock, library, players=None):
                     dealer_blackjack = True
                 for player in players:
                     player.display_results(screen, dealer_score, 'bj', dealer_blackjack)
-                player0.show_cards(screen, True)
-                player0.display_score_bj(screen, True)
+                not_everyone_busts = not everyone_bust(players)
+                player0.show_cards(screen, not_everyone_busts)
+                player0.display_score_bj(screen, not_everyone_busts)
                 again_button.draw(screen)
                 for event in pygame.event.get():
                     if again_button.button_pressed(event):
                         last_fingers = None
-                        hit_clicked = False
-                        doubledown_clicked = False
-                        stand_clicked = False
                         deal_2_cards, deal_cards, check_results, place_bets, i, j, deck, players = play_again(players,
                                                                                                               player0)
                     elif exit_button.button_pressed(event):
@@ -501,11 +477,12 @@ def blackjack(screen, clock, library, players=None):
                         return [player0] + players
 
             exit_button.draw(screen)
+
         else:
-            screen.fill(GREEN)
             screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
             start_button.draw(screen)
             rules_button.draw(screen)
+            exit_button.draw(screen)
             H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
             S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
             screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
@@ -513,32 +490,32 @@ def blackjack(screen, clock, library, players=None):
             if rules:
                 pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))
                 pygame.draw.rect(screen, BLACK, (0, 0, 1200, 600), 2, 1)
-                exit_button.draw(screen)
-                f = open('blackjackrules.txt', 'r')
-                content = f.read()
-                splittedcontent = content.splitlines()
+                return_button.draw(screen)
+                split_content = content.splitlines()
                 x = 10
                 y = 10
-                for i, line in enumerate(splittedcontent):
+                for i, line in enumerate(split_content):
                     rules_surf = font_small.render(line, False, BLACK)
                     screen.blit(rules_surf, rules_surf.get_rect(topleft=(x, y)))
                     y += 12
-                f.close()
 
             for event in pygame.event.get():
                 exit_pygame(event)
-                if start_button.button_pressed(event):
-                    game_active = True
                 if not rules:
-                    if rules_button.button_pressed(event):
+                    if start_button.button_pressed(event):
+                        game_active = True
+                    elif exit_button.button_pressed(event):
+                        return [player0] + players
+                    elif rules_button.button_pressed(event):
                         rules = True
-                elif exit_button.button_pressed(event):
+                elif return_button.button_pressed(event):
                     rules = False
 
         clock.tick(60)
+
 
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
     clock = pygame.time.Clock()
-    blackjack(screen, clock, Library())
+    blackjack(screen, clock, Library(), LandmarkGetter())

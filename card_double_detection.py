@@ -243,21 +243,12 @@ def get_card(img):
     return None
 
 
-def card_double_detection():
+def card_double_detection(card_amt):
     cap = init_camera()
     while True:
-
         ret, img = cap.read()
-
-        img = cv2.imread("10_kaarten.jpg")
-        """y, x, c = img.shape
-    
-        norm = np.zeros(img.shape)
-        norm = cv2.normalize(img, norm, 0, 255, cv2.NORM_MINMAX)"""
-
-        cards = get_cards(img, 10)
+        cards = get_cards(img, card_amt)
         img = display_cards(img, cards)
-
         cv2.imshow('Colored', cv2.resize(img, (0, 0), fx=0.4, fy=0.4))
 
         q = cv2.waitKey(1)
@@ -268,4 +259,5 @@ def card_double_detection():
 
 
 if __name__ == '__main__':
-    card_double_detection()
+    card_amt = int(input("How many cards are we going to see"))
+    card_double_detection(card_amt)
