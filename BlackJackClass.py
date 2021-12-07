@@ -8,6 +8,12 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 
+""""
+bugs: de dealer stopt niet met kaarten vragen
+"""
+
+
+
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
@@ -97,7 +103,7 @@ def bets_screen(game, screen, buttons):
     current_player = game.get_current_player()
     library = game.library
     if not game.cap_gest:
-        game.cap_gest = init_camera(1)
+        game.cap_gest = init_camera(0)
 
     if perf_counter() - game.gest_time >= 2:
         game.cameracooldown = True
