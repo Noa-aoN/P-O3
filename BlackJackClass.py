@@ -19,10 +19,6 @@ To DO:
 '''
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bcebeb0c86d0d106ae4b1d87c0da35bb166b8a3b
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
@@ -74,10 +70,10 @@ def get_landmark_list(img, current_player, library, landmarklist, screen, landma
         if facecoords and handcoords:
             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
                                                          library, current_player, landmarkgetter)
-            bool = False
+            valid = False
             if facecoords:
-                img, bool = linkfacewithhand(img, facecoords[0], handcoords)
-            if bool:
+                img, valid = linkfacewithhand(img, facecoords[0], handcoords)
+            if valid:
                 templandmarklist.append(landmark)
     return templandmarklist
 
@@ -135,9 +131,7 @@ def bets_screen(game, screen, buttons):
                 if amt_fingers:
                     if bal >= amt_fingers * 1000 and game.last_fingers == amt_fingers:
                         print("Confirmed")
-                        current_button = buttons["bet"][amt_fingers - 1][1]
-                        current_button.set_color((255, 0, 0))
-                        current_button.draw(screen)
+                        buttons["bet"][amt_fingers - 1][1].set_color((255, 0, 0)).draw(screen)
                         pygame.display.update()
                         sleep(0.2)
                         current_player.bet = amt_fingers * 1000
@@ -225,7 +219,7 @@ def deal_cards_screen(game, screen, buttons):
         game.draw_screen = playing_screen
 
     # Zet de servo terug naar de eerste speler
-    print("RESET SERVO")
+    print("RESET SERVO")  # Get Current Player fixen zodat
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
     game.previous_player = game.get_current_player().number
 
@@ -277,8 +271,10 @@ def playing_screen(game, screen, buttons):
                 if landmarklist:
                     option = check_option(landmarklist[0], double_down)
                     if option:
-                        if game.last_option == option:
+                        if game.last_option == option and option is not None:
                             print("Confirmed")
+                            buttons.get(option).set_color((255, 0, 0)).draw(screen)
+                            sleep(0.2)
                             if option == "hit":
                                 game.deck = game.get_card_func(game, current_player)
                                 current_player.show_cards(screen)
@@ -369,6 +365,14 @@ def dealer_card_screen(game, screen, buttons):
     game.draw_screen = check_results_screen
 
 
+def restart_game_screen(game, screen, buttons):
+    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
+    game_over_surf = font_big.render('Game Over', False, (255, 0, 0))
+    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
+    buttons["exit"].draw(screen)
+    buttons["restart"].draw(screen)
+
+
 def blackjack(game):
     while True:
         # Call the game class to display the current frame
@@ -433,6 +437,13 @@ def blackjack(game):
                     game.play_again()
                     return game.players
 
+            # Restart Game Screen
+            elif current_screen == restart_game_screen:
+                if buttons["restart"].button_pressed(event):
+                    return None
+                elif buttons["exit"].button_pressed(event):
+                    return game.players
+
 
 if __name__ == '__main__':
     pygame.init()
@@ -449,11 +460,17 @@ if __name__ == '__main__':
         "again": Button(BLACK, (530, 260), (200, 65), 'Play again!'),
         "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
         "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
-        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
+        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
+        "restart": Button(BLACK, (530, 260), (200, 65), 'Restart Game')
     }
     camera = False
     with_rasp = False
-    game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
-    remaining_players = blackjack(game)
-
-    print("Game Ended", remaining_players)
+    playing = True
+    while playing:
+        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
+        remaining_players = blackjack(game)
+        if remaining_players is None:
+            print("restarting game")
+        else:
+            playing = False
+            print("Game Ended", remaining_players)
