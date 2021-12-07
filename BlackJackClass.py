@@ -163,8 +163,7 @@ def bets_screen(game, screen, buttons):
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
-    i = current_player.number
-    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * (i - 1), 415)))
+    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
     if all([not player.wants_bet for player in game.players]):
         print("Loading Screen")
@@ -316,8 +315,7 @@ def playing_screen(game, screen, buttons):
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
-    i = current_player.number
-    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * (i - 1), 415)))
+    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
     if all([not player.wants_card for player in game.players]):
         game.draw_screen = dealer_card_screen
