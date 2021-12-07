@@ -128,7 +128,7 @@ def higherlower(screen, clock, players, library):
     lost = False
     rules = False
 
-    with_camera = True
+    with_camera = False
     gest_time = 0
     cameracooldown = True
     facedetected = False
@@ -191,7 +191,7 @@ def higherlower(screen, clock, players, library):
                         handcoords = hand_position(landmark)
                         if len(facecoords) > 0 and len(handcoords) > 0:
                             img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords, library,
-                                                                         player1)
+                                                                         player1, landmarkgetter)
                             bool = False
                             if len(facecoords) > 0 and len(handcoords) > 0:
                                 img, bool = linkfacewithhand(img, facecoords[0], handcoords)
