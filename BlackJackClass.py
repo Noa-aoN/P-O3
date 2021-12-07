@@ -11,7 +11,7 @@ from gestures_mediapipe import check_all_fingers, check_option, hand_position
 '''
 Bugs: 
 - When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
-- When someone wins with 21, the text above the other players says that the dealer won
+- When someone wins in general, the text above the other players says that the dealer won the game
 
 To DO:
 - Entering starting balance.
