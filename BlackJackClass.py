@@ -8,10 +8,6 @@ from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 
-""""
-bugs: de dealer stopt niet met kaarten vragen
-"""
-
 
 
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
