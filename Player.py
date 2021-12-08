@@ -128,9 +128,6 @@ class Player:
             self.wants_card = False
             return 0
 
-    def value_count_hl(self):
-        return len(self.cards)
-
     def display_score_bj(self, window, result=False):
         if len(self.cards) == 0:
             return False
@@ -165,23 +162,13 @@ class Player:
             window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
 
     def display_score_hl(self, window):
-        if self.value_count_hl() == 0:
-            score_text = 'Bust'
-        else:
-            score_text = str(self.value_count_hl())
+        score_surf = self.font.render(f"Total cards: {len(self.cards)}", False, (10, 10, 10))
+        window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
 
-        score_surf = self.font.render(score_text, False, (10, 10, 10))
-
-        if not self.name == 'Dealer':
-            window.blit(score_surf, score_surf.get_rect(bottomleft=(100 + 300 * self.number, 365)))
-        else:
-            window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
-
+    # Wordt niet gebruikt voor Higherlower
     def results(self, dealer_score, game, dealer_blackjack=False):
-        if game == 'bj':
-            self_value = self.value_count_bj()
-        else:
-            self_value = self.value_count_hl()
+        self_value = self.value_count_bj()
+
         if self_value == 0:
             return 'bust: dealer wins', -1
         elif dealer_score == self_value:
@@ -206,7 +193,7 @@ class Player:
         print(self.balance, self.name)
         self.surf_balance = self.font_small.render(f'Balance:{int(self.balance)}', False, (10, 10, 10))
 
-    def place_bet(self, window, bet_buttons):
+    def draw_bet_buttons(self, window, bet_buttons):
         question_surf = self.font_big.render(f'{self.name}, how much do you want to bet?', False, (10, 10, 10))
         window.blit(question_surf, question_surf.get_rect(midbottom=(600, 250)))
 

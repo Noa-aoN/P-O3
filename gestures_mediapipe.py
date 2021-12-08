@@ -137,7 +137,7 @@ def check_index(handlandmarks):
     for idx, index_func in enumerate(index_function):
         if index_func(handlandmarks):
             return INDEX[idx]
-    return "Not Recognized"
+    return None
 
 
 class LandmarkGetter:

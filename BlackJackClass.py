@@ -7,6 +7,8 @@ from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 import pygame
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
+from Style import font_big, font, font_rules, font_small, WHITE, BLACK, GREEN
+
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 '''
@@ -20,17 +22,6 @@ To DO:
 '''
 
 
-font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
-font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
-font_small = pygame.font.SysFont('comicsans', 12)
-font_rules = pygame.font.SysFont('comicsans', 14)
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GREEN = (31, 171, 57)
-RED = (0, 0, 255)
-
-
 def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter):
     h, w, c = img.shape
     leftdist = abs(facecoords[0][0] - handcoords[2] * w)
@@ -41,23 +32,20 @@ def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter)
         if hands > w:
             hands = w
         img = img[:, facecoords[0][0]:int(hands)]
-        facecoords = library.searchplayer(player.name, img)
-        landmarklist = landmarkgetter(img)
-        for landmark in landmarklist:
-            handcoords = hand_position(landmark)
     else:
         hands = handcoords[2] * w - 150
         if hands - 150 < 0:
             hands = 0
         img = img[:, int(hands):facecoords[0][0] + facecoords[0][2]]
-        facecoords = library.searchplayer(player.name, img)
-        landmarklist = landmarkgetter(img)
-        for landmark in landmarklist:
-            handcoords = hand_position(landmark)
+
+    facecoords = library.searchplayer(player.name, img)
+    landmarklist = landmarkgetter(img)
+    for landmark in landmarklist:
+        handcoords = hand_position(landmark)
     return img, facecoords, handcoords
 
 
-def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter, playernumber = 1):
+def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter, playernumber=1):
     if facecoords := library.searchplayer(current_player.name, img):
         detect_text = 'Player Recognized'
     else:
@@ -83,13 +71,13 @@ def get_landmark_list(img, current_player, library, landmarklist, screen, landma
 def home_screen(game, screen, buttons):
     Blackjack_surf = font_big.render('Blackjack', False, BLACK)
     screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
-    buttons["start"].draw(screen)
-    buttons["rules"].draw(screen)
-    buttons["exit"].draw(screen)
     H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
     S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
     screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
     screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
+    buttons["start"].draw(screen)
+    buttons["rules"].draw(screen)
+    buttons["exit"].draw(screen)
 
 
 def rules_screen(game, screen, buttons):
@@ -119,8 +107,7 @@ def bets_screen(game, screen, buttons):
     ret, img = game.cap_gest.read()
 
     if current_player.wants_bet:
-        current_player.place_bet(screen, buttons["bet"])
-        bal = current_player.balance
+        current_player.draw_bet_buttons(screen, buttons["bet"])
 
         landmarklist = game.landmarkgetter(img)
 
@@ -132,6 +119,7 @@ def bets_screen(game, screen, buttons):
             if landmarklist:
                 amt_fingers, ges_name = check_all_fingers(landmarklist[0])
                 if amt_fingers:
+                    bal = current_player.balance
                     if bal >= amt_fingers * 1000 and game.last_fingers == amt_fingers:
                         print("Confirmed")
                         current_button = buttons["bet"][amt_fingers - 1][1]
@@ -261,7 +249,7 @@ def playing_screen(game, screen, buttons):
 
             buttons["hit"].draw(screen)
             buttons["stand"].draw(screen)
-            if double_down := len(current_player.cards) == 2 and current_player.balance >= 2*current_player.bet:
+            if double_down := len(current_player.cards) == 2 and current_player.balance >= 2 * current_player.bet:
                 buttons["double"].draw(screen)
 
             landmarklist = game.landmarkgetter(img)
@@ -287,7 +275,7 @@ def playing_screen(game, screen, buttons):
                                 current_player.display_score_bj(screen)
 
                             elif option == "double" and len(current_player.cards) == 2 and \
-                                    current_player.balance >= 2*current_player.bet:
+                                    current_player.balance >= 2 * current_player.bet:
                                 current_player.bet = current_player.bet * 2
                                 game.deck = game.get_card_func(game, current_player)
                                 current_player.show_cards(screen)
@@ -377,10 +365,10 @@ def blackjack(game, screen, buttons):
     while True:
         # Call the game class to display the current frame
         game()
+        templist = list(filter(lambda player: player.balance >= 1000, game.players))
         for event in pygame.event.get():
             exit_pygame(event)
             current_screen = game.draw_screen
-            templist = list(filter(lambda player: player.balance >= 1000, game.players))
             if not templist:
                 current_screen = restart_game_screen
             if current_screen != restart_game_screen:
@@ -422,7 +410,7 @@ def blackjack(game, screen, buttons):
                     current_player.display_score_bj(screen)
 
                 elif game.buttons["double"].button_pressed(event) and len(current_player.cards) == 2 \
-                        and current_player.balance >= 2*current_player.bet:
+                        and current_player.balance >= 2 * current_player.bet:
                     current_player.bet = current_player.bet * 2
                     game.deck = game.get_card_func(game, current_player)
                     current_player.show_cards(screen)
@@ -476,8 +464,8 @@ if __name__ == '__main__':
     camera = False
     with_rasp = False
     playing = True
+    game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
     while playing:
-        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
         remaining_players = blackjack(game, screen, buttons)
         if remaining_players is None:
             print("restarting game")
