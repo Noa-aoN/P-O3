@@ -109,7 +109,7 @@ def higherlower(screen, clock, players, library, landmarkgetter):
     HigherLower_surf = font_big.render('Higher Lower', False, BLACK)
 
     deck = load_random_deck()
-    player1 = players[1]
+    player1 = players[0]
 
     start_button = Button(BLACK, (550, 480), (100, 65), 'Play!')
     again_button = Button(BLACK, (480, 480), (240, 65), 'Play again?')

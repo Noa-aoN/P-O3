@@ -32,18 +32,18 @@ GREEN = (31, 171, 57)
 RED = (0, 0, 255)
 
 
-def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter):
+def face_gest_crop(img, game, facecoords, handcoords):
     h, w, c = img.shape
     leftdist = abs(facecoords[0][0] - handcoords[2] * w)
     rightdist = abs(facecoords[0][0] + facecoords[0][2] - handcoords[2] * w)
-
+    player = game.get_current_player()
     if leftdist > rightdist:
         hands = handcoords[2] * w + 150
         if hands > w:
             hands = w
         img = img[:, facecoords[0][0]:int(hands)]
-        facecoords = library.searchplayer(player.name, img)
-        landmarklist = landmarkgetter(img)
+        facecoords = game.library.searchplayer(player.name, img)
+        landmarklist = game.landmarkgetter(img)
         for landmark in landmarklist:
             handcoords = hand_position(landmark)
     else:
@@ -51,15 +51,16 @@ def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter)
         if hands - 150 < 0:
             hands = 0
         img = img[:, int(hands):facecoords[0][0] + facecoords[0][2]]
-        facecoords = library.searchplayer(player.name, img)
-        landmarklist = landmarkgetter(img)
+        facecoords = game.library.searchplayer(player.name, img)
+        landmarklist = game.landmarkgetter(img)
         for landmark in landmarklist:
             handcoords = hand_position(landmark)
     return img, facecoords, handcoords
 
 
-def get_landmark_list(image, current_player, library, landmarklist, screen, landmarkgetter, playernumber = 1, with_linking = True):
-    if facecoords := library.searchplayer(current_player.name, image):
+def get_landmark_list(image, game, screen, landmarklist):
+    current_player = game.get_current_player()
+    if facecoords := game.library.searchplayer(current_player.name, image):
         x, y, w, h = facecoords[0]
         detect_text = 'Player Recognized'
         cv2.rectangle(image, (x, y), (x + w, y + h),
@@ -68,15 +69,14 @@ def get_landmark_list(image, current_player, library, landmarklist, screen, land
         detect_text = 'Player Not Found'
 
     detect_surf = font_small.render(detect_text, False, (255, 0, 0))
-    screen.blit(detect_surf, detect_surf.get_rect(topleft=(45 + 290 * playernumber, 400)))
+    screen.blit(detect_surf, detect_surf.get_rect(topleft=(45 + 290 * current_player.number, 400)))
 
     templandmarklist = []
     for landmark in landmarklist:
         handcoords = hand_position(landmark)
         if facecoords and handcoords:
-            if with_linking:
-                img, facecoords, handcoords = face_gest_crop(image, facecoords, handcoords,
-                                                             library, current_player, landmarkgetter)
+            if game.with_linking:
+                img, facecoords, handcoords = face_gest_crop(image, game, facecoords, handcoords)
                 valid = False
                 if facecoords:
                     img, valid = linkfacewithhand(img, facecoords[0], handcoords)
@@ -106,7 +106,7 @@ def rules_screen(game, screen, buttons):
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
         rules_surf = font_rules.render(line, False, BLACK)
-        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 10 + i * 12)))
+        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 3 + i * 12)))
     f.close()
 
 
@@ -130,10 +130,8 @@ def bets_screen(game, screen, buttons):
         bal = current_player.balance
 
         landmarklist = game.landmarkgetter(img)
-
         if current_player.name in library.libraryembeddings:
-            landmarklist, img = get_landmark_list(img, current_player, library, landmarklist, screen,
-                                             game.landmarkgetter, current_player.number, game.with_linking)
+            landmarklist, img = get_landmark_list(img, game, screen, landmarklist)
 
         if game.cameracooldown:
             if landmarklist:
@@ -272,10 +270,8 @@ def playing_screen(game, screen, buttons):
                 buttons["double"].draw(screen)
 
             landmarklist = game.landmarkgetter(img)
-
             if current_player.name in library.libraryembeddings:
-                landmarklist, img = get_landmark_list(img, current_player, library, landmarklist, screen,
-                                                 game.landmarkgetter, current_player.number, game.with_linking)
+                landmarklist, img = get_landmark_list(img, game, screen, landmarklist)
 
             if game.cameracooldown:
                 if landmarklist:
@@ -484,7 +480,7 @@ if __name__ == '__main__':
     with_rasp = False
     playing = True
     while playing:
-        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
+        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp, with_linking=False)
         remaining_players = blackjack(game, screen, buttons)
         if remaining_players is None:
             print("restarting game")
