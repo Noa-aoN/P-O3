@@ -18,6 +18,7 @@ Bugs:
 - When someone wins in general, the text above the other players says that the dealer won the game
 
 To DO:
+- put get landmarklist in another file, geef enkel de argumenten (game, img, ...) mee
 - Entering starting balance.
 - ...
 '''

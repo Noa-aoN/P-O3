@@ -14,6 +14,7 @@ Bugs:
 
 To DO:
 - een oplossing verzinnen voor meerdere spelers te displayen
+- zie BlackJackClass
 '''
 
 
@@ -70,7 +71,7 @@ def playing_screen(game, screen, buttons):
     wrong = False
 
     if player.name in library.libraryembeddings:
-        landmarklist = get_landmark_list(img, player, library, landmarklist, screen, game.landmarkgetter, player.number)
+        landmarklist, img = get_landmark_list(img, player, library, landmarklist, screen, game.landmarkgetter, player.number)
 
     if game.cameracooldown:
         if landmarklist:
