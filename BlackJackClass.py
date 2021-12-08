@@ -6,6 +6,7 @@ from time import sleep, perf_counter
 from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 import pygame
+import cv2
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
 from Style import font_big, font, font_rules, font_small, WHITE, BLACK, GREEN
 
@@ -45,9 +46,12 @@ def face_gest_crop(img, facecoords, handcoords, library, player, landmarkgetter)
     return img, facecoords, handcoords
 
 
-def get_landmark_list(img, current_player, library, landmarklist, screen, landmarkgetter, playernumber=1):
-    if facecoords := library.searchplayer(current_player.name, img):
+def get_landmark_list(image, current_player, library, landmarklist, screen, landmarkgetter, playernumber = 1, with_linking = True):
+    if facecoords := library.searchplayer(current_player.name, image):
+        x, y, w, h = facecoords[0]
         detect_text = 'Player Recognized'
+        cv2.rectangle(image, (x, y), (x + w, y + h),
+                      (0, 0, 255), 7)
     else:
         detect_text = 'Player Not Found'
 
@@ -58,14 +62,17 @@ def get_landmark_list(img, current_player, library, landmarklist, screen, landma
     for landmark in landmarklist:
         handcoords = hand_position(landmark)
         if facecoords and handcoords:
-            img, facecoords, handcoords = face_gest_crop(img, facecoords, handcoords,
-                                                         library, current_player, landmarkgetter)
-            valid = False
-            if facecoords:
-                img, valid = linkfacewithhand(img, facecoords[0], handcoords)
-            if valid:
+            if with_linking:
+                img, facecoords, handcoords = face_gest_crop(image, facecoords, handcoords,
+                                                             library, current_player, landmarkgetter)
+                valid = False
+                if facecoords:
+                    img, valid = linkfacewithhand(img, facecoords[0], handcoords)
+                if valid:
+                    templandmarklist.append(landmark)
+            else:
                 templandmarklist.append(landmark)
-    return templandmarklist
+    return templandmarklist, image
 
 
 def home_screen(game, screen, buttons):
@@ -112,8 +119,8 @@ def bets_screen(game, screen, buttons):
         landmarklist = game.landmarkgetter(img)
 
         if current_player.name in library.libraryembeddings:
-            landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
-                                             game.landmarkgetter, current_player.number)
+            landmarklist, img = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                             game.landmarkgetter, current_player.number, game.with_linking)
 
         if game.cameracooldown:
             if landmarklist:
@@ -255,8 +262,8 @@ def playing_screen(game, screen, buttons):
             landmarklist = game.landmarkgetter(img)
 
             if current_player.name in library.libraryembeddings:
-                landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
-                                                 game.landmarkgetter, current_player.number)
+                landmarklist, img = get_landmark_list(img, current_player, library, landmarklist, screen,
+                                                 game.landmarkgetter, current_player.number, game.with_linking)
 
             if game.cameracooldown:
                 if landmarklist:

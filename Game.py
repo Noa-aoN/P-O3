@@ -76,12 +76,13 @@ class Game:
 
 
 class Blackjack(Game):
-    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp):
+    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp, with_linking):
         super().__init__(screen, draw_screen, players, buttons, library, camera, with_rasp)
         self.dealer = Player('Dealer', 0, 0)
         self.previous_player = 0
         self.last_fingers = None
         self.last_option = None
+        self.with_linking = with_linking
 
     def play_again(self):
         self.filter_players()
