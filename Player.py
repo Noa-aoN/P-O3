@@ -177,7 +177,7 @@ class Player:
         else:
             window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
 
-    def results(self, dealer_score, game):
+    def results(self, dealer_score, game, dealer_blackjack=False):
         if game == 'bj':
             self_value = self.value_count_bj()
         else:
@@ -186,7 +186,7 @@ class Player:
             return 'bust: dealer wins', -1
         elif dealer_score == self_value:
             return f'{self_value}: draw', 0
-        elif dealer_score > self_value:
+        elif dealer_score > self_value or dealer_blackjack:
             return f'{self_value}: dealer wins', -1
         elif self_value == 21 and len(self.cards) == 2:
             return f'Blackjack: you win', 1.5
@@ -201,8 +201,8 @@ class Player:
 
         window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
 
-    def adjust_balance(self, dealer_score, game):
-        self.balance += int(self.bet * self.results(dealer_score, game)[1])
+    def adjust_balance(self, dealer_score, game, blackjack=False):
+        self.balance += int(self.bet * self.results(dealer_score, game, blackjack)[1])
         print(self.balance, self.name)
         self.surf_balance = self.font_small.render(f'Balance:{int(self.balance)}', False, (10, 10, 10))
 

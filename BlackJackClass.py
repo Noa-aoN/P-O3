@@ -23,6 +23,7 @@ To DO:
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font_small = pygame.font.SysFont('comicsans', 12)
+font_rules = pygame.font.SysFont('comicsans', 14)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -97,7 +98,7 @@ def rules_screen(game, screen, buttons):
     content = f.read()
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
-        rules_surf = font_small.render(line, False, BLACK)
+        rules_surf = font_rules.render(line, False, BLACK)
         screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 10 + i * 12)))
     f.close()
 
@@ -212,7 +213,6 @@ def deal_cards_screen(game, screen, buttons):
     assert len(game.dealer.cards) == 2
 
     if game.dealer.value_count_bj() == 21:
-        print("Dealer Blackjack!")
         game.draw_screen = check_results_screen
     else:
         for player in game.players:
@@ -342,6 +342,8 @@ def check_results_screen(game, screen, buttons):
     pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
     for player in game.players:
         player.display_results(screen, dealer_score, 'bj', dealer_blackjack)
+        if dealer_blackjack:
+            player.adjust_balance(dealer_score, 'bj', dealer_blackjack)
 
     not_everyone_busts = not game.everyone_bust()
 
@@ -378,6 +380,9 @@ def blackjack(game, screen, buttons):
         for event in pygame.event.get():
             exit_pygame(event)
             current_screen = game.draw_screen
+            templist = list(filter(lambda player: player.balance >= 1000, game.players))
+            if not templist:
+                current_screen = restart_game_screen
             if current_screen != restart_game_screen:
                 current_player = game.get_current_player()
 
@@ -442,6 +447,9 @@ def blackjack(game, screen, buttons):
             elif current_screen == restart_game_screen:
                 game.play_again()
                 if buttons["restart"].button_pressed(event):
+                    for i in game.players:
+                        i.balance = 10000
+                    game.draw_screen = bets_screen
                     return None
                 elif buttons["exit"].button_pressed(event):
                     return game.players

@@ -34,7 +34,8 @@ class Game:
     def __init__(self, screen, draw_screen, players, buttons, library, camera):
         self.screen = screen
         self.clock = pygame.time.Clock()
-        self.players = players
+        self.players = list(players)
+        self.player_memory = list(players)
         self.player_index = 0
         self.draw_screen = draw_screen
         self.cap_gest = None
@@ -107,14 +108,9 @@ class Blackjack(Game):
             player.display_score_bj(self.screen)
 
     def filter_players(self):
-        for player in self.players:
-            if player.balance < 1000:
-                player.cards = []
-                player.bet = 0
-                player.wants_bet = True
-                player.wants_card = False
         self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
         if len(self.players) == 0:
+            self.players = list(self.player_memory)
             self.draw_screen = restart_game_screen
 
     def next_player(self):

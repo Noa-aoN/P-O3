@@ -40,7 +40,7 @@ def main_menu():
         "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
         "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
         "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
-        "restart": Button(BLACK, (530, 260), (200, 65), 'Restart Game')
+        "restart": Button(BLACK, (480, 260), (250, 65), 'Restart Game')
     }
     camera = False
     with_rasp = False
@@ -114,10 +114,14 @@ def main_menu():
             for event in pygame.event.get():
                 exit_pygame(event)
                 if bj_button.button_pressed(event):
+                    playing = True
                     playsound("Sounds/DroppingChips.wav")
                     print(players, "2")
-                    game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
-                    remaining_players = blackjack(game, screen, buttons)
+                    while playing:
+                        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
+                        remaining_players = blackjack(game, screen, buttons)
+                        if remaining_players is not None:
+                            playing = False
                 elif hl_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
                     players = higherlower(screen, clock, players, library, landmarkgetter)
