@@ -39,7 +39,8 @@ def main_menu():
         "again": Button(BLACK, (530, 260), (200, 65), 'Play again!'),
         "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
         "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
-        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
+        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
+        "restart": Button(BLACK, (530, 260), (200, 65), 'Restart Game')
     }
     camera = False
     with_rasp = False
@@ -102,7 +103,7 @@ def main_menu():
                             playeralreadyregistered = None
                             name_text = ''
 
-            if len(players) == 5 or bool == 'skip':
+            if len(players) == 4 or bool == 'skip':
                 addplayers = False
         else:
             screen.blit(choose_game, choose_game.get_rect(midbottom=(600, 150)))
@@ -116,7 +117,7 @@ def main_menu():
                     playsound("Sounds/DroppingChips.wav")
                     print(players, "2")
                     game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
-                    remaining_players = blackjack(game)
+                    remaining_players = blackjack(game, screen, buttons)
                 elif hl_button.button_pressed(event):
                     playsound("Sounds/DroppingChips.wav")
                     players = higherlower(screen, clock, players, library, landmarkgetter)

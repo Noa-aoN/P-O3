@@ -5,6 +5,9 @@ from Player import Player
 from Camera import get_camera_card
 
 GREEN = (31, 171, 57)
+font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 80)
+font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
+font_small = pygame.font.SysFont('comicsans', 12)
 
 
 def legefunctie():
@@ -66,6 +69,7 @@ class Blackjack(Game):
         self.last_fingers = None
         self.last_option = None
         self.first_card = True
+        self.draw_screen = draw_screen
 
         if with_rasp:
             self.give_card = dcmotor_rotate
@@ -103,16 +107,22 @@ class Blackjack(Game):
             player.display_score_bj(self.screen)
 
     def filter_players(self):
+        for player in self.players:
+            if player.balance < 1000:
+                player.cards = []
+                player.bet = 0
+                player.wants_bet = True
+                player.wants_card = False
         self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
-        if len(players) == 0:
-            game.draw_screen = restart_game_screen
+        if len(self.players) == 0:
+            self.draw_screen = restart_game_screen
 
     def next_player(self):
         if self.player_index + 1 < len(self.players):
             self.player_index += 1
         else:
             self.player_index = 0
-        print("current player "+ str(self.player_index))
+        print("current player " + str(self.player_index))
 
     def everyone_bust(self):
         return all([player.value_count_bj() == 0 for player in self.players])

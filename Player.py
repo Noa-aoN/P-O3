@@ -140,7 +140,7 @@ class Player:
             else:
                 score_surf = self.font.render(str(self.value_count_bj()), False, (10, 10, 10))
             pygame.draw.rect(window, (31, 171, 57), (45 + 290 * self.number, 330, 50, 30))
-            window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * (self.number - 1), 365)))
+            window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
 
         else:
             if len(self.cards) == 2:

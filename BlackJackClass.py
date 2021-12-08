@@ -63,7 +63,7 @@ def get_landmark_list(img, current_player, library, landmarklist, screen, landma
         detect_text = 'Player Not Found'
 
     detect_surf = font_small.render(detect_text, False, (255, 0, 0))
-    screen.blit(detect_surf, detect_surf.get_rect(topleft=(45 + 290 * (playernumber - 1), 400)))
+    screen.blit(detect_surf, detect_surf.get_rect(topleft=(45 + 290 * playernumber, 400)))
 
     templandmarklist = []
     for landmark in landmarklist:
@@ -84,6 +84,7 @@ def home_screen(game, screen, buttons):
     screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
     buttons["start"].draw(screen)
     buttons["rules"].draw(screen)
+    buttons["exit"].draw(screen)
     H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
     S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
     screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
@@ -132,7 +133,9 @@ def bets_screen(game, screen, buttons):
                 if amt_fingers:
                     if bal >= amt_fingers * 1000 and game.last_fingers == amt_fingers:
                         print("Confirmed")
-                        buttons["bet"][amt_fingers - 1][1].set_color((255, 0, 0)).draw(screen)
+                        current_button = buttons["bet"][amt_fingers - 1][1]
+                        current_button.set_color((255, 0, 0))
+                        current_button.draw(screen)
                         pygame.display.update()
                         sleep(0.2)
                         current_player.bet = amt_fingers * 1000
@@ -258,14 +261,14 @@ def playing_screen(game, screen, buttons):
 
             buttons["hit"].draw(screen)
             buttons["stand"].draw(screen)
-            if double_down := len(current_player.cards) == 2:
+            if double_down := len(current_player.cards) == 2 and current_player.balance >= 2*current_player.bet:
                 buttons["double"].draw(screen)
 
             landmarklist = game.landmarkgetter(img)
 
             if current_player.name in library.libraryembeddings:
                 landmarklist = get_landmark_list(img, current_player, library, landmarklist, screen,
-                                                 game.landmarkgetter)
+                                                 game.landmarkgetter, current_player.number)
 
             if game.cameracooldown:
                 if landmarklist:
@@ -273,14 +276,18 @@ def playing_screen(game, screen, buttons):
                     if option:
                         if game.last_option == option and option is not None:
                             print("Confirmed")
-                            buttons.get(option).set_color((255, 0, 0)).draw(screen)
+                            current_button = buttons[option]
+                            current_button.set_color((255, 0, 0))
+                            current_button.draw(screen)
+                            pygame.display.update()
                             sleep(0.2)
                             if option == "hit":
                                 game.deck = game.get_card_func(game, current_player)
                                 current_player.show_cards(screen)
                                 current_player.display_score_bj(screen)
 
-                            elif option == "double":
+                            elif option == "double" and len(current_player.cards) == 2 and \
+                                    current_player.balance >= 2*current_player.bet:
                                 current_player.bet = current_player.bet * 2
                                 game.deck = game.get_card_func(game, current_player)
                                 current_player.show_cards(screen)
@@ -364,14 +371,15 @@ def dealer_card_screen(game, screen, buttons):
     game.draw_screen = check_results_screen
 
 
-def blackjack(game):
+def blackjack(game, screen, buttons):
     while True:
         # Call the game class to display the current frame
         game()
         for event in pygame.event.get():
             exit_pygame(event)
             current_screen = game.draw_screen
-            current_player = game.get_current_player()
+            if current_screen != restart_game_screen:
+                current_player = game.get_current_player()
 
             # Home Screen
             if current_screen == home_screen:
@@ -408,7 +416,8 @@ def blackjack(game):
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
 
-                elif game.buttons["double"].button_pressed(event):
+                elif game.buttons["double"].button_pressed(event) and len(current_player.cards) == 2 \
+                        and current_player.balance >= 2*current_player.bet:
                     current_player.bet = current_player.bet * 2
                     game.deck = game.get_card_func(game, current_player)
                     current_player.show_cards(screen)
@@ -422,7 +431,8 @@ def blackjack(game):
             elif current_screen == check_results_screen:
                 if game.buttons["again"].button_pressed(event):
                     game.play_again()
-                    game.draw_screen = bets_screen
+                    if game.draw_screen != restart_game_screen:
+                        game.draw_screen = bets_screen
 
                 elif game.buttons["exit"].button_pressed(event):
                     game.play_again()
@@ -430,6 +440,7 @@ def blackjack(game):
 
             # Restart Game Screen
             elif current_screen == restart_game_screen:
+                game.play_again()
                 if buttons["restart"].button_pressed(event):
                     return None
                 elif buttons["exit"].button_pressed(event):
@@ -459,7 +470,7 @@ if __name__ == '__main__':
     playing = True
     while playing:
         game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
-        remaining_players = blackjack(game)
+        remaining_players = blackjack(game, screen, buttons)
         if remaining_players is None:
             print("restarting game")
         else:
