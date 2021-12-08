@@ -1,9 +1,9 @@
 import pygame
 from Deck import load_random_deck, get_random_card
 from gestures_mediapipe import LandmarkGetter
-from Player import Player
+from Player import Player, Library
 from Camera import get_camera_card
-from Style import font_big, GREEN
+from Style import font_big, GREEN, BLACK
 
 
 def legefunctie():
@@ -18,6 +18,26 @@ def legefunctie_3(player):
     print("ga naar", player)
 
 
+def home_screen_hl(game, screen, buttons):
+    title_surf = font_big.render('Higher Lower', False, BLACK)
+    screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
+    buttons["start"].draw(screen)
+    buttons["rules"].draw(screen)
+    buttons["exit"].draw(screen)
+
+
+def home_screen_bj(game, screen, buttons):
+    Blackjack_surf = font_big.render('Blackjack', False, BLACK)
+    screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
+    H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
+    S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
+    screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
+    screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
+    buttons["start"].draw(screen)
+    buttons["rules"].draw(screen)
+    buttons["exit"].draw(screen)
+
+
 def restart_game_screen(game, screen, buttons):
     pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
     game_over_surf = font_big.render('Game Over', False, (255, 0, 0))
@@ -27,7 +47,7 @@ def restart_game_screen(game, screen, buttons):
 
 
 class Game:
-    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp):
+    def __init__(self, screen, draw_screen, players, buttons, camera, with_rasp, with_linking):
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.players = list(players)
@@ -37,12 +57,13 @@ class Game:
         self.cap_gest = None
         self.cap_card = None
         self.buttons = buttons
-        self.library = library
+        self.library = Library()
         self.landmarkgetter = LandmarkGetter()
         self.gest_time = 0
         self.cameracooldown = True
         self.deck = load_random_deck()
         self.first_card = True
+        self.with_linking = with_linking
 
         if camera:
             self.get_card_func = get_camera_card
@@ -76,13 +97,12 @@ class Game:
 
 
 class Blackjack(Game):
-    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp, with_linking):
-        super().__init__(screen, draw_screen, players, buttons, library, camera, with_rasp)
+    def __init__(self, screen, players, buttons, camera, with_rasp, with_linking):
+        super().__init__(screen, home_screen_bj, players, buttons, camera, with_rasp, with_linking)
         self.dealer = Player('Dealer', 0, 0)
         self.previous_player = 0
         self.last_fingers = None
         self.last_option = None
-        self.with_linking = with_linking
 
     def play_again(self):
         self.filter_players()
@@ -119,8 +139,8 @@ class Blackjack(Game):
 
 
 class Higherlower(Game):
-    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp):
-        super().__init__(screen, draw_screen, players, buttons, library, camera, with_rasp)
+    def __init__(self, screen, players, buttons, camera, with_rasp, with_linking):
+        super().__init__(screen, home_screen_hl, players, buttons, camera, with_rasp, with_linking)
         self.last_index = None
 
     def play_again(self):

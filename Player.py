@@ -190,7 +190,6 @@ class Player:
 
     def adjust_balance(self, dealer_score, game, blackjack=False):
         self.balance += int(self.bet * self.results(dealer_score, game, blackjack)[1])
-        print(self.balance, self.name)
         self.surf_balance = self.font_small.render(f'Balance:{int(self.balance)}', False, (10, 10, 10))
 
     def draw_bet_buttons(self, window, bet_buttons):

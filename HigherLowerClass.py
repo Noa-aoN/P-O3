@@ -1,11 +1,11 @@
 import pygame
+from time import perf_counter
 from Button import Button, exit_pygame
-from Game import Higherlower
-from Player import Player, Library
-from Style import font_big, font, WHITE, BLACK, GREEN, RED
+from Game import Higherlower, home_screen_hl
+from Player import Player
+from Style import font_big, font, WHITE, BLACK, GREEN
 from Camera import init_camera, opencv_to_pygame
 from BlackJackClass import get_landmark_list
-from time import perf_counter
 from gestures_mediapipe import check_index
 
 '''
@@ -25,12 +25,7 @@ def last_two_vals(player):
     return last_card.hl_value, current_card.hl_value
 
 
-def home_screen(game, screen, buttons):
-    title_surf = font_big.render('Higher Lower', False, BLACK)
-    screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
-    buttons["start"].draw(screen)
-    buttons["rules"].draw(screen)
-    buttons["exit"].draw(screen)
+
 
 
 def rules_screen(game, screen, buttons):
@@ -42,7 +37,6 @@ def rules_screen(game, screen, buttons):
         rules_surf = font.render(line, False, BLACK)
         screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 10 + i * 30)))
     f.close()
-
     buttons["exit"].draw(screen)
 
 
@@ -65,13 +59,12 @@ def playing_screen(game, screen, buttons):
 
     ret, img = game.cap_gest.read()
     landmarklist = game.landmarkgetter(img)
-    library = game.library
     active_button = None
     selected_button = None
     wrong = False
 
-    if player.name in library.libraryembeddings:
-        landmarklist, img = get_landmark_list(img, player, library, landmarklist, screen, game.landmarkgetter, player.number)
+    if player.name in game.library.libraryembeddings:
+        landmarklist, img = get_landmark_list(img, game, screen, landmarklist)
 
     if game.cameracooldown:
         if landmarklist:
@@ -135,7 +128,7 @@ def wrong_screen(game, screen, buttons):
     wrong_surf = font_big.render('Wrong!', False, BLACK)
     screen.blit(wrong_surf, wrong_surf.get_rect(midbottom=(600, 150)))
 
-    buttons["again"].draw(screen)
+    buttons["try"].draw(screen)
     buttons["next"].draw(screen)
 
 
@@ -148,23 +141,23 @@ def higherlower(game, screen, buttons):
             current_player = game.get_current_player()
 
             # Home Screen
-            if current_screen == home_screen:
+            if current_screen == home_screen_hl:
                 if buttons["start"].button_pressed(event):
                     game.draw_screen = playing_screen
                 elif buttons["rules"].button_pressed(event):
                     game.draw_screen = rules_screen
                 elif buttons["exit"].button_pressed(event):
-                    return players
+                    return game.players
 
             # Rules Screen
             elif current_screen == rules_screen:
                 if buttons["exit"].button_pressed(event):
-                    game.draw_screen = home_screen
+                    game.draw_screen = home_screen_hl
 
             # Playing Screen
             elif current_screen == playing_screen:
                 if buttons["exit"].button_pressed(event):
-                    game.draw_screen = home_screen
+                    game.draw_screen = home_screen_hl
                 elif buttons["higher"].button_pressed(event) or buttons["lower"].button_pressed(event):
                     game.give_card()
                     game.deck = game.get_card_func(game, current_player)
@@ -180,8 +173,8 @@ def higherlower(game, screen, buttons):
             # Wrong Screen
             elif current_screen == wrong_screen:
                 if buttons["exit"].button_pressed(event):
-                    game.draw_screen = home_screen
-                elif buttons["again"].button_pressed(event):
+                    game.draw_screen = home_screen_hl
+                elif buttons["try"].button_pressed(event):
                     game.play_again()
                     game.draw_screen = playing_screen
                 elif buttons["next"].button_pressed(event):
@@ -201,7 +194,7 @@ if __name__ == '__main__':
         "start": Button(BLACK, (550, 480), (100, 65), 'Play!'),
         "higher": Button(BLACK, (380, 250), (150, 60), 'Higher'),
         "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
-        "again": Button(BLACK, (480, 480), (240, 65), 'Play again?'),
+        "try": Button(BLACK, (480, 480), (240, 65), 'Try again'),
         "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
         "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
         "restart": Button(BLACK, (530, 260), (200, 65), 'Restart Game'),
@@ -209,9 +202,10 @@ if __name__ == '__main__':
     }
     camera = False
     with_rasp = False
+    with_linking = True
     playing = True
     while playing:
-        game = Higherlower(screen, home_screen, players, buttons, Library(), camera, with_rasp)
+        game = Higherlower(screen, players, buttons, camera, with_rasp, with_linking)
         remaining_players = higherlower(game, screen, buttons)
         if remaining_players is None:
             print("restarting game")
