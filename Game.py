@@ -63,7 +63,7 @@ class Game:
 
 
 class Blackjack(Game):
-    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp):
+    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp, with_linking):
         super().__init__(screen, draw_screen, players, buttons, library, camera)
         self.dealer = Player('Dealer', 0, 0)
         self.previous_player = 0
@@ -71,6 +71,8 @@ class Blackjack(Game):
         self.last_option = None
         self.first_card = True
         self.draw_screen = draw_screen
+
+        self.with_linking = with_linking
 
         if with_rasp:
             self.give_card = dcmotor_rotate
@@ -100,9 +102,7 @@ class Blackjack(Game):
             player.wants_card = False
 
     def show_each_player(self):
-        print(self.players, "1")
         for player in self.players:
-            print(player, "4")
             player.show_name(self.screen)
             player.show_cards(self.screen)
             player.display_score_bj(self.screen)

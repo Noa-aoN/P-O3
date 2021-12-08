@@ -44,6 +44,7 @@ def main_menu():
     }
     camera = False
     with_rasp = False
+    with_linking = False
 
     players = []
 
@@ -118,7 +119,7 @@ def main_menu():
                     playsound("Sounds/DroppingChips.wav")
                     print(players, "2")
                     while playing:
-                        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp)
+                        game = Blackjack(screen, home_screen, players, buttons, Library(), camera, with_rasp, with_linking)
                         remaining_players = blackjack(game, screen, buttons)
                         if remaining_players is not None:
                             playing = False
