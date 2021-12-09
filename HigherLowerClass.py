@@ -57,7 +57,7 @@ def bets_screen(game, screen, buttons):
     ret, img = game.cap_gest.read()
 
     if current_player.wants_bet:
-        current_player.draw_bet_buttons(screen, buttons["bet"])
+        current_player.draw_bet_buttons(screen, game.buttons["bet"])
 
         landmarklist = game.landmarkgetter(img)
         if current_player.name in game.library.libraryembeddings:
@@ -70,7 +70,7 @@ def bets_screen(game, screen, buttons):
                     bal = current_player.balance
                     if bal >= amt_fingers * 1000 and game.last_fingers == amt_fingers:
                         print("Confirmed")
-                        current_button = buttons["bet"][amt_fingers - 1][1]
+                        current_button = game.buttons["bet"][amt_fingers - 1][1]
                         current_button.set_color((255, 0, 0))
                         current_button.draw(screen)
                         pygame.display.update()
@@ -81,11 +81,11 @@ def bets_screen(game, screen, buttons):
                     elif game.last_fingers != amt_fingers:
                         print(f"{ges_name}", end="->")
                         if game.last_fingers:
-                            last_button = buttons["bet"][game.last_fingers - 1][1]
+                            last_button = game.buttons["bet"][game.last_fingers - 1][1]
                             last_button.set_color(BLACK)
                             last_button.draw(screen)
 
-                    current_button = buttons["bet"][amt_fingers - 1][1]
+                    current_button = game.buttons["bet"][amt_fingers - 1][1]
                     current_button.set_color(WHITE)
                     current_button.draw(screen)
 
@@ -98,7 +98,7 @@ def bets_screen(game, screen, buttons):
         if not current_player.wants_restart:
             game.next_player()
         game.last_fingers = None
-        for _, button in buttons["bet"]:
+        for _, button in game.buttons["bet"]:
             button.set_color(BLACK)
 
     img = opencv_to_pygame(img)

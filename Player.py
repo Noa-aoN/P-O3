@@ -89,7 +89,7 @@ class Player:
         self.surf_balance = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
         window.blit(self.surf, self.surf.get_rect(topleft=(45 + 290 * self.number, 520)))
         window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(45 + 290 * self.number, 550)))
-        bet_surf = self.font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
+        bet_surf = font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
         window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
 
     def show_prize_money(self, window):
