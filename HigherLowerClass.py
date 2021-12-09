@@ -1,17 +1,14 @@
 import pygame
-<<<<<<< HEAD
 from time import perf_counter, sleep
 from Button import Button, exit_pygame
 from Game import Higherlower, home_screen_hl, restart_game_screen
 from Player import Player
 from Style import font_big, font, font_small, WHITE, BLACK, GREEN
-=======
 from time import perf_counter
 from Button import exit_pygame
 from Game import Higherlower, home_screen_hl
 from Player import Player
 from Style import font_huge, font, WHITE, BLACK, GREEN
->>>>>>> 30e91cb017348e5955a7e38e3fadde517ce010e1
 from Camera import init_camera, opencv_to_pygame
 from gestures_mediapipe import check_index, check_all_fingers, hand_position
 from mediapipe_pose import linkfacewithhand

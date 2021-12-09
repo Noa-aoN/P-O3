@@ -8,8 +8,6 @@ import os
 from Style import BLACK, WHITE, font, font_small, font_big
 
 
-
-
 def Library():
     if os.path.exists(r"C:\Users"):
         projectdirectory = local_directory(r"C:\Users")
@@ -69,8 +67,8 @@ class Player:
         self.bet = 0
         self.cards = []
         self.number = player_number
-        self.surf = self.font.render(self.name, False, (10, 10, 10))
-        self.surf_balance = self.font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
+        self.surf = font.render(self.name, False, (10, 10, 10))
+        self.surf_balance = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
         self.wants_card = wants_card
         self.wants_bet = wants_bet
         self.prev_prize = 0
@@ -88,14 +86,14 @@ class Player:
 
     def show_name(self, window):
         pygame.draw.rect(window, (114, 200, 114), (40 + 290 * self.number, 370, 250, 220), 0, 3)
-        self.surf_balance = self.font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
+        self.surf_balance = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
         window.blit(self.surf, self.surf.get_rect(topleft=(45 + 290 * self.number, 520)))
         window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(45 + 290 * self.number, 550)))
         bet_surf = self.font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
         window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
 
     def show_prize_money(self, window):
-        surf_prize_money = self.font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
+        surf_prize_money = font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
         window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * self.number, 550)))
 
     def set_balance(self, new_balance):
