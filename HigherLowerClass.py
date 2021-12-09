@@ -233,7 +233,7 @@ def higherlower(game):
 
             # Home Screen
             if current_screen == home_screen_hl:
-                if buttons["start"].button_pressed(event):
+                if game.buttons["start"].button_pressed(event):
                     game.draw_screen = bets_screen
                 elif game.buttons["rules"].button_pressed(event):
                     game.draw_screen = rules_screen

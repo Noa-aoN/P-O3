@@ -69,8 +69,8 @@ class Player:
         self.number = player_number
         self.surf = font.render(self.name, False, (10, 10, 10))
         self.surf_balance = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
-        self.wants_card = wants_card
-        self.wants_bet = wants_bet
+        self.wants_card = True
+        self.wants_bet = True
         self.prev_prize = 0
         self.prize_money = 0
         self.prize_money_coefs = [25/3, 37.5, 475/6]  # a*x^3 + b*x^2 + c*x for a bet of 1k
