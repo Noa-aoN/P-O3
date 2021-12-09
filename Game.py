@@ -142,12 +142,31 @@ class Higherlower(Game):
     def __init__(self, screen, players, buttons, camera, with_rasp, with_linking):
         super().__init__(screen, home_screen_hl, players, buttons, camera, with_rasp, with_linking)
         self.last_index = None
+        self.last_fingers = None
 
-    def play_again(self):
+    def show_each_player(self):
+        for player in self.players:
+            player.show_name(self.screen)
+            player.show_cards(self.screen)
+            player.display_score_bj(self.screen)
+
+    def play_again(self, cur_player=None):
         self.deck = load_random_deck()
         self.gest_time = 0
         self.cameracooldown = True
         self.first_card = True
-        for player in self.players:
-            player.cards = []
-            player.bet = 0
+        if cur_player is not None:
+            if cur_player.balance < 1000:
+                cur_player.wants_bet = False
+            else:
+                cur_player.wants_bet = True
+            cur_player.cards = []
+            cur_player.bet = 0
+            cur_player.prize_money = 0
+        else:
+            for player in self.players:
+                player.wants_bet = True
+                player.cards = []
+                player.bet = 0
+                player.prize_money = 0
+

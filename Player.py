@@ -69,17 +69,25 @@ class Player:
         self.surf_balance = self.font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
         self.wants_card = wants_card
         self.wants_bet = wants_bet
+        self.prev_prize = 0
+        self.prize_money = 0
+        self.prize_money_coefs = [25/3, 37.5, 475/6]  # a*x^3 + b*x^2 + c*x for a bet of 1k
+        self.wants_restart = False
 
     def __repr__(self):
         return self.name
 
     def show_name(self, window):
         pygame.draw.rect(window, (114, 200, 114), (40 + 290 * self.number, 370, 250, 220), 0, 3)
-
+        self.surf_balance = self.font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
         window.blit(self.surf, self.surf.get_rect(topleft=(45 + 290 * self.number, 520)))
         window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(45 + 290 * self.number, 550)))
         bet_surf = self.font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
         window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
+
+    def show_prize_money(self, window):
+        surf_prize_money = self.font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
+        window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * self.number, 550)))
 
     def set_balance(self, new_balance):
         self.balance = new_balance
@@ -199,3 +207,14 @@ class Player:
         for bet_amount, button in bet_buttons:
             if self.balance >= bet_amount:
                 button.draw(window)
+
+    def calculate_prize_money(self):
+        factor = self.bet/1000
+        coefs = list(map(lambda y: y*factor, self.prize_money_coefs))
+        x = len(self.cards)-1
+        self.prize_money = int(coefs[0]*(x**3) - coefs[1]*(x**2) + coefs[2]*x) + self.prev_prize
+
+    def reset_money(self):
+        self.bet = 0
+        self.prize_money = 0
+        self.prev_prize = 0

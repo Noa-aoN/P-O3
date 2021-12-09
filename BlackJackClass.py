@@ -77,9 +77,6 @@ def get_landmark_list(image, game, screen, landmarklist):
     return templandmarklist, image
 
 
-
-
-
 def rules_screen(game, screen, buttons):
     buttons["exit"].draw(screen)
     f = open('blackjackrules.txt', 'r')
