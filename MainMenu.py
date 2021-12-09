@@ -5,13 +5,12 @@ from Game import Blackjack, Higherlower
 from BlackJackClass import blackjack
 from HigherLowerClass import higherlower
 from AudioPlay import playsound
-from Player import Player, add_player, Library
+from Player import add_player, Library
 from localdirectory import local_directory
 from facenet_facerecognition import create_folder
 from facenet_facerecognition import clear_folder_contents
 from facenet_facerecognition import PlayerRegistration
-from gestures_mediapipe import LandmarkGetter
-from Style import BLACK, font_big, font
+from Style import BLACK, GREEN, font_huge, font
 """
 to do:
 -scherm gesture recognition weergeven
@@ -23,53 +22,28 @@ def main_menu():
     screen = pygame.display.set_mode((1200, 600))
     clock = pygame.time.Clock()
 
-    bj_button = Button((0, 0, 0), (300, 480), (180, 65), 'Blackjack')
-    hl_button = Button((0, 0, 0), (550, 480), (260, 65), 'Higher Lower')
-    newpl_button = Button((0, 0, 0), (1080, 20), (100, 25), 'New Players', 'small')
-    skip_button = Button((0, 0, 0), (650, 340), (70, 25), 'Skip', 'small')
-
-    buttons = {
-        "start": Button(BLACK, (550, 480), (100, 65), 'Play!'),
-        "hit": Button(BLACK, (330, 250), (110, 60), 'Hit'),
-        "double": Button(BLACK, (475, 250), (250, 60), 'Double Down'),
-        "stand": Button(BLACK, (770, 250), (110, 60), 'Stand'),
-        "again": Button(BLACK, (530, 260), (200, 65), 'Play again!'),
-        "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
-        "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
-        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
-        "restart": Button(BLACK, (480, 260), (250, 65), 'Restart Game'),
-        "higher": Button(BLACK, (380, 250), (150, 60), 'Higher'),
-        "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
-        "try": Button(BLACK, (480, 480), (240, 65), 'Try again'),
-        "next": Button(BLACK, (800, 480), (240, 65), 'Next player')
-    }
-    camera = False
-    with_rasp = False
-    with_linking = False
+    bj_button = Button(BLACK, (350, 320), (180, 65), 'Blackjack')
+    hl_button = Button(BLACK, (600, 320), (260, 65), 'Higher Lower')
+    newpl_button = Button(BLACK, (1080, 20), (100, 25), 'New Players', 'small')
+    skip_button = Button(BLACK, (650, 340), (70, 25), 'Skip', 'small')
+    yes_button = Button(BLACK, (460, 300), (55, 30), 'Yes', 'small')
+    no_button = Button(BLACK, (700, 300), (55, 30), 'No', 'small')
 
     players = []
-
-    choose_game = font_big.render('Choose Game', False, (0, 0, 0))
-
     library = Library()
-
-    libraryexists_surf = font.render('A face library already exists for this player. Do you want to replace it?', False, (0, 0, 0))
-    newlibrary_surf = font.render('A face library doesnt yet exists for this player. Do you want to create one?', False, (0, 0, 0))
     playeralreadyregistered = None
-    yes_button = Button((0, 0, 0), (460, 300), (55, 30), 'Yes', 'small')
-    no_button = Button((0, 0, 0), (700, 300), (55, 30), 'No', 'small')
-
     addplayers = True
     bool = False
     name_text = ''
+
     while True:
         pygame.display.update()
-        screen.fill((31, 171, 57))
+        screen.fill(GREEN)
         if addplayers:
             if playeralreadyregistered is None:
-                if len(players) > 0:
+                if players:
                     skip_button.draw(screen)
-                bool, name_text = add_player(screen, players, skip_button, bool, name_text, library)
+                bool, name_text = add_player(screen, players, skip_button, bool, name_text)
 
                 # library creation
                 if not bool and name_text is not None and len(name_text) > 0 and name_text in os.listdir(library.directory) and \
@@ -78,35 +52,36 @@ def main_menu():
                 elif not bool and name_text is not None and len(name_text) > 0:
                     playeralreadyregistered = False
             else:
+                yes_button.draw(screen)
+                no_button.draw(screen)
                 if playeralreadyregistered:
-                    screen.blit(libraryexists_surf, libraryexists_surf.get_rect(topleft=(290, 250)))
-                    yes_button.draw(screen)
-                    no_button.draw(screen)
+                    library_text = 'A face library already exists for this player. Do you want to replace it?'
                     for event in pygame.event.get():
                         if yes_button.button_pressed(event):
                             clear_folder_contents(os.path.join(library.directory, name_text))
                             library.registerplayer(name_text)
                             playeralreadyregistered = None
                             name_text = ''
-                        if no_button.button_pressed(event):
+                        elif no_button.button_pressed(event):
                             playeralreadyregistered = None
                             name_text = ''
                 else:
-                    screen.blit(newlibrary_surf, newlibrary_surf.get_rect(topleft=(290, 250)))
-                    yes_button.draw(screen)
-                    no_button.draw(screen)
+                    library_text = 'A face library doesnt yet exists for this player. Do you want to create one?'
                     for event in pygame.event.get():
                         if yes_button.button_pressed(event):
                             library.registerplayer(name_text)
                             playeralreadyregistered = None
                             name_text = ''
-                        if no_button.button_pressed(event):
+                        elif no_button.button_pressed(event):
                             playeralreadyregistered = None
                             name_text = ''
+                library_surf = font.render(library_text, False, BLACK)
+                screen.blit(library_surf, library_surf.get_rect(topleft=(290, 250)))
 
             if len(players) == 4 or bool == 'skip':
                 addplayers = False
         else:
+            choose_game = font_huge.render('Choose Game', False, BLACK)
             screen.blit(choose_game, choose_game.get_rect(midbottom=(600, 150)))
             bj_button.draw(screen)
             hl_button.draw(screen)
@@ -118,8 +93,8 @@ def main_menu():
                     playing = True
                     playsound("Sounds/DroppingChips.wav")
                     while playing:
-                        game = Blackjack(screen, players, buttons, camera, with_rasp, with_linking)
-                        remaining_players = blackjack(game, screen, buttons)
+                        game = Blackjack(screen, players)
+                        remaining_players = blackjack(game)
                         if remaining_players is not None:
                             playing = False
 
@@ -127,8 +102,8 @@ def main_menu():
                     playing = True
                     playsound("Sounds/DroppingChips.wav")
                     while playing:
-                        game = Higherlower(screen, players, buttons, camera, with_rasp, with_linking)
-                        remaining_players = higherlower(game, screen, buttons)
+                        game = Higherlower(screen, players)
+                        remaining_players = higherlower(game)
                         if remaining_players is not None:
                             playing = False
                 elif newpl_button.button_pressed(event):

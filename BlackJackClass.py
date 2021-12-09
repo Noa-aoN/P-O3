@@ -1,14 +1,14 @@
 import pygame
-import cv2
+from cv2 import rectangle
 from time import sleep, perf_counter
-from Button import Button, exit_pygame
+from Button import exit_pygame
 from Player import Player
 from Game import Blackjack, home_screen_bj, restart_game_screen
 from AudioPlay import playsound
 from Camera import init_camera, opencv_to_pygame
 from mediapipe_pose import linkfacewithhand
 from gestures_mediapipe import check_all_fingers, check_option, hand_position
-from Style import font_big, font, font_rules, font_small, WHITE, BLACK, GREEN
+from Style import font, font_small, WHITE, BLACK, GREEN, RED
 
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
@@ -21,8 +21,6 @@ To DO:
 - Entering starting balance.
 - ...
 '''
-
-RED = (0, 0, 255)
 
 
 def face_gest_crop(img, game, facecoords, handcoords):
@@ -53,12 +51,11 @@ def get_landmark_list(image, game, screen, landmarklist):
     if facecoords := game.library.searchplayer(current_player.name, image):
         x, y, w, h = facecoords[0]
         detect_text = 'Player Recognized'
-        cv2.rectangle(image, (x, y), (x + w, y + h),
-                      (0, 0, 255), 7)
+        rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 7)
     else:
         detect_text = 'Player Not Found'
 
-    detect_surf = font_small.render(detect_text, False, (255, 0, 0))
+    detect_surf = font_small.render(detect_text, False, RED)
     screen.blit(detect_surf, detect_surf.get_rect(topleft=(45 + 290 * current_player.number, 400)))
 
     templandmarklist = []
@@ -83,7 +80,7 @@ def rules_screen(game, screen, buttons):
     content = f.read()
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
-        rules_surf = font_rules.render(line, False, BLACK)
+        rules_surf = font_small.render(line, False, BLACK)
         screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 3 + i * 12)))
     f.close()
 
@@ -197,9 +194,6 @@ def deal_cards_screen(game, screen, buttons):
     if game.dealer.value_count_bj() == 21:
         game.draw_screen = check_results_screen
     else:
-        for player in game.players:
-            player.wants_card = True  # TODO in de class Player aanpassen naar True
-            # maar vereukt nu de gewonen Blackjack
         print("Playing Screen")
         game.draw_screen = playing_screen
 
@@ -229,11 +223,13 @@ def playing_screen(game, screen, buttons):
         game.cameracooldown = True
 
     if current_player.wants_card:
-        if current_player.value_count_bj() == 'bust':
-            # TODO add playsound
+        if current_player.value_count_bj() == 0:
+            print(f"{current_player} Busted")
+            playsound("Sounds/Bust.wav")
             current_player.wants_card = False
 
         elif current_player.value_count_bj() == 21:
+            print(f"{current_player} got Blackjack")
             playsound("Sounds/Applause.wav")
             current_player.wants_card = False
 
@@ -305,6 +301,7 @@ def playing_screen(game, screen, buttons):
     screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
     if all([not player.wants_card for player in game.players]):
+        print("Dealer Cards Screen")
         game.draw_screen = dealer_card_screen
 
 
@@ -353,11 +350,12 @@ def dealer_card_screen(game, screen, buttons):
     game.draw_screen = check_results_screen
 
 
-def blackjack(game, screen, buttons):
+def blackjack(game):
     while True:
         # Call the game class to display the current frame
         game()
-        templist = list(filter(lambda player: player.balance >= 1000, game.players))
+        templist = list(filter(lambda player: player, game.players))
+        screen = game.screen
         for event in pygame.event.get():
             exit_pygame(event)
             current_screen = game.draw_screen
@@ -372,6 +370,33 @@ def blackjack(game, screen, buttons):
                     game.draw_screen = rules_screen
                 elif game.buttons["start"].button_pressed(event):
                     game.draw_screen = bets_screen
+                elif game.buttons["cam"].button_pressed(event):
+                    game.cam = not game.cam
+                    print("camera", game.cam)
+                    if game.cam:
+                        game.buttons["cam"].set_color(WHITE)
+                    else:
+                        game.buttons["cam"].set_color(BLACK)
+                    #game.buttons["cam"].draw(screen)
+                    #pygame.display.update()
+                elif game.buttons["rasp"].button_pressed(event):
+                    game.rasp = not game.rasp
+                    print("raspberry pi", game.rasp)
+                    if game.rasp:
+                        game.buttons["rasp"].set_color(WHITE)
+                    else:
+                        game.buttons["rasp"].set_color(BLACK)
+                    #game.buttons["rasp"].draw(screen)
+                    #pygame.display.update()
+                elif game.buttons["link"].button_pressed(event):
+                    game.with_linking = not game.with_linking
+                    print("face linking", game.with_linking)
+                    if game.with_linking:
+                        game.buttons["link"].set_color(WHITE)
+                    else:
+                        game.buttons["link"].set_color(BLACK)
+                    #game.buttons["link"].draw(screen)
+                    #pygame.display.update()
                 elif game.buttons["exit"].button_pressed(event):
                     return game.players
 
@@ -426,12 +451,12 @@ def blackjack(game, screen, buttons):
             # Restart Game Screen
             elif current_screen == restart_game_screen:
                 game.play_again()
-                if buttons["restart"].button_pressed(event):
+                if game.buttons["restart"].button_pressed(event):
                     for i in game.players:
                         i.balance = 10000
                     game.draw_screen = bets_screen
                     return None
-                elif buttons["exit"].button_pressed(event):
+                elif game.buttons["exit"].button_pressed(event):
                     return game.players
 
 
@@ -442,28 +467,10 @@ if __name__ == '__main__':
     names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
     players = [Player(name, 10000, i) for i, name in enumerate(names)]
 
-    buttons = {
-        "start": Button(BLACK, (550, 480), (100, 65), 'Play!'),
-        "hit": Button(BLACK, (330, 250), (110, 60), 'Hit'),
-        "double": Button(BLACK, (475, 250), (250, 60), 'Double Down'),
-        "stand": Button(BLACK, (770, 250), (110, 60), 'Stand'),
-        "again": Button(BLACK, (530, 260), (200, 65), 'Play again!'),
-        "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
-        "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
-        "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
-        "restart": Button(BLACK, (530, 260), (200, 65), 'Restart Game'),
-        "higher": Button(BLACK, (380, 250), (150, 60), 'Higher'),
-        "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
-        "try": Button(BLACK, (480, 480), (240, 65), 'Try again'),
-        "next": Button(BLACK, (800, 480), (240, 65), 'Next player')
-    }
-    camera = False
-    with_rasp = False
-    with_linking = True
     playing = True
     while playing:
-        game = Blackjack(screen, players, buttons, camera, with_rasp, with_linking)
-        remaining_players = blackjack(game, screen, buttons)
+        game = Blackjack(screen, players)
+        remaining_players = blackjack(game)
         if remaining_players is None:
             print("restarting game")
         else:
