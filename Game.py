@@ -3,7 +3,8 @@ from Deck import load_random_deck, get_random_card
 from gestures_mediapipe import LandmarkGetter
 from Player import Player, Library
 from Camera import get_camera_card
-from Style import font_big, GREEN, BLACK
+from Style import font_huge, GREEN, BLACK
+from Button import common_buttons, hl_buttons, bj_buttons
 
 
 def legefunctie():
@@ -19,35 +20,41 @@ def legefunctie_3(player):
 
 
 def home_screen_hl(game, screen, buttons):
-    title_surf = font_big.render('Higher Lower', False, BLACK)
+    title_surf = font_huge.render('Higher Lower', False, BLACK)
     screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
     buttons["start"].draw(screen)
+    buttons["cam"].draw(screen)
+    buttons["rasp"].draw(screen)
+    buttons["link"].draw(screen)
     buttons["rules"].draw(screen)
     buttons["exit"].draw(screen)
 
 
 def home_screen_bj(game, screen, buttons):
-    Blackjack_surf = font_big.render('Blackjack', False, BLACK)
+    Blackjack_surf = font_huge.render('Blackjack', False, BLACK)
     screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
     H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
     S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
     screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
     screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
     buttons["start"].draw(screen)
+    buttons["cam"].draw(screen)
+    buttons["rasp"].draw(screen)
+    buttons["link"].draw(screen)
     buttons["rules"].draw(screen)
     buttons["exit"].draw(screen)
 
 
 def restart_game_screen(game, screen, buttons):
     pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
-    game_over_surf = font_big.render('Game Over', False, (255, 0, 0))
+    game_over_surf = font_huge.render('Game Over', False, (255, 0, 0))
     screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
     buttons["exit"].draw(screen)
     buttons["restart"].draw(screen)
 
 
 class Game:
-    def __init__(self, screen, draw_screen, players, buttons, camera, with_rasp, with_linking):
+    def __init__(self, screen, players, draw_screen, buttons):
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.players = list(players)
@@ -63,27 +70,38 @@ class Game:
         self.cameracooldown = True
         self.deck = load_random_deck()
         self.first_card = True
-        self.with_linking = with_linking
-
-        if camera:
-            self.get_card_func = get_camera_card
-        else:
-            self.get_card_func = get_random_card
-
-        if with_rasp:
-            self.give_card = dcmotor_rotate
-            self.rotate_fromto_player = servo_rotate_fromto
-            self.rotate_to = servo_rotate
-        else:
-            self.give_card = legefunctie
-            self.rotate_fromto_player = legefunctie_2
-            self.rotate_to = legefunctie_3
+        self.with_linking = False
+        self.cam = False
+        self.rasp = False
 
     def __call__(self):
         self.screen.fill(GREEN)
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
         self.clock.tick(60)
+
+    def get_card_func(self, player):
+        if self.cam:
+            return get_camera_card(self, player)
+        return get_random_card(self, player)
+
+    def give_card(self):
+        if self.rasp:
+            dcmotor_rotate()
+        else:
+            legefunctie()
+
+    def rotate_fromto_player(self, player1, player2):
+        if self.rasp:
+            servo_rotate_fromto(player1, player2)
+        else:
+            legefunctie_2(player1, player2)
+
+    def rotate_to(self, player):
+        if self.rasp:
+            servo_rotate(player)
+        else:
+            legefunctie_3(player)
 
     def get_current_player(self):
         return self.players[self.player_index]
@@ -97,8 +115,8 @@ class Game:
 
 
 class Blackjack(Game):
-    def __init__(self, screen, players, buttons, camera, with_rasp, with_linking):
-        super().__init__(screen, home_screen_bj, players, buttons, camera, with_rasp, with_linking)
+    def __init__(self, screen, players):
+        super().__init__(screen, players, home_screen_bj, dict(common_buttons, **bj_buttons))
         self.dealer = Player('Dealer', 0, 0)
         self.previous_player = 0
         self.last_fingers = None
@@ -129,7 +147,7 @@ class Blackjack(Game):
             player.display_score_bj(self.screen)
 
     def filter_players(self):
-        self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
+        self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)
             self.draw_screen = restart_game_screen
@@ -139,8 +157,8 @@ class Blackjack(Game):
 
 
 class Higherlower(Game):
-    def __init__(self, screen, players, buttons, camera, with_rasp, with_linking):
-        super().__init__(screen, home_screen_hl, players, buttons, camera, with_rasp, with_linking)
+    def __init__(self, screen, players):
+        super().__init__(screen, players, home_screen_hl, dict(common_buttons, **hl_buttons))
         self.last_index = None
 
     def play_again(self):
