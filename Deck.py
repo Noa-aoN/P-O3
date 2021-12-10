@@ -70,8 +70,7 @@ def get_random_card(game, player):
     j = SUITS.index(suit)
 
     player.add_card(Card(0, 0, 0, 0, 0, i, j))
-
-    return deck
+    game.deck = deck
 
 
 def get_random_card_2(deck, player):

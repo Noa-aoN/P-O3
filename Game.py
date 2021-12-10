@@ -1,44 +1,80 @@
 import pygame
 from Deck import load_random_deck, get_random_card
 from gestures_mediapipe import LandmarkGetter
-from Player import Player
+from Player import Player, Library
 from Camera import get_camera_card
-
-GREEN = (31, 171, 57)
-
-
-def legefunctie():
-    print("geef nieuwe kaart")
+from Style import font_huge, GREEN, BLACK, WHITE, BLUE
+from Button import common_buttons, hl_buttons, bj_buttons
 
 
-def legefunctie_2(previous_player, player):
-    print("ga van", previous_player, "naar", player)
+def home_screen_hl(game, screen, buttons):
+    title_surf = font_huge.render('Higher Lower', False, BLACK)
+    screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
+    # TODO mooie foto zoeken/maken
+    for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
+        if option:
+            game.buttons[name].set_color(BLUE)
+        else:
+            game.buttons[name].set_color(BLACK)
+
+    buttons["start"].draw(screen)
+    buttons["cam"].draw(screen)
+    buttons["rasp"].draw(screen)
+    buttons["link"].draw(screen)
+    buttons["rules"].draw(screen)
+    buttons["exit"].draw(screen)
 
 
-def legefunctie_3(player):
-    print("ga naar", player)
+def home_screen_bj(game, screen, buttons):
+    Blackjack_surf = font_huge.render('Blackjack', False, BLACK)
+    screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
+    H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
+    S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
+    screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
+    screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
+
+    for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
+        if option:
+            game.buttons[name].set_color(BLUE)
+        else:
+            game.buttons[name].set_color(BLACK)
+
+    buttons["start"].draw(screen)
+    buttons["cam"].draw(screen)
+    buttons["rasp"].draw(screen)
+    buttons["link"].draw(screen)
+    buttons["rules"].draw(screen)
+    buttons["exit"].draw(screen)
+
+
+def restart_game_screen(game, screen, buttons):
+    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
+    game_over_surf = font_huge.render('Game Over', False, (255, 0, 0))
+    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
+    buttons["exit"].draw(screen)
+    buttons["restart"].draw(screen)
 
 
 class Game:
-    def __init__(self, screen, draw_screen, players, buttons, library, camera):
+    def __init__(self, screen, players, draw_screen, buttons):
         self.screen = screen
         self.clock = pygame.time.Clock()
-        self.players = players
+        self.players = list(players)
+        self.player_memory = list(players)
         self.player_index = 0
         self.draw_screen = draw_screen
         self.cap_gest = None
         self.cap_card = None
         self.buttons = buttons
-        self.library = library
+        self.library = Library()
         self.landmarkgetter = LandmarkGetter()
         self.gest_time = 0
         self.cameracooldown = True
         self.deck = load_random_deck()
-
-        if camera:
-            self.get_card_func = get_camera_card
-        else:
-            self.get_card_func = get_random_card
+        self.first_card = True
+        self.with_linking = False
+        self.cam = False
+        self.rasp = False
 
     def __call__(self):
         self.screen.fill(GREEN)
@@ -46,27 +82,44 @@ class Game:
         pygame.display.update()
         self.clock.tick(60)
 
+    def get_card_func(self, player):
+        if self.cam:
+            return get_camera_card(self, player)
+        return get_random_card(self, player)
+
+    def give_card(self):
+        print("geef nieuwe kaart")
+        if self.rasp:
+            dcmotor_rotate()
+
+    def rotate_fromto_player(self, previous_player, player):
+        print("ga van", previous_player, "naar", player)
+        if self.rasp:
+            servo_rotate_fromto(previous_player, player)
+
+    def rotate_to(self, player):
+        print("ga naar", player)
+        if self.rasp:
+            servo_rotate(player)
+
     def get_current_player(self):
         return self.players[self.player_index]
 
+    def next_player(self):
+        if self.player_index == len(self.players) - 1:
+            self.player_index = 0
+        else:
+            self.player_index += 1
+        print("current player " + str(self.player_index))
+
 
 class Blackjack(Game):
-    def __init__(self, screen, draw_screen, players, buttons, library, camera, with_rasp):
-        super().__init__(screen, draw_screen, players, buttons, library, camera)
+    def __init__(self, screen, players):
+        super().__init__(screen, players, home_screen_bj, dict(common_buttons, **bj_buttons))
         self.dealer = Player('Dealer', 0, 0)
         self.previous_player = 0
         self.last_fingers = None
         self.last_option = None
-        self.first_card = True
-
-        if with_rasp:
-            self.give_card = dcmotor_rotate
-            self.rotate_fromto_player = servo_rotate_fromto
-            self.rotate_to = servo_rotate
-        else:
-            self.give_card = legefunctie
-            self.rotate_fromto_player = legefunctie_2
-            self.rotate_to = legefunctie_3
 
     def play_again(self):
         self.filter_players()
@@ -84,7 +137,8 @@ class Blackjack(Game):
             player.cards = []
             player.bet = 0
             player.wants_bet = True
-            player.wants_card = False
+            player.wants_card = True
+            player.wants_card = True
 
     def show_each_player(self):
         for player in self.players:
@@ -103,18 +157,46 @@ class Blackjack(Game):
         else:
             self.player_index = 0
         print("current player "+ str(self.player_index))
+        self.players = list(filter(lambda player: player, self.players))
+        if not self.players:
+            self.players = list(self.player_memory)
+            self.draw_screen = restart_game_screen
 
     def everyone_bust(self):
-        everyone_busts = True
-        for player in self.players:
-            if player.value_count_bj() != 0:
-                everyone_busts = False
-        return everyone_busts
-        # TODO lijn hieronder zou hetzelfde moeten doen
-        # TODO not hier weghalen + bij de functie oproep
-        return not any([player.value_count_bj() != 0 for player in self.players])
+        return all([player.value_count_bj() == 0 for player in self.players])
 
 
 class Higherlower(Game):
-    def __init__(self, screen, draw_screen, players, buttons, library, camera):
-        super().__init__(screen, draw_screen, players, buttons, library, camera)
+    def __init__(self, screen, players):
+        super().__init__(screen, players, home_screen_hl, dict(common_buttons, **hl_buttons))
+        self.last_index = None
+        self.last_fingers = None
+
+    def show_each_player(self):
+        for player in self.players:
+            player.show_name(self.screen)
+            player.show_cards(self.screen)
+            player.display_score_bj(self.screen)
+
+    def play_again(self, cur_player=None):
+        self.deck = load_random_deck()
+        self.gest_time = 0
+        self.cameracooldown = True
+        self.first_card = True
+        if cur_player is not None:
+            if cur_player.balance < 1000:
+                cur_player.wants_bet = False
+            else:
+                cur_player.wants_bet = True
+            cur_player.cards = []
+            cur_player.bet = 0
+            cur_player.prize_money = 0
+        else:
+            for player in self.players:
+                if not player.balance < 1000:
+                    player.wants_bet = True
+                else:
+                    player.wants_bet = False
+                player.cards = []
+                player.bet = 0
+                player.prize_money = 0
