@@ -270,10 +270,10 @@ def check_results_screen(game, screen, buttons):
         if dealer_blackjack:
             player.adjust_balance(dealer_score, 'bj', dealer_blackjack)
 
-    not_everyone_busts = not game.everyone_bust()
+    # not_everyone_busts = not game.everyone_bust()
 
     game.dealer.show_cards(screen)
-    game.dealer.display_score_bj(screen, not_everyone_busts)
+    game.dealer.display_score_bj(screen)
 
 
 def dealer_card_screen(game, screen, buttons):
