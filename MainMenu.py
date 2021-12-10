@@ -6,10 +6,7 @@ from BlackJackClass import blackjack
 from HigherLowerClass import higherlower
 from AudioPlay import playsound
 from Player import add_player, Library
-from localdirectory import local_directory
-from facenet_facerecognition import create_folder
 from facenet_facerecognition import clear_folder_contents
-from facenet_facerecognition import PlayerRegistration
 from Style import BLACK, GREEN, font_huge, font
 """
 to do:
@@ -116,7 +113,7 @@ def main_menu():
                     name_text = ''
                     players = []
 
-        clock.tick(60)
+        clock.tick(20)
 
 
 if __name__ == '__main__':

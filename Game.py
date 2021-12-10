@@ -13,6 +13,8 @@ from Button import common_buttons, hl_buttons, bj_buttons
 def home_screen_hl(game, screen, buttons):
     title_surf = font_huge.render('Higher Lower', False, BLACK)
     screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
+    H = pygame.transform.rotozoom(pygame.image.load("Images/Arrows/arrow_two_with_backgr.jpg"), 0, 0.5)
+    screen.blit(pygame.transform.rotozoom(H, 0, 2), (530, 210))
     # TODO mooie foto zoeken/maken
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
         if option:
@@ -31,8 +33,8 @@ def home_screen_hl(game, screen, buttons):
 def home_screen_bj(game, screen, buttons):
     Blackjack_surf = font_huge.render('Blackjack', False, BLACK)
     screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
-    H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
-    S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
+    H = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Jack_Spades.png"), 0, 0.15)
+    S = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Hearts.png"), 0, 0.15)
     screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
     screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
 
@@ -83,7 +85,7 @@ class Game:
         self.screen.fill(GREEN)
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
-        self.clock.tick(60)
+        self.clock.tick(20)
 
     def get_card_func(self, player):
         if self.cam:
@@ -91,17 +93,17 @@ class Game:
         return get_random_card(self, player)
 
     def give_card(self):
-        print("geef nieuwe kaart")
+        #print("geef nieuwe kaart")
         if self.rasp:
             dcmotor_rotate()
 
     def rotate_fromto_player(self, previous_player, player):
-        print("ga van", previous_player, "naar", player)
+        #print("ga van", previous_player, "naar", player)
         if self.rasp:
             servo_rotate_fromto(previous_player, player)
 
     def rotate_to(self, player):
-        print("ga naar", player)
+        #print("ga naar", player)
         if self.rasp:
             servo_rotate(player)
 
@@ -113,7 +115,7 @@ class Game:
             self.player_index = 0
         else:
             self.player_index += 1
-        print("current player " + str(self.player_index))
+        #print("current player ok" + str(self.player_index))
 
 
 class Blackjack(Game):
@@ -159,7 +161,7 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
-        print("current player "+ str(self.player_index))
+        print("current player ok"+ str(self.player_index))
         self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)

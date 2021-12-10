@@ -7,7 +7,7 @@ from AudioPlay import playsound
 from face_with_hand_linking import get_landmark_list
 from gestures_mediapipe import check_all_fingers, check_option
 from Camera import init_camera, opencv_to_pygame
-from Style import font, font_small, WHITE, BLACK, GREEN, RED
+from Style import font, font_small, WHITE, BLACK, GREEN
 
 '''
 Bugs: 
@@ -94,7 +94,7 @@ def bets_screen(game, screen, buttons):
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
     screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
-    if all([not player.wants_bet for player in game.players]):
+    if all([not player.wants_bet for player in game.players]) and game.player_index == game.players[0].number:
         print("Loading Screen")
         game.draw_screen = deal_cards_screen
     if all([len(player.cards) == 2 for player in game.players]):
@@ -143,7 +143,7 @@ def deal_cards_screen(game, screen, buttons):
     assert len(game.dealer.cards) == 2
 
     # Zet de servo terug naar de eerste speler
-    print("RESET SERVO")  # Get Current Player fixen zodat
+    #print("RESET SERVO")  # Get Current Player fixen zodat
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
     game.previous_player = game.get_current_player().number
 
@@ -248,8 +248,8 @@ def playing_screen(game, screen, buttons):
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
     screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
-    if all([not player.wants_card for player in game.players]):
-        print("Dealer Cards Screen")
+    if all([not player.wants_card for player in game.players]) and game.player_index == game.players[0].number:
+        #print("Dealer Cards Screen")
         game.draw_screen = dealer_card_screen
 
 

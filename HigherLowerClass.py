@@ -180,10 +180,10 @@ def playing_screen(game, screen, buttons):
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 0.25)
     screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
-    player.show_name(screen)
-    player.show_cards(screen)
-    player.display_score_hl(screen)
-    player.show_prize_money(screen)
+    player.show_name(screen, True)
+    player.show_cards(screen, True)
+    player.display_score_hl(screen, True)
+    player.show_prize_money(screen, True)
     buttons["exit"].draw(screen)
     buttons["higher"].draw(screen)
     buttons["lower"].draw(screen)
@@ -196,10 +196,10 @@ def playing_screen(game, screen, buttons):
 
 def wrong_screen(game, screen, buttons):
     player = game.get_current_player()
-    player.show_name(screen)
-    player.show_cards(screen)
-    player.show_prize_money(screen)
-    player.display_score_hl(screen)
+    player.show_name(screen, True)
+    player.show_cards(screen, True)
+    player.show_prize_money(screen, True)
+    player.display_score_hl(screen, True)
 
     current_card = player.cards[-1]
     screen.blit(pygame.transform.rotozoom(current_card.load_image(), 0, 2), (520, 200))
@@ -207,10 +207,11 @@ def wrong_screen(game, screen, buttons):
     wrong_surf = font_huge.render('Wrong!', False, BLACK)
     screen.blit(wrong_surf, wrong_surf.get_rect(midbottom=(600, 150)))
 
-    if player.balance >= 1000:
-        buttons["try"].draw(screen)
     if len(game.players) > 1:
         buttons["next"].draw(screen)
+    else:
+        buttons["try"].draw(screen)
+
     buttons["exit"].draw(screen)
 
 
