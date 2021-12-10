@@ -45,11 +45,8 @@ class SpecialCard:
         self.hl_value = hl_value
 
     def load_image(self):
-        return pygame.transform.rotozoom(pygame.image.load(self.file).convert_alpha(), 0, 0.15)
-
-
-"""def load_deck():
-    return [[(rank, suit) for rank in range(len(RANKS[:-1]))] for suit in range(len(SUITS))]"""
+        img = pygame.transform.scale(pygame.image.load(self.file), (500, 726))
+        return pygame.transform.rotozoom(img.convert_alpha(), 0, 0.15)
 
 
 def load_random_deck():
@@ -71,21 +68,6 @@ def get_random_card(game, player):
 
     player.add_card(Card(0, 0, 0, 0, 0, i, j))
     game.deck = deck
-
-
-def get_random_card_2(deck, player):
-    if not deck:
-        deck = load_random_deck()
-        print("A new deck was created")
-
-    cardname = deck.pop()
-    rank, suit = cardname
-    i = RANKS.index(rank)
-    j = SUITS.index(suit)
-
-    player.add_card(Card(0, 0, 0, 0, 0, i, j))
-
-    return deck
 
 
 BACK = SpecialCard('Images/Cards/Card_Back.png', 0, 0)

@@ -128,29 +128,29 @@ def deal_cards_screen(game, screen, buttons):
             sleep(0.5)
 
     # Give the dealer 2 cards
-    for _ in range(2):
-        if game.previous_player != 2.5:
-            game.rotate_fromto_player(game.previous_player, 2.5)
-            game.previous_player = 2.5
-        game.get_card_func(game.dealer)
-        game.dealer.show_cards(screen)
-        game.dealer.display_score_bj(screen)
-        pygame.display.update()
-        sleep(0.5)
+    # 1 face-up, 1 face-down
+    if game.previous_player != 2.5:
+        game.rotate_fromto_player(game.previous_player, 2.5)
+        game.previous_player = 2.5
+    game.get_card_func(game.dealer)
+    game.dealer.show_cards(screen)
+    game.dealer.display_score_bj(screen)
+    pygame.display.update()
+    sleep(0.5)
+    game.dealer.add_hidden_card()
+    game.dealer.show_cards(screen)
+    pygame.display.update()
 
     assert all([len(player.cards) == 2 for player in game.players])
     assert len(game.dealer.cards) == 2
-
-    if game.dealer.value_count_bj() == 21:
-        game.draw_screen = check_results_screen
-    else:
-        print("Playing Screen")
-        game.draw_screen = playing_screen
 
     # Zet de servo terug naar de eerste speler
     print("RESET SERVO")  # Get Current Player fixen zodat
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
     game.previous_player = game.get_current_player().number
+
+    print("Playing Screen")
+    game.draw_screen = playing_screen
 
 
 def playing_screen(game, screen, buttons):
@@ -274,18 +274,21 @@ def check_results_screen(game, screen, buttons):
 
     not_everyone_busts = not game.everyone_bust()
 
-    game.dealer.show_cards(screen, not_everyone_busts)
+    game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen, not_everyone_busts)
 
 
 def dealer_card_screen(game, screen, buttons):
     game.show_each_player()
+    if game.dealer.has_dummy:
+        game.dealer.cards.pop()
+        game.dealer.has_dummy = False
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
 
     while 0 < game.dealer.value_count_bj() < 17:
-        game.dealer.show_cards(screen, True)
-        game.dealer.display_score_bj(screen, True)
+        game.dealer.show_cards(screen)
+        game.dealer.display_score_bj(screen)
         pygame.display.update()
         sleep(1)
         game.give_card()
