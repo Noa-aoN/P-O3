@@ -147,6 +147,16 @@ class Blackjack(Game):
             player.display_score_bj(self.screen)
 
     def filter_players(self):
+        self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
+        if len(self.players) == 0:
+            self.draw_screen = restart_game_screen
+
+    def next_player(self):
+        if self.player_index + 1 < len(self.players):
+            self.player_index += 1
+        else:
+            self.player_index = 0
+        print("current player "+ str(self.player_index))
         self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)
