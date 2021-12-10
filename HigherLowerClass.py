@@ -7,7 +7,7 @@ from Style import font_huge, font, WHITE, BLACK, GREEN
 from Camera import init_camera, opencv_to_pygame
 from gestures_mediapipe import check_index, check_all_fingers, hand_position
 from mediapipe_pose import linkfacewithhand
-from BlackJackClass import face_gest_crop, get_landmark_list
+from face_with_hand_linking import face_gest_crop, get_landmark_list
 
 '''
 Bugs: 
@@ -112,7 +112,6 @@ def playing_screen(game, screen, buttons):
     # Give the current player a card if they have none
     if not player.cards:
         game.give_card()
-        game.deck = game.get_card_func(player)
         game.get_card_func(player)
 
     question_surf = font.render(f'{player.name}, is the next card going to be higher or lower?', False, BLACK)
@@ -138,7 +137,6 @@ def playing_screen(game, screen, buttons):
             index = check_index(landmarklist[0])
             if index == "index up":
                 if game.last_index == index:
-                    game.deck = game.get_card_func(player)
                     game.get_card_func(player)
                     last_val, current_val = last_two_vals(player)
                     wrong = last_val > current_val
@@ -149,7 +147,6 @@ def playing_screen(game, screen, buttons):
 
             elif index == "index down":
                 if game.last_index == index:
-                    game.deck = game.get_card_func(player)
                     game.get_card_func(player)
                     last_val, current_val = last_two_vals(player)
                     wrong = last_val < current_val
@@ -275,7 +272,6 @@ def higherlower(game):
                     game.draw_screen = home_screen_hl
                 elif game.buttons["higher"].button_pressed(event) or game.buttons["lower"].button_pressed(event):
                     game.give_card()
-                    game.deck = game.get_card_func(current_player)
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     last_val, current_val = last_two_vals(current_player)
@@ -297,6 +293,7 @@ def higherlower(game):
                     game.draw_screen = home_screen_hl
                 elif len(game.players) > 1 and game.buttons["next"].button_pressed(event):
                     if game.get_current_player() == game.players[-1]:
+                        game.play_again()
                         game.draw_screen = bets_screen
                     else:
                         game.draw_screen = playing_screen
@@ -312,6 +309,8 @@ def higherlower(game):
                 if game.buttons["restart"].button_pressed(event):
                     for i in game.players:
                         i.balance = 10000
+                        i.wants_bet = True
+                    game.player_index = 0
                     game.draw_screen = bets_screen
                     return None
                 elif game.buttons["exit"].button_pressed(event):

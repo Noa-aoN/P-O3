@@ -14,6 +14,11 @@ from Style import BLACK, GREEN, font_huge, font
 """
 to do:
 -scherm gesture recognition weergeven
+
+bugs: 
+als ge teveel kaarten hebt bij higher lower gaat het uit uw vakje 
+
+als ge van hoger lager naar blackjack gaat dan hebt ge nog steeds uw deck wat ge bij hoger lager geïndigd zijt.
 """
 
 
@@ -77,8 +82,7 @@ def main_menu():
                             name_text = ''
                 library_surf = font.render(library_text, False, BLACK)
                 screen.blit(library_surf, library_surf.get_rect(topleft=(290, 250)))
-
-            if len(players) == 4 or bool == 'skip':
+            if (len(players) == 4 and playeralreadyregistered is None) or bool == 'skip':
                 addplayers = False
         else:
             choose_game = font_huge.render('Choose Game', False, BLACK)
