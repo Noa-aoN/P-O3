@@ -94,8 +94,8 @@ class Blackjack(Game):
 
     def filter_players(self):
         self.players = list(filter(lambda player: 1000 <= player.balance, self.players))
-        if len(players) == 0:
-            game.draw_screen = restart_game_screen
+        if len(self.players) == 0:
+            self.draw_screen = restart_game_screen
 
     def next_player(self):
         if self.player_index + 1 < len(self.players):
