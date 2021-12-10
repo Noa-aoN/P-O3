@@ -7,18 +7,6 @@ from Style import font_huge, GREEN, BLACK, WHITE, BLUE
 from Button import common_buttons, hl_buttons, bj_buttons
 
 
-def legefunctie():
-    print("geef nieuwe kaart")
-
-
-def legefunctie_2(previous_player, player):
-    print("ga van", previous_player, "naar", player)
-
-
-def legefunctie_3(player):
-    print("ga naar", player)
-
-
 def home_screen_hl(game, screen, buttons):
     title_surf = font_huge.render('Higher Lower', False, BLACK)
     screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
@@ -100,22 +88,19 @@ class Game:
         return get_random_card(self, player)
 
     def give_card(self):
+        print("geef nieuwe kaart")
         if self.rasp:
             dcmotor_rotate()
-        else:
-            legefunctie()
 
-    def rotate_fromto_player(self, player1, player2):
+    def rotate_fromto_player(self, previous_player, player):
+        print("ga van", previous_player, "naar", player)
         if self.rasp:
-            servo_rotate_fromto(player1, player2)
-        else:
-            legefunctie_2(player1, player2)
+            servo_rotate_fromto(previous_player, player)
 
     def rotate_to(self, player):
+        print("ga naar", player)
         if self.rasp:
             servo_rotate(player)
-        else:
-            legefunctie_3(player)
 
     def get_current_player(self):
         return self.players[self.player_index]
@@ -205,4 +190,3 @@ class Higherlower(Game):
                 player.cards = []
                 player.bet = 0
                 player.prize_money = 0
-
