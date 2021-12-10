@@ -6,7 +6,7 @@ from BlackJackClass import blackjack
 from HigherLowerClass import higherlower
 from AudioPlay import playsound
 from Player import add_player, Library
-from facenet_facerecognition import clear_folder_contents
+from Detection.facenet_facerecognition import clear_folder_contents
 from Style import BLACK, GREEN, font_huge, font
 """
 to do:

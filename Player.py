@@ -1,8 +1,8 @@
 import pygame
 from Deck import BACK
-from facenet_facerecognition import PlayerRegistration
+from Detection.facenet_facerecognition import PlayerRegistration
 from localdirectory import local_directory
-from facenet_facerecognition import create_folder
+from Detection.facenet_facerecognition import create_folder
 import os
 from Style import BLACK, WHITE, GREEN, font, font_small, font_big
 

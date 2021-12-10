@@ -4,8 +4,8 @@ from Button import exit_pygame
 from Player import Player
 from Game import Blackjack, home_screen_bj, restart_game_screen
 from AudioPlay import playsound
-from face_with_hand_linking import get_landmark_list
-from gestures_mediapipe import check_all_fingers, check_option
+from Detection.face_with_hand_linking import get_landmark_list
+from Detection.gestures_mediapipe import check_all_fingers, check_option
 from Camera import init_camera, opencv_to_pygame
 from Style import font, font2_small, WHITE, BLACK, GREEN
 

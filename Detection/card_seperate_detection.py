@@ -23,8 +23,8 @@ SUIT_HEIGHT = 100
 SUITS_IMG = [cv2.imread(f"Images/MyMoulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
 RANKS_IMG = [cv2.imread(f"Images/MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
 
-TEMPLATE_SUITS_IMG = cv2.imread("Images/References/ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
-TEMPLATE_RANKS_IMG = cv2.imread("Images/References/ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
+TEMPLATE_SUITS_IMG = cv2.imread("../Images/References/ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
+TEMPLATE_RANKS_IMG = cv2.imread("../Images/References/ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
 
 
 def empty(_):

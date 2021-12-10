@@ -1,7 +1,7 @@
 import cv2
 from time import sleep
 from Button import Button
-from card_double_detection import get_card
+from Detection.card_double_detection import get_card
 import pygame
 
 BLACK = (0, 0, 0)

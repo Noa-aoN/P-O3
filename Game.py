@@ -1,6 +1,6 @@
 import pygame
 from Deck import load_random_deck, get_random_card
-from gestures_mediapipe import LandmarkGetter
+from Detection.gestures_mediapipe import LandmarkGetter
 from Player import Dealer, Library
 from Camera import get_camera_card
 from Style import font_huge, GREEN, BLACK, WHITE, BLUE
