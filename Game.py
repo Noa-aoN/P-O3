@@ -11,8 +11,10 @@ from Button import common_buttons, hl_buttons, bj_buttons
 
 
 def home_screen_hl(game, screen, buttons):
-    title_surf = font_huge.render('Higher Lower', False, BLACK)
-    screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
+    title_surf = font_huge.render('Higher Lower', False, WHITE)
+    screen.blit(title_surf, title_surf.get_rect(midbottom=(597, 157)))
+    title_surf2 = font_huge.render('Higher Lower', False, BLACK)
+    screen.blit(title_surf2, title_surf2.get_rect(midbottom=(600, 160)))
     H = pygame.transform.rotozoom(pygame.image.load("Images/Arrows/arrow_two_with_backgr.jpg"), 0, 0.5)
     screen.blit(pygame.transform.rotozoom(H, 0, 2), (530, 210))
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
@@ -30,12 +32,14 @@ def home_screen_hl(game, screen, buttons):
 
 
 def home_screen_bj(game, screen, buttons):
+    Blackjack_surf2 = font_huge.render('Blackjack', False, WHITE)
+    screen.blit(Blackjack_surf2, Blackjack_surf2.get_rect(midbottom=(597, 157)))
     Blackjack_surf = font_huge.render('Blackjack', False, BLACK)
-    screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
+    screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 160)))
     H = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Jack_Spades.png"), 0, 0.15)
     S = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Hearts.png"), 0, 0.15)
-    screen.blit(pygame.transform.rotozoom(H, 10, 1.2), (510, 250))
-    screen.blit(pygame.transform.rotozoom(S, -10, 1.2), (590, 250))
+    screen.blit(pygame.transform.rotozoom(H, 10, 1.2), (510, 230))
+    screen.blit(pygame.transform.rotozoom(S, -10, 1.2), (590, 230))
 
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
         if option:
