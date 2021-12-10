@@ -96,7 +96,7 @@ class Player:
         surf_prize_money = font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
         window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * self.number, 550)))
 
-    def set_balance(self, new_balance):
+    def set_balance(self, window, new_balance):
         self.balance = new_balance
         name_surf = font.render(self.name, False, (10, 10, 10))
         window.blit(name_surf, name_surf.get_rect(topleft=(45 + 290 * self.number, 520)))
