@@ -88,21 +88,22 @@ class Game:
         return get_random_card(self, player)
 
     def give_card(self):
-        print("geef nieuwe kaart")
+        #print("geef nieuwe kaart")
         if self.rasp:
             dcmotor_rotate()
 
     def rotate_fromto_player(self, previous_player, player):
-        print("ga van", previous_player, "naar", player)
+        #print("ga van", previous_player, "naar", player)
         if self.rasp:
             servo_rotate_fromto(previous_player, player)
 
     def rotate_to(self, player):
-        print("ga naar", player)
+        #print("ga naar", player)
         if self.rasp:
             servo_rotate(player)
 
     def get_current_player(self):
+        print("current_player", self.player_index)
         return self.players[self.player_index]
 
     def next_player(self):
@@ -110,7 +111,7 @@ class Game:
             self.player_index = 0
         else:
             self.player_index += 1
-        print("current player " + str(self.player_index))
+        #print("current player ok" + str(self.player_index))
 
 
 class Blackjack(Game):
@@ -156,7 +157,7 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
-        print("current player "+ str(self.player_index))
+        print("current player ok"+ str(self.player_index))
         self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)

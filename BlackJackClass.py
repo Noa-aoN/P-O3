@@ -148,7 +148,7 @@ def bets_screen(game, screen, buttons):
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
     screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
-    if all([not player.wants_bet for player in game.players]):
+    if all([not player.wants_bet for player in game.players]) and game.player_index == game.players[0].number:
         print("Loading Screen")
         game.draw_screen = deal_cards_screen
     if all([len(player.cards) == 2 for player in game.players]):
@@ -196,11 +196,11 @@ def deal_cards_screen(game, screen, buttons):
     if game.dealer.value_count_bj() == 21:
         game.draw_screen = check_results_screen
     else:
-        print("Playing Screen")
+        #print("Playing Screen")
         game.draw_screen = playing_screen
 
     # Zet de servo terug naar de eerste speler
-    print("RESET SERVO")  # Get Current Player fixen zodat
+    #print("RESET SERVO")  # Get Current Player fixen zodat
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
     game.previous_player = game.get_current_player().number
 
@@ -209,7 +209,7 @@ def playing_screen(game, screen, buttons):
     game.show_each_player()
 
     game.dealer.show_cards(screen)
-    print("showed dealer cards")
+    #print("showed dealer cards")
     game.dealer.display_score_bj(screen)
     buttons["exit"].draw(screen)
 
@@ -227,12 +227,12 @@ def playing_screen(game, screen, buttons):
 
     if current_player.wants_card:
         if current_player.value_count_bj() == 0:
-            print(f"{current_player} Busted")
+            #print(f"{current_player} Busted")
             playsound("Sounds/Bust.wav")
             current_player.wants_card = False
 
         elif current_player.value_count_bj() == 21:
-            print(f"{current_player} got Blackjack")
+            #print(f"{current_player} got Blackjack")
             playsound("Sounds/Applause.wav")
             current_player.wants_card = False
 
@@ -254,7 +254,7 @@ def playing_screen(game, screen, buttons):
                     option = check_option(landmarklist[0], double_down)
                     if option:
                         if game.last_option == option and option is not None:
-                            print("Confirmed")
+                            #print("Confirmed")
                             current_button = buttons[option]
                             current_button.set_color((255, 0, 0))
                             current_button.draw(screen)
@@ -278,7 +278,7 @@ def playing_screen(game, screen, buttons):
 
                         # Last two options weren't the same
                         else:
-                            print(f"{option}", end="->")
+                            #print(f"{option}", end="->")
                             if game.last_option:
                                 last_button = buttons.get(game.last_option)
                                 last_button.set_color(BLACK)
@@ -303,8 +303,8 @@ def playing_screen(game, screen, buttons):
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
     screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
 
-    if all([not player.wants_card for player in game.players]):
-        print("Dealer Cards Screen")
+    if all([not player.wants_card for player in game.players]) and game.player_index == game.players[0].number:
+        #print("Dealer Cards Screen")
         game.draw_screen = dealer_card_screen
 
 
@@ -348,7 +348,7 @@ def dealer_card_screen(game, screen, buttons):
     for player in game.players:
         player.adjust_balance(dealer_score, 'bj')
 
-    print("Checking Results")
+    #print("Checking Results")
     game.draw_screen = check_results_screen
 
 
@@ -374,13 +374,13 @@ def blackjack(game):
                     game.draw_screen = bets_screen
                 elif game.buttons["cam"].button_pressed(event):
                     game.cam = not game.cam
-                    print("camera", game.cam)
+                    #print("camera", game.cam)
                 elif game.buttons["rasp"].button_pressed(event):
                     game.rasp = not game.rasp
-                    print("raspberry pi", game.rasp)
+                    #print("raspberry pi", game.rasp)
                 elif game.buttons["link"].button_pressed(event):
                     game.with_linking = not game.with_linking
-                    print("face linking", game.with_linking)
+                    #print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
                     return game.players
 
@@ -456,7 +456,8 @@ if __name__ == '__main__':
         game = Blackjack(screen, players)
         remaining_players = blackjack(game)
         if remaining_players is None:
-            print("restarting game")
+            #print("restarting game")
+            pass
         else:
             playing = False
-            print("Game Ended", remaining_players)
+            #print("Game Ended", remaining_players)
