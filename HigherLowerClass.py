@@ -309,6 +309,8 @@ def higherlower(game):
                 if game.buttons["restart"].button_pressed(event):
                     for i in game.players:
                         i.balance = 10000
+                        i.wants_bet = True
+                    game.player_index = 0
                     game.draw_screen = bets_screen
                     return None
                 elif game.buttons["exit"].button_pressed(event):
