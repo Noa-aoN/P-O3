@@ -7,7 +7,7 @@ If the next card is the same rank then the current card, the game continues.
 e.g The given card is a 5, you guess that the next card will be higher.
 If next card is a 5 or higher you win. If the next card is a 4 or lower you lose.
 
-You can chose higher or lower by pressing on the right button or by gesture.
+You can choose higher or lower by pressing on the right button or by gesture.
 
 Gestures:
             Index finger down = lower

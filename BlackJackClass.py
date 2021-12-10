@@ -26,7 +26,7 @@ def rules_screen(game, screen, buttons):
     content = f.read()
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
-        rules_surf = font.render(line, False, BLACK)
+        rules_surf = font_small.render(line, False, BLACK)
         screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 3 + i * 20)))
     f.close()
 
