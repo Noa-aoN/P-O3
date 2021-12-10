@@ -10,6 +10,8 @@ from Button import common_buttons, hl_buttons, bj_buttons
 def home_screen_hl(game, screen, buttons):
     title_surf = font_huge.render('Higher Lower', False, BLACK)
     screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
+    H = pygame.transform.rotozoom(pygame.image.load("Images/Arrows/arrow_two_with_backgr.jpg"), 0, 0.5)
+    screen.blit(pygame.transform.rotozoom(H, 0, 2), (530, 210))
     # TODO mooie foto zoeken/maken
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
         if option:
@@ -28,8 +30,8 @@ def home_screen_hl(game, screen, buttons):
 def home_screen_bj(game, screen, buttons):
     Blackjack_surf = font_huge.render('Blackjack', False, BLACK)
     screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 150)))
-    H = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Hearts.png"), 0, 0.15)
-    S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
+    H = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Jack_Spades.png"), 0, 0.15)
+    S = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Hearts.png"), 0, 0.15)
     screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
     screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
 
