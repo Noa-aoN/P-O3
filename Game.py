@@ -80,7 +80,7 @@ class Game:
         self.screen.fill(GREEN)
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
-        self.clock.tick(60)
+        self.clock.tick(20)
 
     def get_card_func(self, player):
         if self.cam:

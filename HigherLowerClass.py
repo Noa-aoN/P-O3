@@ -208,10 +208,11 @@ def wrong_screen(game, screen, buttons):
     wrong_surf = font_huge.render('Wrong!', False, BLACK)
     screen.blit(wrong_surf, wrong_surf.get_rect(midbottom=(600, 150)))
 
-    if player.balance >= 1000:
-        buttons["try"].draw(screen)
     if len(game.players) > 1:
         buttons["next"].draw(screen)
+    else:
+        buttons["try"].draw(screen)
+
     buttons["exit"].draw(screen)
 
 
