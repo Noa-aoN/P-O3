@@ -108,7 +108,6 @@ class Game:
             servo_rotate(player)
 
     def get_current_player(self):
-        print("current_player", self.player_index)
         return self.players[self.player_index]
 
     def next_player(self):
