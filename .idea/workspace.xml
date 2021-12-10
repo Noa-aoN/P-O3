@@ -150,6 +150,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.BlackJackClass" />
+      <item itemvalue="Python.BlackJack" />
+      <item itemvalue="Python.Game" />
+      <item itemvalue="Python.MainMenu" />
+      <item itemvalue="Python.Player" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.BlackJackClass" />
