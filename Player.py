@@ -1,11 +1,10 @@
 import pygame
 from Deck import BACK
-from facenet_pytorch import MTCNN, InceptionResnetV1
 from facenet_facerecognition import PlayerRegistration
 from localdirectory import local_directory
 from facenet_facerecognition import create_folder
 import os
-from Style import BLACK, WHITE, font, font_small, font_big
+from Style import BLACK, WHITE, GREEN, font, font_small, font_big
 
 
 def Library():
@@ -67,16 +66,12 @@ class Player:
         self.bet = 0
         self.cards = []
         self.number = player_number
-        self.surf = font.render(self.name, False, (10, 10, 10))
-        self.surf_balance = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
         self.wants_card = True
         self.wants_bet = True
         self.prev_prize = 0
         self.prize_money = 0
-        self.prize_money_coefs = [25/3, 37.5, 475/6]  # a*x^3 + b*x^2 + c*x for a bet of 1k
+        self.prize_money_coefs = [25 / 3, 37.5, 475 / 6]  # a*x^3 + b*x^2 + c*x for a bet of 1k
         self.wants_restart = False
-        self.wants_card = True
-        self.wants_bet = True
 
     def __repr__(self):
         return self.name
@@ -86,18 +81,6 @@ class Player:
 
     def show_name(self, window):
         pygame.draw.rect(window, (114, 200, 114), (40 + 290 * self.number, 370, 250, 220), 0, 3)
-        self.surf_balance = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
-        window.blit(self.surf, self.surf.get_rect(topleft=(45 + 290 * self.number, 520)))
-        window.blit(self.surf_balance, self.surf_balance.get_rect(topleft=(45 + 290 * self.number, 550)))
-        bet_surf = font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
-        window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
-
-    def show_prize_money(self, window):
-        surf_prize_money = font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
-        window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * self.number, 550)))
-
-    def set_balance(self, window, new_balance):
-        self.balance = new_balance
         name_surf = font.render(self.name, False, (10, 10, 10))
         window.blit(name_surf, name_surf.get_rect(topleft=(45 + 290 * self.number, 520)))
 
@@ -107,28 +90,16 @@ class Player:
         bet_surf = font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
         window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
 
+    def show_prize_money(self, window):
+        surf_prize_money = font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
+        window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * self.number, 550)))
+
     def add_card(self, card):
         self.cards.append(card)
 
-    def show_cards(self, window, result=False):
-        if not self.name == 'Dealer':
-            for i, card in enumerate(self.cards):
-                window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1),
-                            (45 + 290 * self.number + 25 * i, 380))
-
-        else:
-            if len(self.cards) == 2 and not result:
-                if self.value_count_bj() == 21:
-                    for i, card in enumerate(self.cards):
-                        window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
-
-                else:
-                    window.blit(pygame.transform.rotozoom(self.cards[0].load_image(), 0, 1), (560, 50))
-                    window.blit(pygame.transform.scale(BACK.load_image(), (500 * 0.15, 726 * 0.15)), (585, 50))
-
-            else:
-                for i, card in enumerate(self.cards):
-                    window.blit(pygame.transform.rotozoom(card.load_image(), 0, 1), (560 + 25 * i, 50))
+    def show_cards(self, window):
+        for i, card in enumerate(self.cards):
+            window.blit(card.load_image(), (45 + 290 * self.number + 25 * i, 380))
 
     def value_count_bj(self):
         value_list = []
@@ -150,38 +121,15 @@ class Player:
                     return som
         return 0
 
-    def display_score_bj(self, window, result=False):
+    def display_score_bj(self, window):
         if len(self.cards) == 0:
             return False
-        if not self.name == 'Dealer':
-            if self.value_count_bj() == 0:
-                score_surf = font.render('Bust', False, (10, 10, 10))
-            else:
-                score_surf = font.render(str(self.value_count_bj()), False, (10, 10, 10))
-            pygame.draw.rect(window, (31, 171, 57), (45 + 290 * self.number, 330, 50, 30))
-            window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
-
+        if self.value_count_bj() == 0:
+            score_surf = font.render('Bust', False, (10, 10, 10))
         else:
-            if len(self.cards) == 2:
-                if not result:
-                    if self.cards[0].bj_value == 0:
-                        score_surf = font.render(str(11), False, (10, 10, 10))
-                    else:
-                        score_surf = font.render(str(self.cards[0].bj_value), False, (10, 10, 10))
-                    window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
-                else:
-                    if self.value_count_bj() == 21:
-                        score_surf = font.render("Blackjack", False, (10, 10, 10))
-                    else:
-                        score_surf = font.render(str(self.value_count_bj()), False, (10, 10, 10))
-                    pygame.draw.rect(window, (31, 171, 57), (550, 10, 100, 35))
-                    window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
-            elif self.value_count_bj() == 0:
-                score_surf = font.render('Bust', False, (10, 10, 10))
-            else:
-                score_surf = font.render(str(self.value_count_bj()), False, (10, 10, 10))
-            pygame.draw.rect(window, (31, 171, 57), (550, 10, 100, 35))
-            window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))
+            score_surf = font.render(str(self.value_count_bj()), False, (10, 10, 10))
+        pygame.draw.rect(window, (31, 171, 57), (45 + 290 * self.number, 330, 50, 30))
+        window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
 
     def display_score_hl(self, window):
         score_surf = font.render(f"Total cards: {len(self.cards)}", False, (10, 10, 10))
@@ -222,12 +170,64 @@ class Player:
                 button.draw(window)
 
     def calculate_prize_money(self):
-        factor = self.bet/1000
-        coefs = list(map(lambda y: y*factor, self.prize_money_coefs))
-        x = len(self.cards)-1
-        self.prize_money = int(coefs[0]*(x**3) - coefs[1]*(x**2) + coefs[2]*x) + self.prev_prize
+        factor = self.bet / 1000
+        coefs = list(map(lambda y: y * factor, self.prize_money_coefs))
+        x = len(self.cards) - 1
+        self.prize_money = int(coefs[0] * (x ** 3) - coefs[1] * (x ** 2) + coefs[2] * x) + self.prev_prize
 
     def reset_money(self):
         self.bet = 0
         self.prize_money = 0
         self.prev_prize = 0
+
+
+class Dealer:
+    def __init__(self):
+        self.cards = []
+        self.has_dummy = False
+
+    def add_card(self, card):
+        self.cards.append(card)
+
+    def add_hidden_card(self):
+        self.has_dummy = True
+        self.cards.append(BACK)
+
+    def show_cards(self, window):
+        for i, card in enumerate(self.cards):
+            window.blit(card.load_image(), (560 + 25 * i, 50))
+
+    def value_count_bj(self):
+        value_list = []
+        for card in self.cards:
+            if card.bj_value == 0:
+                value_list.append(11)
+            else:
+                value_list.append(card.bj_value)
+        som = sum(value_list)
+        if som < 22:
+            return som
+
+        for value in value_list:
+            if value == 11:
+                ace_index = value_list.index(11)
+                value_list[ace_index] = 1
+                som = sum(value_list)
+                if som < 22:
+                    return som
+        return 0
+
+    def display_score_bj(self, window):
+        # Otherwise bust is displayed
+        if len(self.cards) == 0:
+            return False
+
+        if self.value_count_bj() == 21:
+            score_surf = font.render("Blackjack", False, (10, 10, 10))
+        elif self.value_count_bj() == 0:
+            score_surf = font.render('Bust', False, (10, 10, 10))
+        else:
+            score_surf = font.render(str(self.value_count_bj()), False, (10, 10, 10))
+
+        pygame.draw.rect(window, GREEN, (550, 10, 100, 35))
+        window.blit(score_surf, score_surf.get_rect(midbottom=(600, 45)))

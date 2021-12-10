@@ -1,10 +1,13 @@
 import pygame
 from Deck import load_random_deck, get_random_card
 from gestures_mediapipe import LandmarkGetter
-from Player import Player, Library
+from Player import Dealer, Library
 from Camera import get_camera_card
 from Style import font_huge, GREEN, BLACK, WHITE, BLUE
 from Button import common_buttons, hl_buttons, bj_buttons
+
+
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 
 def home_screen_hl(game, screen, buttons):
@@ -117,7 +120,7 @@ class Game:
 class Blackjack(Game):
     def __init__(self, screen, players):
         super().__init__(screen, players, home_screen_bj, dict(common_buttons, **bj_buttons))
-        self.dealer = Player('Dealer', 0, 0)
+        self.dealer = Dealer()
         self.previous_player = 0
         self.last_fingers = None
         self.last_option = None
