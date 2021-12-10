@@ -14,6 +14,11 @@ from Style import BLACK, GREEN, font_huge, font
 """
 to do:
 -scherm gesture recognition weergeven
+
+bugs: 
+als ge teveel kaarten hebt bij higher lower gaat het uit uw vakje 
+
+als ge van hoger lager naar blackjack gaat dan hebt ge nog steeds uw deck wat ge bij hoger lager geïndigd zijt.
 """
 
 
