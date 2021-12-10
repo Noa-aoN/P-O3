@@ -9,16 +9,6 @@ from gestures_mediapipe import check_all_fingers, check_option
 from Camera import init_camera, opencv_to_pygame
 from Style import font, font2_small, WHITE, BLACK, GREEN
 
-'''
-Bugs: 
-- When you exit BlackJack at the Hit or Stand menu and then re-enter BlackJack from MainMenu, the game crashes
-- When someone wins in general, the text above the other players says that the dealer won the game
-
-To DO:
-- Entering starting balance.
-- ...
-'''
-
 
 def rules_screen(game, screen, buttons):
     buttons["exit"].draw(screen)
@@ -143,7 +133,7 @@ def deal_cards_screen(game, screen, buttons):
     assert len(game.dealer.cards) == 2
 
     # Zet de servo terug naar de eerste speler
-    #print("RESET SERVO")  # Get Current Player fixen zodat
+    # print("RESET SERVO")
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
     game.previous_player = game.get_current_player().number
 
@@ -393,6 +383,9 @@ def blackjack(game):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
+    pygame.display.set_caption('Virtual Card Game Robot')
+    vtk_icon = pygame.image.load('Images/VTK_icon.png')
+    pygame.display.set_icon(vtk_icon)
 
     names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
     players = [Player(name, 10000, i) for i, name in enumerate(names)]

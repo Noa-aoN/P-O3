@@ -22,8 +22,8 @@ def face_gest_crop(img, game, facecoords, handcoords):
 
     facecoords = game.library.searchplayer(player.name, img)
     landmarklist = game.landmarkgetter(img)
-    for landmark in landmarklist:
-        handcoords = hand_position(landmark)
+    if landmarklist:
+        handcoords = hand_position(landmarklist[0])
     return img, facecoords, handcoords
 
 

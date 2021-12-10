@@ -20,6 +20,9 @@ als ge van hoger lager naar blackjack gaat dan hebt ge nog steeds uw deck wat ge
 def main_menu():
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
+    pygame.display.set_caption('Virtual Card Game Robot')
+    vtk_icon = pygame.image.load('Images/VTK_icon.png')
+    pygame.display.set_icon(vtk_icon)
     clock = pygame.time.Clock()
 
     bj_button = Button(BLACK, (350, 320), (180, 65), 'Blackjack')
