@@ -293,6 +293,7 @@ def higherlower(game):
                     game.draw_screen = home_screen_hl
                 elif len(game.players) > 1 and game.buttons["next"].button_pressed(event):
                     if game.get_current_player() == game.players[-1]:
+                        game.play_again()
                         game.draw_screen = bets_screen
                     else:
                         game.draw_screen = playing_screen
