@@ -45,5 +45,5 @@ If a player believes they will be unable to beat dealers hand, they can choose t
 rather than the whole amount. A player can only forfeit their hand before receiving extra cards.
 
 Bet Behind
-Busy, live casinos sometimes offer an option to take side bets, otherwise known as ‘bet behind’. This is where a limitless number of people take a bet behind the main
+Busy, live casinos sometimes offer an option to take side bets, otherwise known as bet behind. This is where a limitless number of people take a bet behind the main
 seven seated players, wagering that they will win the hand.

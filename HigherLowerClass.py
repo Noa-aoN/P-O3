@@ -55,9 +55,8 @@ def bets_screen(game, screen, buttons):
         game.cameracooldown = True
 
     ret, img = game.cap_gest.read()
-
     if current_player.wants_bet:
-        current_player.draw_bet_buttons(screen, game.buttons["bet"])
+        current_player.draw_bet_buttons(screen, buttons["bet"])
 
         landmarklist = game.landmarkgetter(img)
         if current_player.name in game.library.libraryembeddings:
@@ -70,7 +69,7 @@ def bets_screen(game, screen, buttons):
                     bal = current_player.balance
                     if bal >= amt_fingers * 1000 and game.last_fingers == amt_fingers:
                         print("Confirmed")
-                        current_button = game.buttons["bet"][amt_fingers - 1][1]
+                        current_button = buttons["bet"][amt_fingers - 1][1]
                         current_button.set_color((255, 0, 0))
                         current_button.draw(screen)
                         pygame.display.update()
@@ -81,11 +80,11 @@ def bets_screen(game, screen, buttons):
                     elif game.last_fingers != amt_fingers:
                         print(f"{ges_name}", end="->")
                         if game.last_fingers:
-                            last_button = game.buttons["bet"][game.last_fingers - 1][1]
+                            last_button = buttons["bet"][game.last_fingers - 1][1]
                             last_button.set_color(BLACK)
                             last_button.draw(screen)
 
-                    current_button = game.buttons["bet"][amt_fingers - 1][1]
+                    current_button = buttons["bet"][amt_fingers - 1][1]
                     current_button.set_color(WHITE)
                     current_button.draw(screen)
 
@@ -98,7 +97,7 @@ def bets_screen(game, screen, buttons):
         if not current_player.wants_restart:
             game.next_player()
         game.last_fingers = None
-        for _, button in game.buttons["bet"]:
+        for _, button in buttons["bet"]:
             button.set_color(BLACK)
 
     img = opencv_to_pygame(img)
@@ -118,7 +117,7 @@ def playing_screen(game, screen, buttons):
     # Give the current player a card if they have none
     if not player.cards:
         game.give_card()
-        game.deck = game.get_card_func(game, player)
+        game.deck = game.get_card_func(player)
 
     question_surf = font.render(f'{player.name}, is the next card going to be higher or lower?', False, BLACK)
     screen.blit(question_surf, question_surf.get_rect(midbottom=(600, 200)))
@@ -143,21 +142,23 @@ def playing_screen(game, screen, buttons):
             index = check_index(landmarklist[0])
             if index == "index up":
                 if game.last_index == index:
-                    game.deck = game.get_card_func(game, player)
+                    game.deck = game.get_card_func(player)
                     last_val, current_val = last_two_vals(player)
                     wrong = last_val > current_val
                     active_button = buttons["higher"]
                 else:
                     selected_button = buttons["higher"]
+                buttons["lower"].set_color(BLACK)
 
             elif index == "index down":
                 if game.last_index == index:
-                    game.deck = game.get_card_func(game, player)
+                    game.deck = game.get_card_func(player)
                     last_val, current_val = last_two_vals(player)
                     wrong = last_val < current_val
                     active_button = buttons["lower"]
                 else:
                     selected_button = buttons["lower"]
+                buttons["higher"].set_color(BLACK)
 
             game.last_index = index
             game.cameracooldown = False
@@ -214,7 +215,8 @@ def wrong_screen(game, screen, buttons):
 
     if player.balance >= 1000:
         buttons["try"].draw(screen)
-    buttons["next"].draw(screen)
+    if len(game.players) > 1:
+        buttons["next"].draw(screen)
     buttons["exit"].draw(screen)
 
 
@@ -223,13 +225,13 @@ def higherlower(game):
         game()
         templist = list(filter(lambda player: player.balance >= 1000, game.players))
         screen = game.screen
+        if not templist:
+            game.draw_screen = restart_game_screen
+        else:
+            current_player = game.get_current_player()
         for event in pygame.event.get():
             exit_pygame(event)
             current_screen = game.draw_screen
-            if not templist:
-                game.draw_screen = restart_game_screen
-            else:
-                current_player = game.get_current_player()
 
             # Home Screen
             if current_screen == home_screen_hl:
@@ -293,7 +295,7 @@ def higherlower(game):
                     game.draw_screen = home_screen_hl
                 elif game.buttons["higher"].button_pressed(event) or game.buttons["lower"].button_pressed(event):
                     game.give_card()
-                    game.deck = game.get_card_func(game, current_player)
+                    game.deck = game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     last_val, current_val = last_two_vals(current_player)
 
@@ -312,23 +314,18 @@ def higherlower(game):
             elif current_screen == wrong_screen:
                 if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen_hl
-                elif game.buttons["next"].button_pressed(event):
+                elif len(game.players) > 1 and game.buttons["next"].button_pressed(event):
                     prev_idx = game.player_index
-                    game.play_again(current_player)
-                elif game.buttons["try"].button_pressed(event):
-                    game.play_again()
-                    game.draw_screen = playing_screen
-                elif game.buttons["next"].button_pressed(event):
                     game.next_player()
                     if prev_idx == len(game.players)-1:
+                        game.play_again()
                         game.draw_screen = bets_screen
                     else:
                         game.draw_screen = playing_screen
-                elif current_player.balance >= 1000:
-                    if game.buttons["try"].button_pressed(event) and current_player.balance >= 1000:
-                        current_player.wants_restart = True
-                        game.play_again(current_player)
-                        game.draw_screen = bets_screen
+                elif current_player.balance >= 1000 and game.buttons["try"].button_pressed(event):
+                    current_player.wants_restart = True
+                    game.play_again(current_player)
+                    game.draw_screen = bets_screen
 
             # Restart Game Screen
             elif current_screen == restart_game_screen:

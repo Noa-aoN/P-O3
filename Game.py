@@ -138,7 +138,7 @@ class Blackjack(Game):
             player.cards = []
             player.bet = 0
             player.wants_bet = True
-            player.wants_card = False
+            player.wants_card = True
 
     def show_each_player(self):
         for player in self.players:
@@ -183,7 +183,10 @@ class Higherlower(Game):
             cur_player.prize_money = 0
         else:
             for player in self.players:
-                player.wants_bet = True
+                if not player.balance < 1000:
+                    player.wants_bet = True
+                else:
+                    player.wants_bet = False
                 player.cards = []
                 player.bet = 0
                 player.prize_money = 0
