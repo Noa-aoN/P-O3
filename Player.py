@@ -79,27 +79,39 @@ class Player:
     def __bool__(self):
         return self.balance >= 1000
 
-    def show_name(self, window):
-        pygame.draw.rect(window, (114, 200, 114), (40 + 290 * self.number, 370, 250, 220), 0, 3)
+    def show_name(self, window, hl_game=False):
+        i = self.number
+        width_background = 250
+        if hl_game:
+            i = 0
+            width_background = 1120
+
+        pygame.draw.rect(window, (114, 200, 114), (40 + 290 * i, 370, width_background, 220), 0, 3)
         name_surf = font.render(self.name, False, (10, 10, 10))
-        window.blit(name_surf, name_surf.get_rect(topleft=(45 + 290 * self.number, 520)))
+        window.blit(name_surf, name_surf.get_rect(topleft=(45 + 290 * i, 520)))
 
         balance_surf = font_small.render(f'Balance:{self.balance}', False, (10, 10, 10))
-        window.blit(balance_surf, balance_surf.get_rect(topleft=(45 + 290 * self.number, 550)))
+        window.blit(balance_surf, balance_surf.get_rect(topleft=(45 + 290 * i, 550)))
 
         bet_surf = font_small.render(f'Current bet:{self.bet}', False, (10, 10, 10))
-        window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * self.number, 565)))
+        window.blit(bet_surf, bet_surf.get_rect(topleft=(45 + 290 * i, 565)))
 
-    def show_prize_money(self, window):
+    def show_prize_money(self, window, hl_game=False):
+        i = self.number
+        if hl_game:
+            i = 0
         surf_prize_money = font_small.render(f'+ {self.prize_money}', False, (10, 10, 10))
-        window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * self.number, 550)))
+        window.blit(surf_prize_money, surf_prize_money.get_rect(topleft=(160 + 290 * i, 550)))
 
     def add_card(self, card):
         self.cards.append(card)
 
-    def show_cards(self, window):
+    def show_cards(self, window, hl_game=False):
+        j = self.number
+        if hl_game:
+            j = 0
         for i, card in enumerate(self.cards):
-            window.blit(card.load_image(), (45 + 290 * self.number + 25 * i, 380))
+            window.blit(card.load_image(), (45 + 290 * j + 25 * i, 380))
 
     def value_count_bj(self):
         value_list = []
@@ -131,9 +143,12 @@ class Player:
         pygame.draw.rect(window, (31, 171, 57), (45 + 290 * self.number, 330, 50, 30))
         window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
 
-    def display_score_hl(self, window):
+    def display_score_hl(self, window, hl_game=False):
+        i = self.number
+        if hl_game:
+            i = 0
         score_surf = font.render(f"Total cards: {len(self.cards)}", False, (10, 10, 10))
-        window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * self.number, 365)))
+        window.blit(score_surf, score_surf.get_rect(bottomleft=(45 + 290 * i, 365)))
 
     # Wordt niet gebruikt voor Higherlower
     def results(self, dealer_score, game, dealer_blackjack=False):
