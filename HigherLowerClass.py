@@ -26,7 +26,7 @@ def last_two_vals(player):
 
 
 def rules_screen(game, screen, buttons):
-    f = open('RulesHigherLower', 'r')
+    f = open('Rules/RulesHigherLower', 'r')
     content = f.read()
     split_content = content.splitlines()
     pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))

@@ -12,7 +12,7 @@ from Style import font, font2_small, WHITE, BLACK, GREEN
 
 def rules_screen(game, screen, buttons):
     buttons["exit"].draw(screen)
-    f = open('blackjackrules.txt', 'r')
+    f = open('Rules/RulesBlackjack.txt', 'r')
     content = f.read()
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
