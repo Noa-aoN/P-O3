@@ -5,9 +5,8 @@ from Game import Higherlower, home_screen_hl, restart_game_screen
 from Player import Player
 from Style import font_huge, font, WHITE, BLACK, GREEN
 from Camera import init_camera, opencv_to_pygame
-from gestures_mediapipe import check_index, check_all_fingers, hand_position
-from mediapipe_pose import linkfacewithhand
-from face_with_hand_linking import face_gest_crop, get_landmark_list
+from gestures_mediapipe import check_index, check_all_fingers
+from face_with_hand_linking import get_landmark_list
 
 '''
 Bugs: 

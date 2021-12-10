@@ -4,12 +4,10 @@ from Button import exit_pygame
 from Player import Player
 from Game import Blackjack, home_screen_bj, restart_game_screen
 from AudioPlay import playsound
-from face_with_hand_linking import get_landmark_list, face_gest_crop
-from gestures_mediapipe import check_all_fingers, check_option, hand_position
+from face_with_hand_linking import get_landmark_list
+from gestures_mediapipe import check_all_fingers, check_option
 from Camera import init_camera, opencv_to_pygame
 from Style import font, font_small, WHITE, BLACK, GREEN, RED
-
-# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 '''
 Bugs: 
