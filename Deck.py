@@ -4,7 +4,7 @@ from random import shuffle
 SUITS = ("Hearts", "Diamonds", "Spades", "Clubs")
 RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
          "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Joker")
-BJ_VALUES = (0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 0)
+BJ_VALUES = (-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 0)
 HL_VALUES = (14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0)
 
 
