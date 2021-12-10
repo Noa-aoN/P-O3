@@ -3,7 +3,7 @@ from Deck import load_random_deck, get_random_card
 from gestures_mediapipe import LandmarkGetter
 from Player import Player, Library
 from Camera import get_camera_card
-from Style import font_huge, GREEN, BLACK
+from Style import font_huge, GREEN, BLACK, WHITE, BLUE
 from Button import common_buttons, hl_buttons, bj_buttons
 
 
@@ -22,6 +22,13 @@ def legefunctie_3(player):
 def home_screen_hl(game, screen, buttons):
     title_surf = font_huge.render('Higher Lower', False, BLACK)
     screen.blit(title_surf, title_surf.get_rect(midbottom=(600, 150)))
+    # TODO mooie foto zoeken/maken
+    for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
+        if option:
+            game.buttons[name].set_color(BLUE)
+        else:
+            game.buttons[name].set_color(BLACK)
+
     buttons["start"].draw(screen)
     buttons["cam"].draw(screen)
     buttons["rasp"].draw(screen)
@@ -37,6 +44,13 @@ def home_screen_bj(game, screen, buttons):
     S = pygame.transform.rotozoom(pygame.image.load(f"Images/Cards/Ace_Spades.png"), 0, 0.15)
     screen.blit(pygame.transform.rotozoom(H, 10, 1), (510, 250))
     screen.blit(pygame.transform.rotozoom(S, -10, 1), (590, 250))
+
+    for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
+        if option:
+            game.buttons[name].set_color(BLUE)
+        else:
+            game.buttons[name].set_color(BLACK)
+
     buttons["start"].draw(screen)
     buttons["cam"].draw(screen)
     buttons["rasp"].draw(screen)
@@ -138,6 +152,7 @@ class Blackjack(Game):
             player.cards = []
             player.bet = 0
             player.wants_bet = True
+            player.wants_card = True
             player.wants_card = True
 
     def show_each_player(self):

@@ -76,7 +76,8 @@ common_buttons = {
     "next": Button(BLACK, (800, 480), (240, 65), 'Next Player'),
     "restart": Button(BLACK, (470, 260), (280, 65), 'Restart Game'),
     "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
-    "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small')
+    "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
+    "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
 }
 
 hl_buttons = {
@@ -91,6 +92,6 @@ bj_buttons = {
     "hit": Button(BLACK, (330, 250), (110, 60), 'Hit'),
     "double": Button(BLACK, (475, 250), (250, 60), 'Double Down'),
     "stand": Button(BLACK, (770, 250), (110, 60), 'Stand'),
-    "again": Button(BLACK, (530, 260), (200, 65), 'Play Again!'),
-    "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
+    "again": Button(BLACK, (530, 260), (200, 65), 'Play Again!')
+
 }

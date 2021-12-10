@@ -52,7 +52,7 @@ def get_camera_card(game, player):
                 game.deck.remove(cardname)
                 player.add_card(card)
                 cap_card.release()
-                return game.deck
+                break
             else:
                 rank, suit = cardname
                 if rank == "Joker":

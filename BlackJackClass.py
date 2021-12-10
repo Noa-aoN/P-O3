@@ -173,7 +173,7 @@ def deal_cards_screen(game, screen, buttons):
                     game.previous_player = player.number
 
             game.give_card()
-            game.deck = game.get_card_func(player)
+            game.get_card_func(player)
             screen.fill(GREEN)
             game.show_each_player()
             pygame.display.update()
@@ -184,7 +184,7 @@ def deal_cards_screen(game, screen, buttons):
         if game.previous_player != 2.5:
             game.rotate_fromto_player(game.previous_player, 2.5)
             game.previous_player = 2.5
-        game.deck = game.get_card_func(game.dealer)
+        game.get_card_func(game.dealer)
         game.dealer.show_cards(screen)
         game.dealer.display_score_bj(screen)
         pygame.display.update()
@@ -261,14 +261,14 @@ def playing_screen(game, screen, buttons):
                             pygame.display.update()
                             sleep(0.2)
                             if option == "hit":
-                                game.deck = game.get_card_func(current_player)
+                                game.get_card_func(current_player)
                                 current_player.show_cards(screen)
                                 current_player.display_score_bj(screen)
 
                             elif option == "double" and len(current_player.cards) == 2 and \
                                     current_player.balance >= 2 * current_player.bet:
                                 current_player.bet = current_player.bet * 2
-                                game.deck = game.get_card_func(current_player)
+                                game.get_card_func(current_player)
                                 current_player.show_cards(screen)
                                 current_player.display_score_bj(screen)
                                 current_player.wants_card = False
@@ -342,8 +342,7 @@ def dealer_card_screen(game, screen, buttons):
         pygame.display.update()
         sleep(1)
         game.give_card()
-        game.deck = game.get_card_func(game.dealer)
-
+        game.get_card_func(game.dealer)
     dealer_score = game.dealer.value_count_bj()
 
     for player in game.players:
@@ -376,30 +375,12 @@ def blackjack(game):
                 elif game.buttons["cam"].button_pressed(event):
                     game.cam = not game.cam
                     print("camera", game.cam)
-                    if game.cam:
-                        game.buttons["cam"].set_color(WHITE)
-                    else:
-                        game.buttons["cam"].set_color(BLACK)
-                    #game.buttons["cam"].draw(screen)
-                    #pygame.display.update()
                 elif game.buttons["rasp"].button_pressed(event):
                     game.rasp = not game.rasp
                     print("raspberry pi", game.rasp)
-                    if game.rasp:
-                        game.buttons["rasp"].set_color(WHITE)
-                    else:
-                        game.buttons["rasp"].set_color(BLACK)
-                    #game.buttons["rasp"].draw(screen)
-                    #pygame.display.update()
                 elif game.buttons["link"].button_pressed(event):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
-                    if game.with_linking:
-                        game.buttons["link"].set_color(WHITE)
-                    else:
-                        game.buttons["link"].set_color(BLACK)
-                    #game.buttons["link"].draw(screen)
-                    #pygame.display.update()
                 elif game.buttons["exit"].button_pressed(event):
                     return game.players
 
@@ -425,14 +406,14 @@ def blackjack(game):
                     game.draw_screen = home_screen_bj
                     return game.players
                 elif game.buttons["hit"].button_pressed(event):
-                    game.deck = game.get_card_func(current_player)
+                    game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
 
                 elif current_player.balance >= 2 * current_player.bet and game.buttons["double"].button_pressed(event) \
                         and len(current_player.cards) == 2:
                     current_player.bet = current_player.bet * 2
-                    game.deck = game.get_card_func(current_player)
+                    game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
                     current_player.wants_card = False
