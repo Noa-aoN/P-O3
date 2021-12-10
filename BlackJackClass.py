@@ -7,7 +7,7 @@ from AudioPlay import playsound
 from face_with_hand_linking import get_landmark_list
 from gestures_mediapipe import check_all_fingers, check_option
 from Camera import init_camera, opencv_to_pygame
-from Style import font, font_small, WHITE, BLACK, GREEN
+from Style import font, font2_small, WHITE, BLACK, GREEN
 
 '''
 Bugs: 
@@ -26,7 +26,7 @@ def rules_screen(game, screen, buttons):
     content = f.read()
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
-        rules_surf = font_small.render(line, False, BLACK)
+        rules_surf = font2_small.render(line, False, BLACK)
         screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 3 + i * 20)))
     f.close()
 
@@ -156,7 +156,7 @@ def playing_screen(game, screen, buttons):
 
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
-    buttons["exit"].draw(screen)
+    #buttons["exit"].draw(screen)
 
     current_player = game.get_current_player()
     library = game.library

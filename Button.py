@@ -1,7 +1,7 @@
 import pygame
 from AudioPlay import playsound
 from sys import exit
-from Style import BLACK, WHITE
+from Style import BLACK, WHITE, GREEN
 
 
 def exit_pygame(event):
@@ -11,9 +11,9 @@ def exit_pygame(event):
 
 
 class Button:
-    def __init__(self, color, position, size, text='', font=None):
+    def __init__(self, color, position, size, text='', font=None, bg_color=(114, 200, 114)):
         self.color = color
-        self.bg_color = (114, 200, 114)
+        self.bg_color = bg_color
         self.font_color = (0, 0, 0)
         self.pos_x, self.pos_y = position
         self.width, self.height = size
@@ -82,10 +82,10 @@ common_buttons = {
 hl_buttons = {
     "higher": Button(BLACK, (380, 250), (150, 60), 'Higher'),
     "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
-    "try": Button(BLACK, (480, 480), (240, 65), 'Try Again'),
+    "try": Button(BLACK, (480, 480), (240, 65), 'Try Again', None, GREEN),
     "again": Button(BLACK, (530, 260), (200, 65), 'Play Again!'),
     "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
-    "next": Button(BLACK, (480, 480), (240, 65), 'Next Player')
+    "next": Button(BLACK, (480, 480), (240, 65), 'Next Player', None, GREEN)
 }
 
 bj_buttons = {
