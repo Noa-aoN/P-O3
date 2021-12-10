@@ -112,7 +112,6 @@ def playing_screen(game, screen, buttons):
     # Give the current player a card if they have none
     if not player.cards:
         game.give_card()
-        game.deck = game.get_card_func(player)
         game.get_card_func(player)
 
     question_surf = font.render(f'{player.name}, is the next card going to be higher or lower?', False, BLACK)
@@ -138,7 +137,6 @@ def playing_screen(game, screen, buttons):
             index = check_index(landmarklist[0])
             if index == "index up":
                 if game.last_index == index:
-                    game.deck = game.get_card_func(player)
                     game.get_card_func(player)
                     last_val, current_val = last_two_vals(player)
                     wrong = last_val > current_val
@@ -149,7 +147,6 @@ def playing_screen(game, screen, buttons):
 
             elif index == "index down":
                 if game.last_index == index:
-                    game.deck = game.get_card_func(player)
                     game.get_card_func(player)
                     last_val, current_val = last_two_vals(player)
                     wrong = last_val < current_val
@@ -275,7 +272,6 @@ def higherlower(game):
                     game.draw_screen = home_screen_hl
                 elif game.buttons["higher"].button_pressed(event) or game.buttons["lower"].button_pressed(event):
                     game.give_card()
-                    game.deck = game.get_card_func(current_player)
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     last_val, current_val = last_two_vals(current_player)

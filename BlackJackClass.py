@@ -209,7 +209,6 @@ def playing_screen(game, screen, buttons):
     game.show_each_player()
 
     game.dealer.show_cards(screen)
-    print("showed dealer cards")
     game.dealer.display_score_bj(screen)
     buttons["exit"].draw(screen)
 
@@ -382,6 +381,7 @@ def blackjack(game):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
+                    game.play_again()
                     return game.players
 
             # Rules Screen
@@ -404,12 +404,10 @@ def blackjack(game):
             elif current_screen == playing_screen:
                 if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen_bj
-                    return game.players
                 elif game.buttons["hit"].button_pressed(event):
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
-
                 elif current_player.balance >= 2 * current_player.bet and game.buttons["double"].button_pressed(event) \
                         and len(current_player.cards) == 2:
                     current_player.bet = current_player.bet * 2
@@ -417,7 +415,6 @@ def blackjack(game):
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
                     current_player.wants_card = False
-
                 elif game.buttons["stand"].button_pressed(event):
                     current_player.wants_card = False
 
