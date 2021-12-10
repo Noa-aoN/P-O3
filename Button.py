@@ -73,7 +73,6 @@ common_buttons = {
     "cam": Button(BLACK, (540, 490), (120, 20), 'Camera', 'small'),
     "rasp": Button(BLACK, (540, 520), (120, 20), 'Raspberry Pi', 'small'),
     "link": Button(BLACK, (540, 550), (120, 20), 'Face Linking', 'small'),
-    "next": Button(BLACK, (800, 480), (240, 65), 'Next Player'),
     "restart": Button(BLACK, (470, 260), (280, 65), 'Restart Game'),
     "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
     "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
@@ -85,7 +84,8 @@ hl_buttons = {
     "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
     "try": Button(BLACK, (480, 480), (240, 65), 'Try Again'),
     "again": Button(BLACK, (530, 260), (200, 65), 'Play Again!'),
-    "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
+    "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
+    "next": Button(BLACK, (480, 480), (240, 65), 'Next Player')
 }
 
 bj_buttons = {

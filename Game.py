@@ -1,10 +1,13 @@
 import pygame
 from Deck import load_random_deck, get_random_card
 from gestures_mediapipe import LandmarkGetter
-from Player import Player, Library
+from Player import Dealer, Library
 from Camera import get_camera_card
 from Style import font_huge, GREEN, BLACK, WHITE, BLUE
 from Button import common_buttons, hl_buttons, bj_buttons
+
+
+# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 
 def home_screen_hl(game, screen, buttons):
@@ -82,7 +85,7 @@ class Game:
         self.screen.fill(GREEN)
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
-        self.clock.tick(60)
+        self.clock.tick(20)
 
     def get_card_func(self, player):
         if self.cam:
@@ -90,21 +93,22 @@ class Game:
         return get_random_card(self, player)
 
     def give_card(self):
-        print("geef nieuwe kaart")
+        #print("geef nieuwe kaart")
         if self.rasp:
             dcmotor_rotate()
 
     def rotate_fromto_player(self, previous_player, player):
-        print("ga van", previous_player, "naar", player)
+        #print("ga van", previous_player, "naar", player)
         if self.rasp:
             servo_rotate_fromto(previous_player, player)
 
     def rotate_to(self, player):
-        print("ga naar", player)
+        #print("ga naar", player)
         if self.rasp:
             servo_rotate(player)
 
     def get_current_player(self):
+        print("current_player", self.player_index)
         return self.players[self.player_index]
 
     def next_player(self):
@@ -112,13 +116,13 @@ class Game:
             self.player_index = 0
         else:
             self.player_index += 1
-        print("current player " + str(self.player_index))
+        #print("current player ok" + str(self.player_index))
 
 
 class Blackjack(Game):
     def __init__(self, screen, players):
         super().__init__(screen, players, home_screen_bj, dict(common_buttons, **bj_buttons))
-        self.dealer = Player('Dealer', 0, 0)
+        self.dealer = Dealer()
         self.previous_player = 0
         self.last_fingers = None
         self.last_option = None
@@ -158,7 +162,7 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
-        print("current player "+ str(self.player_index))
+        print("current player ok"+ str(self.player_index))
         self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)
