@@ -15,7 +15,7 @@ def home_screen_hl(game, screen, buttons):
     screen.blit(title_surf, title_surf.get_rect(midbottom=(597, 157)))
     title_surf2 = font_huge.render('Higher Lower', False, BLACK)
     screen.blit(title_surf2, title_surf2.get_rect(midbottom=(600, 160)))
-    H = pygame.transform.rotozoom(pygame.image.load("Images/Arrows/arrow_two_with_backgr.jpg"), 0, 0.5)
+    H = pygame.transform.rotozoom(pygame.image.load("Images/Arrows.jpg"), 0, 0.5)
     screen.blit(pygame.transform.rotozoom(H, 0, 2), (530, 210))
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
         if option:
