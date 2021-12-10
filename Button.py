@@ -41,7 +41,7 @@ class Button:
 
         if self.text != '':
             text = font.render(self.text, False, self.font_color)
-            window.blit(text, ( x + (w / 2 - text.get_width() / 2), y + (h / 2 - text.get_height() / 2)))
+            window.blit(text, (x + (w / 2 - text.get_width() / 2), y + (h / 2 - text.get_height() / 2)))
 
     def collides(self, mouse):
         if self.pos_x - 10 < mouse[0] < (self.pos_x + self.width) + 10:
@@ -84,7 +84,6 @@ hl_buttons = {
     "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
     "try": Button(BLACK, (480, 480), (240, 65), 'Try Again'),
     "again": Button(BLACK, (530, 260), (200, 65), 'Play Again!'),
-    "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)],
     "next": Button(BLACK, (480, 480), (240, 65), 'Next Player')
 }
 

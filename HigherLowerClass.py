@@ -320,6 +320,9 @@ def higherlower(game):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
+    pygame.display.set_caption('Virtual Card Game Robot')
+    vtk_icon = pygame.image.load('Images/VTK_icon.png')
+    pygame.display.set_icon(vtk_icon)
 
     names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
     players = [Player(name, 10000, i) for i, name in enumerate(names)]

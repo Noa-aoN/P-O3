@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlackJackClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJackClass.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HigherLowerClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/HigherLowerClass.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -283,7 +284,14 @@
       <option name="project" value="LOCAL" />
       <updated>1639153188755</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Icon + title + bug">
+      <created>1639153823273</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1639153823273</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -316,7 +324,8 @@
     <MESSAGE value="Rules" />
     <MESSAGE value="Facedown card value 0 solved" />
     <MESSAGE value="FONTS" />
-    <option name="LAST_COMMIT_MESSAGE" value="FONTS" />
+    <MESSAGE value="Icon + title + bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Icon + title + bug" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>
