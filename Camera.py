@@ -42,7 +42,6 @@ def get_camera_card(game, player):
         give_card_again.draw(screen)
         for event in pygame.event.get():
             if give_card_again.button_pressed(event):
-                print("new card given")
                 game.give_card()
 
         if card:
