@@ -82,8 +82,7 @@ def main_menu():
                             name_text = ''
                 library_surf = font.render(library_text, False, BLACK)
                 screen.blit(library_surf, library_surf.get_rect(topleft=(290, 250)))
-
-            if len(players) == 4 or bool == 'skip':
+            if (len(players) == 4 and playeralreadyregistered is None) or bool == 'skip':
                 addplayers = False
         else:
             choose_game = font_huge.render('Choose Game', False, BLACK)

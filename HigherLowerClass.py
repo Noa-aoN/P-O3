@@ -7,7 +7,7 @@ from Style import font_huge, font, WHITE, BLACK, GREEN
 from Camera import init_camera, opencv_to_pygame
 from gestures_mediapipe import check_index, check_all_fingers, hand_position
 from mediapipe_pose import linkfacewithhand
-from BlackJackClass import face_gest_crop, get_landmark_list
+from face_with_hand_linking import face_gest_crop, get_landmark_list
 
 '''
 Bugs: 
