@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/BlackJackClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlackJackClass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/Camera.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HigherLowerClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/HigherLowerClass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/card_detection_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/card_detection_single.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/card_double_detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/card_double_detection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/card_seperate_detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/card_seperate_detection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/face_with_hand_linking.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/face_with_hand_linking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/facenet_facerecognition.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/facenet_facerecognition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gestures_mediapipe.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/gestures_mediapipe.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mediapipe_pose.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/mediapipe_pose.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

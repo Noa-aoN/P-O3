@@ -70,9 +70,9 @@ class Button:
 
 common_buttons = {
     "start": Button(BLACK, (540, 420), (120, 60), 'Play!'),
-    "cam": Button(BLACK, (540, 490), (120, 20), 'Camera', 'small'),
+    "cam": Button(BLACK, (540, 490), (120, 20), 'Card Detection', 'small'),
     "rasp": Button(BLACK, (540, 520), (120, 20), 'Raspberry Pi', 'small'),
-    "link": Button(BLACK, (540, 550), (120, 20), 'Face Linking', 'small'),
+    "link": Button(BLACK, (540, 550), (120, 20), 'Face Authentication', 'small'),
     "restart": Button(BLACK, (470, 260), (280, 65), 'Restart Game'),
     "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
     "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
