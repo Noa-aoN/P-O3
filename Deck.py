@@ -1,9 +1,17 @@
+from cv2 import imread, IMREAD_GRAYSCALE
 import pygame
 from random import shuffle
 
 SUITS = ("Hearts", "Diamonds", "Spades", "Clubs")
 RANKS = ("Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
          "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Joker")
+
+SUITS_IMG = [imread(f"Images/MyMoulds/{suit}.jpg", IMREAD_GRAYSCALE) for suit in SUITS]
+RANKS_IMG = [imread(f"Images/MyMoulds/{rank}.jpg", IMREAD_GRAYSCALE) for rank in RANKS]
+
+TEMPLATE_SUITS_IMG = imread("Images/References/ReferenceSuits.jpg", IMREAD_GRAYSCALE)
+TEMPLATE_RANKS_IMG = imread("Images/References/ReferenceRanks.jpg", IMREAD_GRAYSCALE)
+
 BJ_VALUES = (-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 0)
 HL_VALUES = (14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0)
 

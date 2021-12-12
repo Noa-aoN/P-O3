@@ -1,9 +1,6 @@
 import cv2
-
 import numpy as np
-# from Camera import init_camera
-
-from Deck import Card, SUITS, RANKS
+from Deck import Card, SUITS, RANKS, SUITS_IMG, RANKS_IMG, TEMPLATE_SUITS_IMG, TEMPLATE_RANKS_IMG
 
 FONT = cv2.FONT_HERSHEY_PLAIN
 
@@ -12,12 +9,6 @@ MIN_CARD_AREA = 10000
 
 RANK_WIDTH_HEIGHT = (70, 100)
 SUIT_WIDTH_HEIGHT = (100, 100)
-
-SUITS_IMG = [cv2.imread(f"Images/MyMoulds/{suit}.jpg", cv2.IMREAD_GRAYSCALE) for suit in SUITS]
-RANKS_IMG = [cv2.imread(f"Images/MyMoulds/{rank}.jpg", cv2.IMREAD_GRAYSCALE) for rank in RANKS]
-
-TEMPLATE_SUITS_IMG = cv2.imread("../Images/References/ReferenceSuits.jpg", cv2.IMREAD_GRAYSCALE)
-TEMPLATE_RANKS_IMG = cv2.imread("../Images/References/ReferenceRanks.jpg", cv2.IMREAD_GRAYSCALE)
 
 
 def binary_threshold(image):
@@ -60,7 +51,7 @@ def create_card(contour, pts, image):
 
     corner_zoom = warp[2:110, 2:45]
 
-    for thresh_level in range(190, 130, -1):
+    for thresh_level in range(190, 130, -5):
         retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
         rank_img = corner_thresh[4:66, 0:50]

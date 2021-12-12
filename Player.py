@@ -208,6 +208,7 @@ class Player:
 
 class Dealer:
     def __init__(self):
+        self.name = "Dealer"
         self.cards = []
         self.has_dummy = False
 
