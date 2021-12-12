@@ -68,6 +68,7 @@ class Game:
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.players = list(players)
+        self.players_reset()
         self.player_memory = list(players)
         self.player_index = 0
         self.draw_screen = draw_screen
@@ -89,6 +90,10 @@ class Game:
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
         self.clock.tick(20)
+        
+    def players_reset(self):
+        for player in self.players:
+            player.reset()
 
     def get_card_func(self, player):
         if self.cam:
@@ -185,6 +190,10 @@ class Higherlower(Game):
             player.show_name(self.screen)
             player.show_cards(self.screen)
             player.display_score_bj(self.screen)
+            
+    def subtract_bets(self):
+        for player in self.players:
+            player.balance -= player.bet
 
     def play_again(self, cur_player=None):
         self.deck = load_random_deck()

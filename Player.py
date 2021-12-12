@@ -79,6 +79,16 @@ class Player:
     def __bool__(self):
         return self.balance >= 1000
 
+    def reset(self):
+        self.balance = 10000
+        self.bet = 0
+        self.cards = []
+        self.wants_card = True
+        self.wants_bet = True
+        self.prev_prize = 0
+        self.prize_money = 0
+        self.wants_restart = False
+
     def show_name(self, window, hl_game=False):
         i = self.number
         width_background = 250

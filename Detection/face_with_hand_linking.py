@@ -1,5 +1,5 @@
-from gestures_mediapipe import check_all_fingers, check_option, hand_position
-from mediapipe_pose import linkfacewithhand
+from Detection.gestures_mediapipe import hand_position
+from Detection.mediapipe_pose import linkfacewithhand
 from Style import font, font_small, WHITE, BLACK, GREEN, RED
 from cv2 import rectangle
 

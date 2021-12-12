@@ -320,6 +320,7 @@ def blackjack(game):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
+                    game.subtract_bets()
                     game.play_again()
                     return game.players
 
@@ -372,8 +373,6 @@ def blackjack(game):
             elif current_screen == restart_game_screen:
                 game.play_again()
                 if game.buttons["restart"].button_pressed(event):
-                    for i in game.players:
-                        i.balance = 10000
                     game.draw_screen = bets_screen
                     return None
                 elif game.buttons["exit"].button_pressed(event):

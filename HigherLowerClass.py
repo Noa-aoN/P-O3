@@ -244,6 +244,8 @@ def higherlower(game):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
+                    game.subtract_bets()
+                    game.play_again()
                     return game.players
 
             # Rules Screen
