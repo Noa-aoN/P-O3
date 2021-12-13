@@ -8,14 +8,9 @@ from Style import BLACK, WHITE, GREEN, font, font_small, font_big
 
 
 def Library():
-    if os.path.exists(r"C:\Users"):
-        projectdirectory = local_directory(r"C:\Users")
-    elif os.path.exists(r"C:\Gebruikers"):
-        projectdirectory = local_directory(r"C:\Gebruikers")
-    else:
-        projectdirectory = None
-    librarydirectory = create_folder(os.path.join(projectdirectory, 'facenetLibraries'))
-    library = PlayerRegistration(librarydirectory, 7)
+
+    librarydirectory = create_folder(os.path.join(os.path.expanduser('~'), 'facenetLibraries'))
+    library = PlayerRegistration(librarydirectory, 9)
     return library
 
 

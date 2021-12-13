@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1fa4d72e-55e9-478f-a187-f737397aa401" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deck.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Detection/card_detection_single.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Detection/card_double_detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/card_double_detection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Detection/facenet_facerecognition.py" beforeDir="false" afterPath="$PROJECT_DIR$/Detection/facenet_facerecognition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,7 +54,7 @@
       <recent name="C:\Users\noapa\P-O3\Rules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.BlackJackClass">
+  <component name="RunManager" selected="Python.MainMenu">
     <configuration name="BlackJackClass" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="P-O3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -122,17 +119,17 @@
       <method v="2" />
     </configuration>
     <configuration name="MainMenu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="P-O3" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\noapa\miniconda3\envs\P-O3\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\yanni\anaconda3\envs\P-O3\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MainMenu.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -172,9 +169,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.MainMenu" />
         <item itemvalue="Python.BlackJackClass" />
         <item itemvalue="Python.card_double_detection" />
-        <item itemvalue="Python.MainMenu" />
         <item itemvalue="Python.HigherLowerClass" />
         <item itemvalue="Python.Game" />
       </list>
