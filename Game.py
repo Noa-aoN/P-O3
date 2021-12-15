@@ -1,4 +1,5 @@
 import pygame
+import socket
 from Deck import load_random_deck, get_random_card
 from Detection.gestures_mediapipe import LandmarkGetter
 from Player import Dealer, Library
@@ -6,9 +7,7 @@ from Camera import get_camera_card
 from Style import font_huge, GREEN, BLACK, WHITE, BLUE
 from Button import common_buttons, hl_buttons, bj_buttons
 
-
 # from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
-
 
 def home_screen_hl(game, screen, buttons):
     title_surf = font_huge.render('Higher Lower', False, WHITE)
@@ -63,6 +62,16 @@ def restart_game_screen(game, screen, buttons):
     buttons["restart"].draw(screen)
 
 
+def send(msg):
+    message = msg.encode('utf-8')
+    msg_length = len(message)
+    send_length = str(msg_length).encode('utf-8')
+    send_length += b' ' * (64 - len(send_length))
+    client.send(send_length)
+    client.send(message)
+    print(client.recv(2048).decode('utf-8'))
+
+
 class Game:
     def __init__(self, screen, players, draw_screen, buttons):
         self.screen = screen
@@ -84,13 +93,20 @@ class Game:
         self.with_linking = False
         self.cam = False
         self.rasp = False
+        self.client = None
 
     def __call__(self):
         self.screen.fill(GREEN)
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
         self.clock.tick(20)
-        
+
+    def create_client(self):
+        if self.rasp:
+            self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect(("172.20.10.13", 5050))
+            send("Test 124")
+
     def players_reset(self):
         for player in self.players:
             player.reset()
@@ -101,19 +117,16 @@ class Game:
         return get_random_card(self, player)
 
     def give_card(self):
-        #print("geef nieuwe kaart")
         if self.rasp:
-            dcmotor_rotate()
+            send("GIVE CARD")
 
     def rotate_fromto_player(self, previous_player, player):
-        #print("ga van", previous_player, "naar", player)
         if self.rasp:
-            servo_rotate_fromto(previous_player, player)
+            send(f"ROTATE {previous_player} {player}")
 
     def rotate_to(self, player):
-        #print("ga naar", player)
         if self.rasp:
-            servo_rotate(player)
+            send(f"ROTATE {player}")
 
     def get_current_player(self):
         return self.players[self.player_index]
@@ -123,7 +136,7 @@ class Game:
             self.player_index = 0
         else:
             self.player_index += 1
-        #print("current player ok" + str(self.player_index))
+        # print("current player ok" + str(self.player_index))
 
 
 class Blackjack(Game):
@@ -169,7 +182,7 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
-        print("current player ok"+ str(self.player_index))
+        print("current player ok" + str(self.player_index))
         self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)
@@ -190,7 +203,7 @@ class Higherlower(Game):
             player.show_name(self.screen)
             player.show_cards(self.screen)
             player.display_score_bj(self.screen)
-            
+
     def subtract_bets(self):
         for player in self.players:
             player.balance -= player.bet

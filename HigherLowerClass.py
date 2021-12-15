@@ -184,7 +184,6 @@ def playing_screen(game, screen, buttons):
     player.show_cards(screen, True)
     player.display_score_hl(screen, True)
     player.show_prize_money(screen, True)
-    buttons["exit"].draw(screen)
     buttons["higher"].draw(screen)
     buttons["lower"].draw(screen)
 
@@ -244,7 +243,6 @@ def higherlower(game):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
-                    game.subtract_bets()
                     game.play_again()
                     return game.players
 
@@ -269,9 +267,6 @@ def higherlower(game):
                 if current_player.balance < 1000:
                     game.play_again(current_player)
                     game.next_player()
-                if game.buttons["exit"].button_pressed(event):
-                    current_player.wants_restart = True
-                    game.draw_screen = home_screen_hl
                 elif game.buttons["higher"].button_pressed(event) or game.buttons["lower"].button_pressed(event):
                     game.give_card()
                     game.get_card_func(current_player)
@@ -292,8 +287,11 @@ def higherlower(game):
             # Wrong Screen
             elif current_screen == wrong_screen:
                 if game.buttons["exit"].button_pressed(event):
+                    if game.get_current_player() == game.players[-1]:
+                        game.play_again()
+                        game.next_player()
                     game.draw_screen = home_screen_hl
-                elif len(game.players) > 1 and game.buttons["next"].button_pressed(event):
+                elif game.buttons["next"].button_pressed(event):
                     if game.get_current_player() == game.players[-1]:
                         game.play_again()
                         game.draw_screen = bets_screen
