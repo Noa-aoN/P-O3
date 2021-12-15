@@ -385,14 +385,14 @@ class face_recognition:
         return editedimage, resulting_matches
 
 
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-instance = face_recognition(r'C:\Users\bram\testfolder')
-while True:
-    ret, img = cam.read()
-    image, resultingmatches = instance.faceRecognition(img)
-    cv2.imshow("Face", image)
-    cv2.waitKey(1)
-    print(resultingmatches)
+# cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+# instance = face_recognition(r'C:\Users\bram\testfolder')
+# while True:
+#     ret, img = cam.read()
+#     image, resultingmatches = instance.faceRecognition(img)
+#     cv2.imshow("Face", image)
+#     cv2.waitKey(1)
+#     print(resultingmatches)
 
 
 

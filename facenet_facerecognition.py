@@ -308,7 +308,7 @@ class PlayerRegistration:
 
 # Bram1 = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Bram1.jpg")
 # Bram2 = Image.open(r'C:\Users\bram\facenetLibraries\Bram\image4.jpg')
-Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg")
+# Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg")
 # print(embedding_matching(Bram1, Gorjan1))
 
 #
@@ -319,25 +319,25 @@ Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg"
 # print(looking_direction(Image.open(r'C:\Users\bram\facenetLibraries\Bram\image8.jpg')))
 
 #
-library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
+# library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
 # library.registerplayer("Bram")
 # library.registerplayer("Karel")
 #
 
-imagesize = 160
-margin = 0.2
-mtcnn, resnet = facenet_setup(imagesize, margin)
-libraryembedding = {}
-libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
-libraryembedding["Karel"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Karel', mtcnn, resnet)
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-
-# # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
-while True:
-    ret, img = cam.read()
-    img, resultingmatches = library.identifyface(img, libraryembedding)
-    # print(resultingmatches)
-    # result = library.searchplayer('Bram', img, libraryembedding)
-    # print(result)
-    cv2.imshow("Face", img)
-    cv2.waitKey(1)
+# imagesize = 160
+# margin = 0.2
+# mtcnn, resnet = facenet_setup(imagesize, margin)
+# libraryembedding = {}
+# libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
+# libraryembedding["Karel"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Karel', mtcnn, resnet)
+# cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+# 
+# # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
+# while True:
+#     ret, img = cam.read()
+#     img, resultingmatches = library.identifyface(img, libraryembedding)
+#     # print(resultingmatches)
+#     # result = library.searchplayer('Bram', img, libraryembedding)
+#     # print(result)
+#     cv2.imshow("Face", img)
+#     cv2.waitKey(1)
