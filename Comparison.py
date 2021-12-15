@@ -7,7 +7,7 @@ import os
 eigenrecog = face_recognition(r'C:\Users\bram\testfolder')
 facenetrecog = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
 
-testimgdir = r'C:\Users\bram\OneDrive\Documenten\2Bbi KU Leuven\PnO3\TestFotos'
+testimgdir = r'C:\Users\bram\facenetLibraries'
 
 Bram1 = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Bram1.jpg")
 
