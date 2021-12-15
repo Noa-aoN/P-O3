@@ -10,7 +10,7 @@ from Style import BLACK, WHITE, GREEN, font, font_small, font_big
 def Library():
 
     librarydirectory = create_folder(os.path.join(os.path.expanduser('~'), 'facenetLibraries'))
-    library = PlayerRegistration(librarydirectory, 9)
+    library = PlayerRegistration(librarydirectory, 7)
     return library
 
 
