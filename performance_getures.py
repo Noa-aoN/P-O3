@@ -256,7 +256,7 @@ TEST, x aantal testiteraties, test de nauwkeurigheid, niet de snelheid
 """
 
 
-def test(x, fingers):
+def test(x=5, fingers=5):
     count_cv = []
     count_mp = []
     for i in range(x):
@@ -266,8 +266,8 @@ def test(x, fingers):
     result = {"cv": count_cv, "mp": count_mp}
     return result
 
-iter = 15
-gest = 3
+iter = 20
+gest = 5
 test_gest = test(iter, gest) # eerste is aantal testen, tweede is aantal vingers
 print(test_gest)
 """
@@ -277,6 +277,6 @@ data = [23, 45, 56, 78, 213]
 plt.bar([1,2,3,4,5], data)
 plt.show()
 """
-data = [test_gest["cv"].count(True) , test_gest["mp"].count(True), iter]
+data = [test_gest["cv"].count(True), test_gest["mp"].count(True), iter]
 plt.bar(["cv", "mp", "total"], data)
 plt.show()
