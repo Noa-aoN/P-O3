@@ -260,10 +260,8 @@ def check_results_screen(game, screen, buttons):
         if dealer_blackjack:
             player.adjust_balance(dealer_score, 'bj', dealer_blackjack)
 
-    # not_everyone_busts = not game.everyone_bust()
-
     game.dealer.show_cards(screen)
-    game.dealer.display_score_bj(screen)
+    game.dealer.display_score_bj(screen, dealer_blackjack)
 
 
 def dealer_card_screen(game, screen, buttons):
@@ -274,13 +272,15 @@ def dealer_card_screen(game, screen, buttons):
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
 
-    while 0 < game.dealer.value_count_bj() < 17:
-        game.dealer.show_cards(screen)
-        game.dealer.display_score_bj(screen)
-        pygame.display.update()
-        sleep(1)
-        game.give_card()
-        game.get_card_func(game.dealer)
+    not_everyone_busts = not game.everyone_bust()
+    if not_everyone_busts:
+        while 0 < game.dealer.value_count_bj() < 17:
+            game.dealer.show_cards(screen)
+            game.dealer.display_score_bj(screen)
+            pygame.display.update()
+            sleep(1)
+            game.give_card()
+            game.get_card_func(game.dealer)
     dealer_score = game.dealer.value_count_bj()
 
     for player in game.players:
@@ -320,7 +320,6 @@ def blackjack(game):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
-                    game.subtract_bets()
                     game.play_again()
                     return game.players
 

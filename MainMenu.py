@@ -14,6 +14,7 @@ to do:
 
 bugs: 
 als ge van hoger lager naar blackjack gaat dan hebt ge nog steeds uw deck wat ge bij hoger lager geïndigd zijt.
+- some buttons appear white when drawn.
 """
 
 
@@ -82,6 +83,7 @@ def main_menu():
                 screen.blit(library_surf, library_surf.get_rect(topleft=(290, 250)))
             if (len(players) == 4 and playeralreadyregistered is None) or bool == 'skip':
                 addplayers = False
+
         else:
             choose_game = font_huge.render('Choose Game', False, BLACK)
             screen.blit(choose_game, choose_game.get_rect(midbottom=(600, 150)))
@@ -96,8 +98,8 @@ def main_menu():
                     playsound("Sounds/DroppingChips.wav")
                     while playing:
                         game = Blackjack(screen, players)
-                        remaining_players = blackjack(game)
-                        if remaining_players is not None:
+                        players = blackjack(game)
+                        if players is not None:
                             playing = False
 
                 elif hl_button.button_pressed(event):

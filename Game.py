@@ -151,7 +151,6 @@ class Blackjack(Game):
             player.bet = 0
             player.wants_bet = True
             player.wants_card = True
-            player.wants_card = True
 
     def show_each_player(self):
         for player in self.players:

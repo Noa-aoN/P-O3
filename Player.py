@@ -75,7 +75,6 @@ class Player:
         return self.balance >= 1000
 
     def reset(self):
-        self.balance = 10000
         self.bet = 0
         self.cards = []
         self.wants_card = True
@@ -238,12 +237,12 @@ class Dealer:
                     return som
         return 0
 
-    def display_score_bj(self, window):
+    def display_score_bj(self, window, blackjack=False):
         # Otherwise bust is displayed
         if len(self.cards) == 0:
             return False
 
-        if self.value_count_bj() == 21:
+        if blackjack:
             score_surf = font.render("Blackjack", False, (10, 10, 10))
         elif self.value_count_bj() == 0:
             score_surf = font.render('Bust', False, (10, 10, 10))
