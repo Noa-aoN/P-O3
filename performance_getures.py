@@ -270,13 +270,10 @@ iter = 20
 gest = 5
 test_gest = test(iter, gest) # eerste is aantal testen, tweede is aantal vingers
 print(test_gest)
-"""
-bar plot voorbeeld
 
-data = [23, 45, 56, 78, 213]
-plt.bar([1,2,3,4,5], data)
-plt.show()
-"""
 data = [test_gest["cv"].count(True), test_gest["mp"].count(True), iter]
-plt.bar(["cv", "mp", "total"], data)
+plt.bar(["Convex Hull", "Mediapipe"], data, color='green', width=0.6)
+plt.xlabel("Methods") # labels toevoegen
+plt.ylabel("Nr. of correctly recognized gestures")
+plt.grid(axis='y') # horizontale lijnen invoegen
 plt.show()
