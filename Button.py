@@ -66,29 +66,3 @@ class Button:
                 playsound("Sounds/ButtonClick.wav")
                 return True
             return False
-
-
-common_buttons = {
-    "start": Button(BLACK, (540, 420), (150, 60), 'Play!'),
-    "cam": Button(BLACK, (540, 490), (150, 20), 'Card Detection', 'small'),
-    "rasp": Button(BLACK, (540, 520), (150, 20), 'Raspberry Pi', 'small'),
-    "link": Button(BLACK, (540, 550), (150, 20), 'Face Authentication', 'small'),
-    "restart": Button(BLACK, (470, 260), (280, 65), 'Restart Game'),
-    "exit": Button(BLACK, (1140, 20), (40, 20), 'Exit', 'small'),
-    "rules": Button(BLACK, (1140, 560), (40, 20), 'Rules', 'small'),
-    "again": Button(BLACK, (500, 260), (200, 65), 'Play Again!'),
-    "bet": [(i * 1000, Button(BLACK, (325 + i * 75, 300), (50, 30), f'{i}k')) for i in range(1, 6)]
-}
-
-hl_buttons = {
-    "higher": Button(BLACK, (380, 250), (150, 60), 'Higher'),
-    "lower": Button(BLACK, (680, 250), (150, 60), 'Lower'),
-    "try": Button(BLACK, (480, 480), (240, 65), 'Try Again', None, GREEN),
-    "next": Button(BLACK, (480, 480), (240, 65), 'Next Player', None, GREEN)
-}
-
-bj_buttons = {
-    "hit": Button(BLACK, (330, 250), (110, 60), 'Hit'),
-    "double": Button(BLACK, (475, 250), (250, 60), 'Double Down'),
-    "stand": Button(BLACK, (770, 250), (110, 60), 'Stand')
-}

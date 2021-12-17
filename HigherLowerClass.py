@@ -24,19 +24,19 @@ def last_two_vals(player):
     return last_card.hl_value, current_card.hl_value
 
 
-def rules_screen(game, screen, buttons):
+def rules_screen(game, screen, buttons, x_scale, y_scale):
     f = open('Rules/RulesHigherLower', 'r')
     content = f.read()
     split_content = content.splitlines()
-    pygame.draw.rect(screen, GREEN, (0, 0, 1200, 600))
+    pygame.draw.rect(screen, GREEN, (0, 0, 1200*x_scale, 600*y_scale))
     for i, line in enumerate(split_content):
         rules_surf = font.render(line, False, BLACK)
-        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 10 + i * 30)))
+        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10*x_scale, 10*y_scale + i * 30*y_scale)))
     f.close()
     buttons["exit"].draw(screen)
 
 
-def bets_screen(game, screen, buttons):
+def bets_screen(game, screen, buttons, x_scale, y_scale):
     game.show_each_player()
     buttons["exit"].draw(screen)
     current_player = game.get_current_player()
@@ -96,7 +96,7 @@ def bets_screen(game, screen, buttons):
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
-    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
+    screen.blit(scale, scale.get_rect(topleft=(45*x_scale + 290*x_scale * current_player.number, 415*y_scale)))
 
     if all([not player.wants_bet for player in game.players]):
         current_player.wants_restart = False
@@ -104,7 +104,7 @@ def bets_screen(game, screen, buttons):
         game.draw_screen = playing_screen
 
 
-def playing_screen(game, screen, buttons):
+def playing_screen(game, screen, buttons, x_scale, y_scale):
     player = game.get_current_player()
 
     # Give the current player a card if they have none
@@ -113,7 +113,7 @@ def playing_screen(game, screen, buttons):
         game.get_card_func(player)
 
     question_surf = font.render(f'{player.name}, is the next card going to be higher or lower?', False, BLACK)
-    screen.blit(question_surf, question_surf.get_rect(midbottom=(600, 200)))
+    screen.blit(question_surf, question_surf.get_rect(midbottom=(600*x_scale, 200*y_scale)))
 
     if not game.cap_gest:
         game.cap_gest = init_camera(0)
@@ -178,7 +178,7 @@ def playing_screen(game, screen, buttons):
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 0.25)
-    screen.blit(scale, scale.get_rect(midbottom=(180, 200)))
+    screen.blit(scale, scale.get_rect(midbottom=(180*x_scale, 200*y_scale)))
     player.show_name(screen, True)
     player.show_cards(screen, True)
     player.display_score_hl(screen, True)
@@ -192,7 +192,7 @@ def playing_screen(game, screen, buttons):
         game.draw_screen = wrong_screen
 
 
-def wrong_screen(game, screen, buttons):
+def wrong_screen(game, screen, buttons, x_scale, y_scale):
     player = game.get_current_player()
     player.show_name(screen, True)
     player.show_cards(screen, True)
@@ -200,10 +200,10 @@ def wrong_screen(game, screen, buttons):
     player.display_score_hl(screen, True)
 
     current_card = player.cards[-1]
-    screen.blit(pygame.transform.rotozoom(current_card.load_image(), 0, 2), (520, 200))
+    screen.blit(pygame.transform.rotozoom(current_card.load_image(), 0, 2), (520*x_scale, 200*y_scale))
 
     wrong_surf = font_huge.render('Wrong!', False, BLACK)
-    screen.blit(wrong_surf, wrong_surf.get_rect(midbottom=(600, 150)))
+    screen.blit(wrong_surf, wrong_surf.get_rect(midbottom=(600*x_scale, 150*y_scale)))
 
     if len(game.players) > 1:
         buttons["next"].draw(screen)
@@ -320,16 +320,18 @@ def higherlower(game):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
+    w, h = pygame.display.get_surface().get_size()
+    x_scale, y_scale = w / 1200, h / 600
     pygame.display.set_caption('Virtual Card Game Robot')
     vtk_icon = pygame.image.load('Images/VTK_icon.png')
     pygame.display.set_icon(vtk_icon)
 
     names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
-    players = [Player(name, 10000, i) for i, name in enumerate(names)]
+    players = [Player(name, 10000, i, x_scale, y_scale) for i, name in enumerate(names)]
 
     playing = True
     while playing:
-        game = Higherlower(screen, players)
+        game = Higherlower(screen, players, dict(common_buttons, **hl_buttons), x_scale, y_scale)
         remaining_players = higherlower(game)
         if remaining_players is None:
             print("restarting game")

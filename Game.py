@@ -6,16 +6,15 @@ from Detection.gestures_mediapipe import LandmarkGetter
 from Player import Dealer, Library
 from Camera import get_camera_card
 from Style import font_huge, GREEN, BLACK, WHITE, BLUE
-from Button import common_buttons, hl_buttons, bj_buttons
 
 
-def home_screen_hl(game, screen, buttons):
+def home_screen_hl(game, screen, buttons, x_scale, y_scale):
     title_surf = font_huge.render('Higher Lower', False, WHITE)
-    screen.blit(title_surf, title_surf.get_rect(midbottom=(597, 157)))
+    screen.blit(title_surf, title_surf.get_rect(midbottom=(597*x_scale, 157*y_scale)))
     title_surf2 = font_huge.render('Higher Lower', False, BLACK)
-    screen.blit(title_surf2, title_surf2.get_rect(midbottom=(600, 160)))
+    screen.blit(title_surf2, title_surf2.get_rect(midbottom=(600*x_scale, 160*y_scale)))
     H = pygame.transform.rotozoom(pygame.image.load("Images/Arrows.jpg"), 0, 0.5)
-    screen.blit(pygame.transform.rotozoom(H, 0, 2), (530, 210))
+    screen.blit(pygame.transform.rotozoom(H, 0, 2), (530*x_scale, 210*y_scale))
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
         if option:
             game.buttons[name].set_color(BLUE)
@@ -30,15 +29,15 @@ def home_screen_hl(game, screen, buttons):
     buttons["exit"].draw(screen)
 
 
-def home_screen_bj(game, screen, buttons):
+def home_screen_bj(game, screen, buttons, x_scale, y_scale):
     Blackjack_surf2 = font_huge.render('Blackjack', False, WHITE)
-    screen.blit(Blackjack_surf2, Blackjack_surf2.get_rect(midbottom=(597, 157)))
+    screen.blit(Blackjack_surf2, Blackjack_surf2.get_rect(midbottom=(597*x_scale, 157*y_scale)))
     Blackjack_surf = font_huge.render('Blackjack', False, BLACK)
-    screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600, 160)))
+    screen.blit(Blackjack_surf, Blackjack_surf.get_rect(midbottom=(600*x_scale, 160*y_scale)))
     H = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Jack_Spades.png"), 0, 0.15)
     S = pygame.transform.rotozoom(pygame.image.load("Images/Cards/Ace_Hearts.png"), 0, 0.15)
-    screen.blit(pygame.transform.rotozoom(H, 10, 1.2), (510, 230))
-    screen.blit(pygame.transform.rotozoom(S, -10, 1.2), (590, 230))
+    screen.blit(pygame.transform.rotozoom(H, 10, 1.2), (510*x_scale, 230*y_scale))
+    screen.blit(pygame.transform.rotozoom(S, -10, 1.2), (590*x_scale, 230*y_scale))
 
     for name, option in [("cam", game.cam), ("rasp", game.rasp), ("link", game.with_linking)]:
         if option:
@@ -54,16 +53,16 @@ def home_screen_bj(game, screen, buttons):
     buttons["exit"].draw(screen)
 
 
-def restart_game_screen(game, screen, buttons):
-    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
+def restart_game_screen(game, screen, buttons, x_scale, y_scale):
+    pygame.draw.rect(screen, GREEN, (0, 340*y_scale, 1200*x_scale, 25*y_scale), 0)
     game_over_surf = font_huge.render('Game Over', False, (255, 0, 0))
-    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600, 150)))
+    screen.blit(game_over_surf, game_over_surf.get_rect(midbottom=(600*x_scale, 150*y_scale)))
     buttons["exit"].draw(screen)
     buttons["restart"].draw(screen)
 
 
 class Game:
-    def __init__(self, screen, players, draw_screen, buttons):
+    def __init__(self, screen, players, draw_screen, buttons, x_scale, y_scale):
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.players = list(players)
@@ -84,10 +83,12 @@ class Game:
         self.rasp = False
         self.client = None
         self.previous_player = 0
+        self.x_scale = x_scale
+        self.y_scale = y_scale
 
     def __call__(self):
         self.screen.fill(GREEN)
-        self.draw_screen(self, self.screen, self.buttons)
+        self.draw_screen(self, self.screen, self.buttons, self.x_scale, self.y_scale)
         pygame.display.update()
         self.clock.tick(20)
 
@@ -140,9 +141,9 @@ class Game:
 
 
 class Blackjack(Game):
-    def __init__(self, screen, players):
-        super().__init__(screen, players, home_screen_bj, dict(common_buttons, **bj_buttons))
-        self.dealer = Dealer()
+    def __init__(self, screen, players, buttons, x_scale, y_scale):
+        super().__init__(screen, players, home_screen_bj, buttons, x_scale, y_scale)
+        self.dealer = Dealer(x_scale, y_scale)
         self.last_fingers = None
         self.last_option = None
 
@@ -192,8 +193,8 @@ class Blackjack(Game):
 
 
 class Higherlower(Game):
-    def __init__(self, screen, players):
-        super().__init__(screen, players, home_screen_hl, dict(common_buttons, **hl_buttons))
+    def __init__(self, screen, players, buttons, x_scale, y_scale):
+        super().__init__(screen, players, home_screen_hl, buttons, x_scale, y_scale)
         self.last_index = None
         self.last_fingers = None
 
