@@ -1,8 +1,0 @@
-Download all the python files in this folder.
-
-Run the files to check if you have all the correct modules installed.
-Connect the cameras to your pc and check if python receives the data.
-
-Open on your rapberry pi 4 the folder: raspberry_pi_files and follow the steps in the READ_ME
-
-Run main.py to start playing. ;)
