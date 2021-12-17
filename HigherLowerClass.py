@@ -13,7 +13,6 @@ Bugs:
 - waarschijnlijk wel
 
 To DO:
-- een oplossing verzinnen voor meerdere spelers te displayen
 - zie BlackJackClass
 '''
 
