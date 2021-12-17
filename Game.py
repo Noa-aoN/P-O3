@@ -1,13 +1,12 @@
 import pygame
+import socket
+from time import sleep
 from Deck import load_random_deck, get_random_card
 from Detection.gestures_mediapipe import LandmarkGetter
 from Player import Dealer, Library
 from Camera import get_camera_card
 from Style import font_huge, GREEN, BLACK, WHITE, BLUE
 from Button import common_buttons, hl_buttons, bj_buttons
-
-
-# from carddispencer_functies import setup, dcmotor_rotate, servo_rotate , servo_rotate_fromto
 
 
 def home_screen_hl(game, screen, buttons):
@@ -80,57 +79,70 @@ class Game:
         self.gest_time = 0
         self.cameracooldown = True
         self.deck = load_random_deck()
-        self.first_card = True
         self.with_linking = False
         self.cam = False
         self.rasp = False
+        self.client = None
+        self.previous_player = 0
 
     def __call__(self):
         self.screen.fill(GREEN)
         self.draw_screen(self, self.screen, self.buttons)
         pygame.display.update()
         self.clock.tick(20)
-        
+
+    def create_client(self):
+        if self.rasp:
+            self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.client.connect(("172.20.10.13", 5050))
+            # self.send("CONNECTED !")
+            num = self.players[0].number
+            self.rotate_to(num)
+            self.previous_player = num
+
+    def send(self, msg):
+        message = msg.encode('utf-8')
+        msg_length = len(message)
+        send_length = str(msg_length).encode('utf-8')
+        send_length += b' ' * (64 - len(send_length))
+        self.client.send(send_length)
+        self.client.send(message)
+        print(self.client.recv(2048).decode('utf-8'))
+
     def players_reset(self):
         for player in self.players:
             player.reset()
 
     def get_card_func(self, player):
+        self.give_card()
         if self.cam:
             return get_camera_card(self, player)
         return get_random_card(self, player)
 
     def give_card(self):
-        #print("geef nieuwe kaart")
         if self.rasp:
-            dcmotor_rotate()
+            sleep(1)
+            self.send("GIVE CARD")
 
     def rotate_fromto_player(self, previous_player, player):
-        #print("ga van", previous_player, "naar", player)
+        self.previous_player = player
         if self.rasp:
-            servo_rotate_fromto(previous_player, player)
+            sleep(1)
+            self.send(f"ROTATE {previous_player} {player}")
 
     def rotate_to(self, player):
-        #print("ga naar", player)
         if self.rasp:
-            servo_rotate(player)
+            sleep(1)
+            self.send(f"ROTATE {player}")
 
     def get_current_player(self):
         return self.players[self.player_index]
-
-    def next_player(self):
-        if self.player_index == len(self.players) - 1:
-            self.player_index = 0
-        else:
-            self.player_index += 1
-        #print("current player ok" + str(self.player_index))
 
 
 class Blackjack(Game):
     def __init__(self, screen, players):
         super().__init__(screen, players, home_screen_bj, dict(common_buttons, **bj_buttons))
         self.dealer = Dealer()
-        self.previous_player = 0
         self.last_fingers = None
         self.last_option = None
 
@@ -138,18 +150,20 @@ class Blackjack(Game):
         self.filter_players()
         self.deck = load_random_deck()
         self.player_index = 0
-        self.previous_player = 0
         self.gest_time = 0
         self.last_fingers = None
         self.last_option = None
         self.cameracooldown = True
-        self.first_card = True
         self.dealer.cards = []
+        first_num = self.players[0].number
+        self.rotate_fromto_player(self.previous_player, first_num)
+        self.previous_player = first_num
 
         for player in self.players:
             player.cards = []
             player.bet = 0
             player.wants_bet = True
+            player.wants_card = True
             player.wants_card = True
 
     def show_each_player(self):
@@ -168,7 +182,6 @@ class Blackjack(Game):
             self.player_index += 1
         else:
             self.player_index = 0
-        print("current player ok"+ str(self.player_index))
         self.players = list(filter(lambda player: player, self.players))
         if not self.players:
             self.players = list(self.player_memory)
@@ -189,7 +202,7 @@ class Higherlower(Game):
             player.show_name(self.screen)
             player.show_cards(self.screen)
             player.display_score_bj(self.screen)
-            
+
     def subtract_bets(self):
         for player in self.players:
             player.balance -= player.bet
@@ -216,3 +229,9 @@ class Higherlower(Game):
                 player.cards = []
                 player.bet = 0
                 player.prize_money = 0
+
+    def next_player(self):
+        if self.player_index == len(self.players) - 1:
+            self.player_index = 0
+        else:
+            self.player_index += 1

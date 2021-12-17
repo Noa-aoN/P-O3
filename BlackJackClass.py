@@ -27,8 +27,12 @@ def bets_screen(game, screen, buttons):
     buttons["exit"].draw(screen)
 
     current_player = game.get_current_player()
+
+    if int(current_player.number) != int(game.previous_player):
+        game.rotate_fromto_player(game.previous_player, current_player.number)
+
     if not game.cap_gest:
-        game.cap_gest = init_camera(0)
+        game.cap_gest = init_camera(2)
 
     if perf_counter() - game.gest_time >= 2:
         game.cameracooldown = True
@@ -98,17 +102,10 @@ def deal_cards_screen(game, screen, buttons):
 
     for player in game.players:
         for _ in range(2):
-            if game.first_card:
-                game.rotate_to(player.number)
-                game.previous_player = player.number
-                game.first_card = False
+            if game.previous_player != player.number:
+                game.rotate_fromto_player(game.previous_player, player.number)
 
-            else:
-                if game.previous_player != player.number:
-                    game.rotate_fromto_player(game.previous_player, player.number)
-                    game.previous_player = player.number
-
-            game.give_card()
+            #game.give_card()
             game.get_card_func(player)
             screen.fill(GREEN)
             game.show_each_player()
@@ -117,9 +114,10 @@ def deal_cards_screen(game, screen, buttons):
 
     # Give the dealer 2 cards
     # 1 face-up, 1 face-down
-    if game.previous_player != 2.5:
-        game.rotate_fromto_player(game.previous_player, 2.5)
-        game.previous_player = 2.5
+    if game.previous_player != 1.5:
+        game.rotate_fromto_player(game.previous_player, 1.5)
+
+    #game.give_card()
     game.get_card_func(game.dealer)
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
@@ -135,7 +133,6 @@ def deal_cards_screen(game, screen, buttons):
     # Zet de servo terug naar de eerste speler
     # print("RESET SERVO")
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
-    game.previous_player = game.get_current_player().number
 
     print("Playing Screen")
     game.draw_screen = playing_screen
@@ -153,7 +150,6 @@ def playing_screen(game, screen, buttons):
 
     if int(current_player.number) != int(game.previous_player):
         game.rotate_fromto_player(game.previous_player, current_player.number)
-        game.previous_player = current_player.number
 
     ret, img = game.cap_gest.read()
 
@@ -196,12 +192,14 @@ def playing_screen(game, screen, buttons):
                             pygame.display.update()
                             sleep(0.2)
                             if option == "hit":
+                                #game.give_card()
                                 game.get_card_func(current_player)
                                 current_player.show_cards(screen)
                                 current_player.display_score_bj(screen)
 
                             elif option == "double" and len(current_player.cards) == 2 and \
                                     current_player.balance >= 2 * current_player.bet:
+                                #game.give_card()
                                 current_player.bet = current_player.bet * 2
                                 game.get_card_func(current_player)
                                 current_player.show_cards(screen)
@@ -274,12 +272,14 @@ def dealer_card_screen(game, screen, buttons):
 
     not_everyone_busts = not game.everyone_bust()
     if not_everyone_busts:
+        # Rotate to dealer
+        game.rotate_fromto_player(game.previous_player, 1.5)
         while 0 < game.dealer.value_count_bj() < 17:
             game.dealer.show_cards(screen)
             game.dealer.display_score_bj(screen)
             pygame.display.update()
             sleep(1)
-            game.give_card()
+            #game.give_card()
             game.get_card_func(game.dealer)
     dealer_score = game.dealer.value_count_bj()
 
@@ -309,6 +309,7 @@ def blackjack(game):
                 if game.buttons["rules"].button_pressed(event):
                     game.draw_screen = rules_screen
                 elif game.buttons["start"].button_pressed(event):
+                    game.create_client()
                     game.draw_screen = bets_screen
                 elif game.buttons["cam"].button_pressed(event):
                     game.cam = not game.cam
@@ -344,11 +345,13 @@ def blackjack(game):
                 if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen_bj
                 elif game.buttons["hit"].button_pressed(event):
+                    #game.give_card()
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
                 elif current_player.balance >= 2 * current_player.bet and game.buttons["double"].button_pressed(event) \
                         and len(current_player.cards) == 2:
+                    #game.give_card()
                     current_player.bet = current_player.bet * 2
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
