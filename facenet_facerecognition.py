@@ -34,6 +34,17 @@ def draw_rectangle(image, coords, colour=(0, 255, 0)):
     return image
 
 
+def draw_name(image, player, coords, colour=(0, 255, 0)):
+    assert isinstance(coords, tuple)
+    assert isinstance(colour, tuple)
+    (x, y, w, h) = coords
+    cv2.putText(img=image, text=str(player),
+                org=(x, y-10), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=colour,
+                thickness=1)
+    cv2.waitKey(1)
+    return image
+
+
 def facenet_setup(imagesize=160, margin=0.2):
     # If required, create a face detection pipeline using MTCNN:
     mtcnn = MTCNN(image_size=imagesize, margin=margin)
@@ -311,6 +322,7 @@ class PlayerRegistration:
         return coordlist
 
 
+
 # Bram1 = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Bram1.jpg")
 # Bram2 = Image.open(r'C:\Users\bram\facenetLibraries\Bram\image4.jpg')
 # Karel = Image.open(r"C:\Users\bram\OneDrive\Afbeeldingen\Camera-album\Karel.jpg")
@@ -325,29 +337,21 @@ class PlayerRegistration:
 
 #
 library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 7)
-# library.registerplayer("Bram")
-# library.registerplayer("Karel")
-#
 
-# imagesize = 160
-# margin = 0.2
-# mtcnn, resnet = facenet_setup(imagesize, margin)
-# libraryembedding = {}
-# libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
-# libraryembedding["Karel"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Karel', mtcnn, resnet)
+"""CHANGE PLAYER TO THE NAME YOU WANT DETECTED"""
+player = 'Bram'
 cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# 
-# # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
 while True:
     cur_time = perf_counter()
     ret, img = cam.read()
-    img, resultingmatches = library.identifyface(img)
     # print(resultingmatches)
-    # result = library.searchplayer('Bram', img)
+    result = library.searchplayer(player, img)
+    if result:
+        img = draw_name(draw_rectangle(img, result[0]), player, result[0])
     # print(result)
-    elapsed_time = perf_counter() - cur_time
-    cv2.putText(img=img, text=str(1/elapsed_time), org=(0, 40),
-                fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
-                color=(0, 0, 255), thickness=1)
+    # elapsed_time = perf_counter() - cur_time
+    # cv2.putText(img=img, text=str(1/elapsed_time), org=(0, 40),
+    #             fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
+    #             color=(0, 0, 255), thickness=1)
     cv2.imshow("Face", img)
     cv2.waitKey(1)
