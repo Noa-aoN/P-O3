@@ -10,23 +10,27 @@ from Camera import init_camera, opencv_to_pygame
 from Style import font, font2_small, WHITE, BLACK, GREEN
 
 
-def rules_screen(game, screen, buttons):
+def rules_screen(game, screen, buttons, x_scale, y_scale):
     buttons["exit"].draw(screen)
     f = open('Rules/RulesBlackjack.txt', 'r')
     content = f.read()
     split_content = content.splitlines()
     for i, line in enumerate(split_content):
         rules_surf = font2_small.render(line, False, BLACK)
-        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10, 3 + i * 20)))
+        screen.blit(rules_surf, rules_surf.get_rect(topleft=(10*x_scale, 3*y_scale + i * 20*y_scale)))
     f.close()
 
 
-def bets_screen(game, screen, buttons):
+def bets_screen(game, screen, buttons, x_scale, y_scale):
     game.show_each_player()
 
     buttons["exit"].draw(screen)
 
     current_player = game.get_current_player()
+
+    if int(current_player.number) != int(game.previous_player):
+        game.rotate_fromto_player(game.previous_player, current_player.number)
+
     if not game.cap_gest:
         game.cap_gest = init_camera(0)
 
@@ -82,7 +86,7 @@ def bets_screen(game, screen, buttons):
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
-    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
+    screen.blit(scale, scale.get_rect(topleft=(45*x_scale + 290*x_scale * current_player.number, 415*y_scale)))
 
     if all([not player.wants_bet for player in game.players]) and game.player_index == game.players[0].number:
         print("Loading Screen")
@@ -91,24 +95,17 @@ def bets_screen(game, screen, buttons):
         game.draw_screen = playing_screen
 
 
-def deal_cards_screen(game, screen, buttons):
+def deal_cards_screen(game, screen, buttons, x_scale, y_scale):
     # Put the balances on the screen
     game.show_each_player()
     pygame.display.update()
 
     for player in game.players:
         for _ in range(2):
-            if game.first_card:
-                game.rotate_to(player.number)
-                game.previous_player = player.number
-                game.first_card = False
+            if game.previous_player != player.number:
+                game.rotate_fromto_player(game.previous_player, player.number)
 
-            else:
-                if game.previous_player != player.number:
-                    game.rotate_fromto_player(game.previous_player, player.number)
-                    game.previous_player = player.number
-
-            game.give_card()
+            #game.give_card()
             game.get_card_func(player)
             screen.fill(GREEN)
             game.show_each_player()
@@ -117,9 +114,10 @@ def deal_cards_screen(game, screen, buttons):
 
     # Give the dealer 2 cards
     # 1 face-up, 1 face-down
-    if game.previous_player != 2.5:
-        game.rotate_fromto_player(game.previous_player, 2.5)
-        game.previous_player = 2.5
+    if game.previous_player != 1.5:
+        game.rotate_fromto_player(game.previous_player, 1.5)
+
+    #game.give_card()
     game.get_card_func(game.dealer)
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
@@ -135,13 +133,12 @@ def deal_cards_screen(game, screen, buttons):
     # Zet de servo terug naar de eerste speler
     # print("RESET SERVO")
     game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
-    game.previous_player = game.get_current_player().number
 
     print("Playing Screen")
     game.draw_screen = playing_screen
 
 
-def playing_screen(game, screen, buttons):
+def playing_screen(game, screen, buttons, x_scale, y_scale):
     game.show_each_player()
 
     game.dealer.show_cards(screen)
@@ -153,7 +150,6 @@ def playing_screen(game, screen, buttons):
 
     if int(current_player.number) != int(game.previous_player):
         game.rotate_fromto_player(game.previous_player, current_player.number)
-        game.previous_player = current_player.number
 
     ret, img = game.cap_gest.read()
 
@@ -173,7 +169,7 @@ def playing_screen(game, screen, buttons):
 
         else:
             another_card_surf = font.render(f'{current_player.name}, do you want another card?', False, BLACK)
-            screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600, 200)))
+            screen.blit(another_card_surf, another_card_surf.get_rect(midbottom=(600*x_scale, 200*y_scale)))
 
             buttons["hit"].draw(screen)
             buttons["stand"].draw(screen)
@@ -196,12 +192,14 @@ def playing_screen(game, screen, buttons):
                             pygame.display.update()
                             sleep(0.2)
                             if option == "hit":
+                                #game.give_card()
                                 game.get_card_func(current_player)
                                 current_player.show_cards(screen)
                                 current_player.display_score_bj(screen)
 
                             elif option == "double" and len(current_player.cards) == 2 and \
                                     current_player.balance >= 2 * current_player.bet:
+                                #game.give_card()
                                 current_player.bet = current_player.bet * 2
                                 game.get_card_func(current_player)
                                 current_player.show_cards(screen)
@@ -236,14 +234,14 @@ def playing_screen(game, screen, buttons):
     img = opencv_to_pygame(img)
     surface = pygame.surfarray.make_surface(img)
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
-    screen.blit(scale, scale.get_rect(topleft=(45 + 290 * current_player.number, 415)))
+    screen.blit(scale, scale.get_rect(topleft=(45*x_scale + 290*x_scale * current_player.number, 415*y_scale)))
 
     if all([not player.wants_card for player in game.players]) and game.player_index == game.players[0].number:
         #print("Dealer Cards Screen")
         game.draw_screen = dealer_card_screen
 
 
-def check_results_screen(game, screen, buttons):
+def check_results_screen(game, screen, buttons, x_scale, y_scale):
     game.show_each_player()
 
     game.dealer.show_cards(screen)
@@ -254,19 +252,17 @@ def check_results_screen(game, screen, buttons):
     dealer_score = game.dealer.value_count_bj()
     dealer_blackjack = dealer_score == 21 and len(game.dealer.cards) == 2
 
-    pygame.draw.rect(screen, GREEN, (0, 340, 1200, 25), 0)
+    pygame.draw.rect(screen, GREEN, (0, 340*y_scale, 1200*x_scale, 25*y_scale), 0)
     for player in game.players:
         player.display_results(screen, dealer_score, 'bj', dealer_blackjack)
         if dealer_blackjack:
             player.adjust_balance(dealer_score, 'bj', dealer_blackjack)
 
-    # not_everyone_busts = not game.everyone_bust()
-
     game.dealer.show_cards(screen)
-    game.dealer.display_score_bj(screen)
+    game.dealer.display_score_bj(screen, dealer_blackjack)
 
 
-def dealer_card_screen(game, screen, buttons):
+def dealer_card_screen(game, screen, buttons, x_scale, y_scale):
     game.show_each_player()
     if game.dealer.has_dummy:
         game.dealer.cards.pop()
@@ -274,13 +270,17 @@ def dealer_card_screen(game, screen, buttons):
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
 
-    while 0 < game.dealer.value_count_bj() < 17:
-        game.dealer.show_cards(screen)
-        game.dealer.display_score_bj(screen)
-        pygame.display.update()
-        sleep(1)
-        game.give_card()
-        game.get_card_func(game.dealer)
+    not_everyone_busts = not game.everyone_bust()
+    if not_everyone_busts:
+        # Rotate to dealer
+        game.rotate_fromto_player(game.previous_player, 1.5)
+        while 0 < game.dealer.value_count_bj() < 17:
+            game.dealer.show_cards(screen)
+            game.dealer.display_score_bj(screen)
+            pygame.display.update()
+            sleep(1)
+            #game.give_card()
+            game.get_card_func(game.dealer)
     dealer_score = game.dealer.value_count_bj()
 
     for player in game.players:
@@ -309,6 +309,7 @@ def blackjack(game):
                 if game.buttons["rules"].button_pressed(event):
                     game.draw_screen = rules_screen
                 elif game.buttons["start"].button_pressed(event):
+                    game.create_client()
                     game.draw_screen = bets_screen
                 elif game.buttons["cam"].button_pressed(event):
                     game.cam = not game.cam
@@ -320,7 +321,6 @@ def blackjack(game):
                     game.with_linking = not game.with_linking
                     print("face linking", game.with_linking)
                 elif game.buttons["exit"].button_pressed(event):
-                    game.subtract_bets()
                     game.play_again()
                     return game.players
 
@@ -345,11 +345,13 @@ def blackjack(game):
                 if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen_bj
                 elif game.buttons["hit"].button_pressed(event):
+                    #game.give_card()
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
                 elif current_player.balance >= 2 * current_player.bet and game.buttons["double"].button_pressed(event) \
                         and len(current_player.cards) == 2:
+                    #game.give_card()
                     current_player.bet = current_player.bet * 2
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
@@ -382,16 +384,18 @@ def blackjack(game):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 600))
+    w, h = pygame.display.get_surface().get_size()
+    x_scale, y_scale = w / 1200, h / 600
     pygame.display.set_caption('Virtual Card Game Robot')
     vtk_icon = pygame.image.load('Images/VTK_icon.png')
     pygame.display.set_icon(vtk_icon)
 
     names = ['Nowa', 'Karel', 'Yannic', 'Jasper']
-    players = [Player(name, 10000, i) for i, name in enumerate(names)]
+    players = [Player(name, 10000, i, x_scale, y_scale) for i, name in enumerate(names)]
 
     playing = True
     while playing:
-        game = Blackjack(screen, players)
+        game = Blackjack(screen, players, dict(common_buttons, **bj_buttons), x_scale, y_scale)
         remaining_players = blackjack(game)
         if remaining_players is None:
             print("restarting game")

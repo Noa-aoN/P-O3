@@ -28,11 +28,10 @@ def dcmotor_rotate():
     GPIO.cleanup()
 
 def servo_rotate(player):
-    servoPIN = 11
+    servoPIN = 4
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(servoPIN, GPIO.OUT)
-    pos1 = 300 + (player - 1) * (1020 - 300) / 3
-    print(pos1)
+    pos1 = 300 + (player) * (1020 - 300) / 3
     p = GPIO.PWM(servoPIN, 50)  # GPIO 17 for PWM with 50Hz
     p.start(2.5)  # Initialization
     p.ChangeDutyCycle(int(pos1 / 100))
@@ -41,19 +40,20 @@ def servo_rotate(player):
     GPIO.cleanup()
 
 def servo_rotate_fromto(previous_player,player):
-    servoPIN = 11
+    servoPIN = 4
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(servoPIN, GPIO.OUT)
-    pos0 = 300 + (previous_player-1)*(1020-300)/3
-    pos1 = 300 + (player - 1) * (1020 - 300) / 3
+    pos0 = 300 + (previous_player)*(1020-300)/3
+    pos1 = 300 + (player) * (1020 - 300) / 3
     p = GPIO.PWM(servoPIN, 50)  # GPIO 17 for PWM with 50Hz
     p.start(2.5)  # Initialization
-    if previous_player < 1:
-        p.ChangeDutyCycle(pos1/100)
-
-    for i in range(int(pos0), int(pos1)):
-        p.ChangeDutyCycle(i / 100)
-        print(i)
-        sleep(0.005)
+    if int(pos0)<int(pos1):
+        for i in range(int(pos0), int(pos1)):
+            p.ChangeDutyCycle(i / 100)
+            sleep(0.005)
+    elif int(pos0)>int(pos1):
+        for i in range(int(pos0), int(pos1),-1):
+            p.ChangeDutyCycle(i / 100)
+            sleep(0.005)
     p.stop()
     GPIO.cleanup()

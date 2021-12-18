@@ -24,7 +24,7 @@ def opencv_to_pygame(img):
 
 def get_camera_card(game, player):
     screen = game.screen
-    cap_card = init_camera()
+    cap_card = init_camera(0)
     i = 1
     give_card_again = Button(BLACK, (450, 80), (300, 65), 'Give new card')
     while True:
