@@ -12,7 +12,7 @@ from numpy import linalg
 from tqdm import tqdm
 import mediapipe as mp
 from math import sqrt
-from time import sleep
+from time import sleep, perf_counter
 
 
 def cropped_faces_from_image(image):
@@ -274,7 +274,12 @@ class PlayerRegistration:
         assert isinstance(imagesperlibrary, int)
         self._imagesperlibrary = imagesperlibrary
         self._mtcnn, self._resnet = facenet_setup(imagesize, margin)
+
         self._libraryembeddings = {}
+        if len(os.listdir(librarydirectory)) > 0:
+            for i in os.listdir(librarydirectory):
+                self._libraryembeddings[i] = library_embeddings(os.path.join(librarydirectory, i), self._mtcnn,
+                                                               self._resnet)
 
     def registerplayer(self, player=None):
         assert player is None or isinstance(player, str) or isinstance(player, int)
@@ -319,7 +324,7 @@ class PlayerRegistration:
 # print(looking_direction(Image.open(r'C:\Users\bram\facenetLibraries\Bram\image8.jpg')))
 
 #
-# library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 9)
+library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 7)
 # library.registerplayer("Bram")
 # library.registerplayer("Karel")
 #
@@ -330,14 +335,19 @@ class PlayerRegistration:
 # libraryembedding = {}
 # libraryembedding["Bram"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Bram', mtcnn, resnet)
 # libraryembedding["Karel"] = library_embeddings(r'C:\Users\bram\facenetLibraries\Karel', mtcnn, resnet)
-# cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # 
 # # # instance = PlayerRegistration(r'C:\Users\bram\facenetLibraries')
-# while True:
-#     ret, img = cam.read()
-#     img, resultingmatches = library.identifyface(img, libraryembedding)
-#     # print(resultingmatches)
-#     # result = library.searchplayer('Bram', img, libraryembedding)
-#     # print(result)
-#     cv2.imshow("Face", img)
-#     cv2.waitKey(1)
+while True:
+    cur_time = perf_counter()
+    ret, img = cam.read()
+    img, resultingmatches = library.identifyface(img)
+    # print(resultingmatches)
+    # result = library.searchplayer('Bram', img)
+    # print(result)
+    elapsed_time = perf_counter() - cur_time
+    cv2.putText(img=img, text=str(1/elapsed_time), org=(0, 40),
+                fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5,
+                color=(0, 0, 255), thickness=1)
+    cv2.imshow("Face", img)
+    cv2.waitKey(1)
