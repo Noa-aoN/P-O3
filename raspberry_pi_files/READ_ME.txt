@@ -8,4 +8,4 @@ For the servo motor connect the brown wire to gnd, the red wire to 5V and the or
 Run both files to check if you have all the modules installed.
 
 To use the full project first run the file: start_server.py
-then run the MainMenu.py
+then run the main.py on your PC.
