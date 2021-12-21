@@ -3,9 +3,7 @@ from time import sleep
 from Button import Button
 from Detection.card_double_detection import get_card
 import pygame
-from Style import BLACK, GREEN
-
-font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
+from Style import BLACK, GREEN, font_med
 
 
 def init_camera(source=1):
@@ -30,7 +28,6 @@ def get_camera_card(game, player):
         if i > 9:
             i = 1
         sleep(0.05)
-        # print("Trying again")
         ret, img = cap_card.read()
         card = get_card(img)
         img = opencv_to_pygame(img)
@@ -62,7 +59,7 @@ def get_camera_card(game, player):
         else:
             surf_text = f"{player.name} is getting a card" + "." * (i // 3)
 
-        surf = font.render(surf_text, False, BLACK)
+        surf = font_med.render(surf_text, False, BLACK)
 
         screen.blit(surf, surf.get_rect(midbottom=(600, 50)))
         pygame.display.update()

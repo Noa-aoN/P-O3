@@ -8,6 +8,7 @@ BLUE = (0, 0, 255)
 
 font_huge = pygame.font.Font('Font/Pacifico-Regular.ttf', 80)
 font_big = pygame.font.Font('Font/Roboto-Regular.ttf', 30)
+font_med = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 20)
 font_small = pygame.font.Font('Font/Roboto-Regular.ttf', 13)
 font2_small = pygame.font.SysFont('comicsans', 13)

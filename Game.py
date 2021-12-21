@@ -149,22 +149,19 @@ class Blackjack(Game):
     def play_again(self):
         self.filter_players()
         self.deck = load_random_deck()
-        self.player_index = 0
         self.gest_time = 0
         self.last_fingers = None
         self.last_option = None
         self.cameracooldown = True
         self.dealer.cards = []
-        first_num = self.players[0].number
-        self.rotate_fromto_player(self.previous_player, first_num)
-        self.previous_player = first_num
+        if not self.players:
+            self.player_index = 0
+        else:
+            self.player_index = self.players[0].number
+        self.rotate_fromto_player(self.previous_player, self.player_index)
 
         for player in self.players:
-            player.cards = []
-            player.bet = 0
-            player.wants_bet = True
-            player.wants_card = True
-            player.wants_card = True
+            player.reset()
 
     def show_each_player(self):
         for player in self.players:

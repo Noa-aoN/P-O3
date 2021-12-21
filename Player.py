@@ -1,14 +1,13 @@
+import os
 import pygame
 from Deck import BACK
 from Detection.facenet_facerecognition import PlayerRegistration
-from localdirectory import local_directory
+# from localdirectory import local_directory
 from Detection.facenet_facerecognition import create_folder
-import os
 from Style import BLACK, WHITE, GREEN, font, font_small, font_big
 
 
 def Library():
-
     librarydirectory = create_folder(os.path.join(os.path.expanduser('~'), 'facenetLibraries'))
     library = PlayerRegistration(librarydirectory, 7)
     return library
