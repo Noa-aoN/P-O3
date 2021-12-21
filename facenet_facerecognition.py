@@ -340,6 +340,7 @@ library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 7)
 
 """CHANGE PLAYER TO THE NAME YOU WANT DETECTED"""
 player = 'Bram'
+familyname = ' Van Reusel'
 cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 while True:
     cur_time = perf_counter()
@@ -347,7 +348,7 @@ while True:
     # print(resultingmatches)
     result = library.searchplayer(player, img)
     if result:
-        img = draw_name(draw_rectangle(img, result[0]), player, result[0])
+        img = draw_name(draw_rectangle(img, result[0]), player+familyname, result[0])
     # print(result)
     # elapsed_time = perf_counter() - cur_time
     # cv2.putText(img=img, text=str(1/elapsed_time), org=(0, 40),
