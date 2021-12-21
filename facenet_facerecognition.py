@@ -339,9 +339,12 @@ class PlayerRegistration:
 library = PlayerRegistration(r'C:\Users\bram\facenetLibraries', 7)
 
 """CHANGE PLAYER TO THE NAME YOU WANT DETECTED"""
-player = 'Bram'
-familyname = ' Van Reusel'
+player = 'Yannic'
+familyname = ' Scheyvaerts'
 cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
 while True:
     cur_time = perf_counter()
     ret, img = cam.read()
