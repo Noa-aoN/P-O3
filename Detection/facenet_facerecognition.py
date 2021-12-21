@@ -19,6 +19,7 @@ from math import sqrt
 from time import sleep
 
 
+
 def cropped_faces_from_image(image):
     face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     faces = face_classifier.detectMultiScale(image, 1.3, 5)
@@ -129,7 +130,9 @@ def looking_direction(face):
             else:
                 xaxis = "Centered"
 
-    return (xaxis, yaxis)
+    if not (xaxis, yaxis) == ("Up", "Left") and not (xaxis, yaxis) == ("Up", "Right"):
+        return xaxis, yaxis
+    return xaxis, "Straight"
 
 
 def comparison_with_library(image, libraryembeddings, mtcnn, resnet):

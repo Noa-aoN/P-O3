@@ -89,6 +89,8 @@ def bets_screen(game, screen, buttons, x_scale, y_scale):
     else:
         if not current_player.wants_restart:
             game.next_player()
+            game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
+
         game.last_fingers = None
         for _, button in buttons["bet"]:
             button.set_color(BLACK)
@@ -98,7 +100,7 @@ def bets_screen(game, screen, buttons, x_scale, y_scale):
     scale = pygame.transform.rotozoom(surface, -90, 1 / 8)
     screen.blit(scale, scale.get_rect(topleft=(45*x_scale + 290*x_scale * current_player.number, 415*y_scale)))
 
-    if all([not player.wants_bet for player in game.players]):
+    if all([not player.wants_bet for player in game.players]) and game.player_index == game.players[0].number:
         current_player.wants_restart = False
         print("Loading Screen")
         game.draw_screen = playing_screen
@@ -109,14 +111,13 @@ def playing_screen(game, screen, buttons, x_scale, y_scale):
 
     # Give the current player a card if they have none
     if not player.cards:
-        game.give_card()
         game.get_card_func(player)
 
     question_surf = font.render(f'{player.name}, is the next card going to be higher or lower?', False, BLACK)
     screen.blit(question_surf, question_surf.get_rect(midbottom=(600*x_scale, 200*y_scale)))
 
     if not game.cap_gest:
-        game.cap_gest = init_camera(0)
+        game.cap_gest = init_camera(2)
 
     if perf_counter() - game.gest_time >= 2:
         game.cameracooldown = True
@@ -162,6 +163,7 @@ def playing_screen(game, screen, buttons, x_scale, y_scale):
         active_button.set_color((255, 0, 0))
         active_button.draw(screen)
         pygame.display.update()
+        game.last_index = None
         sleep(0.2)
         active_button.set_color(BLACK)
         active_button.draw(screen)
@@ -216,7 +218,7 @@ def wrong_screen(game, screen, buttons, x_scale, y_scale):
 def higherlower(game):
     while True:
         game()
-        templist = list(filter(lambda player: player.balance >= 1000, game.players))
+        templist = list(filter(lambda player: player, game.players))
         screen = game.screen
         if not templist:
             game.draw_screen = restart_game_screen
@@ -267,8 +269,8 @@ def higherlower(game):
                 if current_player.balance < 1000:
                     game.play_again(current_player)
                     game.next_player()
+                    game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
                 elif game.buttons["higher"].button_pressed(event) or game.buttons["lower"].button_pressed(event):
-                    game.give_card()
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     last_val, current_val = last_two_vals(current_player)
@@ -290,6 +292,7 @@ def higherlower(game):
                     if game.get_current_player() == game.players[-1]:
                         game.play_again()
                         game.next_player()
+                        game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
                     game.draw_screen = home_screen_hl
                 elif game.buttons["next"].button_pressed(event):
                     if game.get_current_player() == game.players[-1]:
@@ -298,6 +301,8 @@ def higherlower(game):
                     else:
                         game.draw_screen = playing_screen
                     game.next_player()
+                    game.rotate_fromto_player(game.previous_player, game.get_current_player().number)
+
                 elif current_player.balance >= 1000 and game.buttons["try"].button_pressed(event):
                     current_player.wants_restart = True
                     game.play_again(current_player)

@@ -3,9 +3,8 @@ from time import sleep
 from Button import Button
 from Detection.card_double_detection import get_card
 import pygame
+from Style import BLACK, GREEN
 
-BLACK = (0, 0, 0)
-GREEN = (31, 171, 57)
 font = pygame.font.Font('Font/Roboto-Regular.ttf', 25)
 
 
@@ -24,7 +23,7 @@ def opencv_to_pygame(img):
 
 def get_camera_card(game, player):
     screen = game.screen
-    cap_card = init_camera(0)
+    cap_card = init_camera(2)
     i = 1
     give_card_again = Button(BLACK, (450, 80), (300, 65), 'Give new card')
     while True:
@@ -42,7 +41,9 @@ def get_camera_card(game, player):
         give_card_again.draw(screen)
         for event in pygame.event.get():
             if give_card_again.button_pressed(event):
-                game.give_card()
+                if game.rasp:
+                    sleep(1)
+                    game.send("GIVE CARD")
 
         if card:
             cardname = card.get_rank_suit()

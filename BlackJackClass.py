@@ -105,7 +105,6 @@ def deal_cards_screen(game, screen, buttons, x_scale, y_scale):
             if game.previous_player != player.number:
                 game.rotate_fromto_player(game.previous_player, player.number)
 
-            #game.give_card()
             game.get_card_func(player)
             screen.fill(GREEN)
             game.show_each_player()
@@ -117,7 +116,6 @@ def deal_cards_screen(game, screen, buttons, x_scale, y_scale):
     if game.previous_player != 1.5:
         game.rotate_fromto_player(game.previous_player, 1.5)
 
-    #game.give_card()
     game.get_card_func(game.dealer)
     game.dealer.show_cards(screen)
     game.dealer.display_score_bj(screen)
@@ -192,14 +190,12 @@ def playing_screen(game, screen, buttons, x_scale, y_scale):
                             pygame.display.update()
                             sleep(0.2)
                             if option == "hit":
-                                #game.give_card()
                                 game.get_card_func(current_player)
                                 current_player.show_cards(screen)
                                 current_player.display_score_bj(screen)
 
                             elif option == "double" and len(current_player.cards) == 2 and \
                                     current_player.balance >= 2 * current_player.bet:
-                                #game.give_card()
                                 current_player.bet = current_player.bet * 2
                                 game.get_card_func(current_player)
                                 current_player.show_cards(screen)
@@ -279,7 +275,6 @@ def dealer_card_screen(game, screen, buttons, x_scale, y_scale):
             game.dealer.display_score_bj(screen)
             pygame.display.update()
             sleep(1)
-            #game.give_card()
             game.get_card_func(game.dealer)
     dealer_score = game.dealer.value_count_bj()
 
@@ -345,13 +340,11 @@ def blackjack(game):
                 if game.buttons["exit"].button_pressed(event):
                     game.draw_screen = home_screen_bj
                 elif game.buttons["hit"].button_pressed(event):
-                    #game.give_card()
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)
                     current_player.display_score_bj(screen)
                 elif current_player.balance >= 2 * current_player.bet and game.buttons["double"].button_pressed(event) \
                         and len(current_player.cards) == 2:
-                    #game.give_card()
                     current_player.bet = current_player.bet * 2
                     game.get_card_func(current_player)
                     current_player.show_cards(screen)

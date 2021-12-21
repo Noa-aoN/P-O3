@@ -96,7 +96,7 @@ class Game:
         if self.rasp:
             self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client.connect(("172.20.10.13", 5050))
-            # self.send("CONNECTED !")
+            self.send("CONNECTED !")
             num = self.players[0].number
             self.rotate_to(num)
             self.previous_player = num
@@ -115,15 +115,14 @@ class Game:
             player.reset()
 
     def get_card_func(self, player):
-        self.give_card()
-        if self.cam:
-            return get_camera_card(self, player)
-        return get_random_card(self, player)
-
-    def give_card(self):
         if self.rasp:
             sleep(1)
             self.send("GIVE CARD")
+
+        if self.cam:
+            return get_camera_card(self, player)
+
+        return get_random_card(self, player)
 
     def rotate_fromto_player(self, previous_player, player):
         self.previous_player = player

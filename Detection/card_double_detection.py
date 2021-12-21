@@ -17,7 +17,7 @@ def binary_threshold(image):
 
     threshs = []
 
-    for thresh_level in range(180, 130, -10):
+    for thresh_level in range(200, 130, -10):
         retval, thresh = cv2.threshold(blur, thresh_level, 255, cv2.THRESH_BINARY)
         threshs.append(thresh)
 
@@ -51,7 +51,7 @@ def create_card(contour, pts, image):
 
     corner_zoom = warp[2:110, 2:45]
 
-    for thresh_level in range(190, 130, -5):
+    for thresh_level in range(200, 130, -10):
         retval, corner_thresh = cv2.threshold(corner_zoom, thresh_level, 255, cv2.THRESH_BINARY)
 
         rank_img = corner_thresh[4:66, 0:50]
@@ -79,9 +79,7 @@ def create_card(contour, pts, image):
             t_suit, t_s_perc = template_matching(suit_img, len(SUITS), TEMPLATE_SUITS_IMG)
 
             if t_rank == rank and t_suit == suit:
-                # print(r_perc * t_r_perc)
-                # print(s_perc * t_s_perc)
-                if r_perc * t_r_perc > 0.5 and s_perc * t_s_perc > 0.5:
+                if r_perc * t_r_perc > 0.4 and s_perc * t_s_perc > 0.4:
                     card = Card(contour, pts, w, h, center, rank, suit)
                     card.match = ((r_perc * t_r_perc)**2 + (s_perc * t_s_perc)**2)**(1/2)
                     return card
